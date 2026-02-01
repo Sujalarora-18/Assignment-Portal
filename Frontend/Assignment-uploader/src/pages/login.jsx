@@ -43,6 +43,8 @@ export default function Login() {
         navigate("/student/dashboard", { replace: true });
       } else if (role === "professor") {
         navigate("/professor/dashboard", { replace: true });
+      } else if (role === "hod") {
+        navigate("/hod/dashboard", { replace: true });
       } else {
         navigate("/home", { replace: true });
       }

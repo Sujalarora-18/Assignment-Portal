@@ -3,9 +3,22 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 const professorRoutes = require("./Routes/professor");
+
+const resetTokenStore = new Map();
+const nodemailerTransporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || "smtp.gmail.com",
+  port: process.env.SMTP_PORT || 587,
+  secure: false,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
 
 require("dotenv").config({ path: path.join(__dirname, "my.env") });
@@ -16,6 +29,7 @@ console.log("[dotenv] JWT_SECRET present?:", !!process.env.JWT_SECRET);
 const adminDepartments = require('./Routes/adminDepartments');
 const adminUsersRoutes = require("./Routes/adminUsers");
 const studentRoutes = require("./Routes/student");
+const hodRoutes = require("./Routes/hod");
 
 const User = require("./models/User");
 
@@ -37,6 +51,7 @@ if (!JWT_SECRET) {
 app.use('/api', adminDepartments);
 app.use("/admin", adminUsersRoutes);
 app.use("/api/student", studentRoutes);
+app.use("/api/hod", hodRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 function signToken(user) {
@@ -158,6 +173,67 @@ app.post("/login", async (req, res) => {
     });
   } catch (err) {
     console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+app.post("/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email || !email.trim())
+      return res.status(400).json({ message: "Email is required" });
+
+    const user = await User.findOne({ email: email.trim().toLowerCase() });
+    if (user && process.env.SMTP_USER && process.env.SMTP_PASS) {
+      const token = crypto.randomBytes(32).toString("hex");
+      const expiresAt = Date.now() + 15 * 60 * 1000;
+      resetTokenStore.set(token, { userId: user._id.toString(), expiresAt });
+
+      const resetUrl = `http://localhost:3000/reset-password?token=${token}`;
+      await nodemailerTransporter.sendMail({
+        from: process.env.SMTP_USER,
+        to: user.email,
+        subject: "Password Reset - Assignment Uploader",
+        html: `
+          <h2>Password Reset Request</h2>
+          <p>Click the link below to reset your password (valid for 15 minutes):</p>
+          <p><a href="${resetUrl}">${resetUrl}</a></p>
+          <p>If you did not request this, please ignore this email.</p>
+        `,
+      });
+    }
+
+    return res.json({
+      message: "If this email is registered, you will receive password reset instructions.",
+    });
+  } catch (err) {
+    console.error("Forgot password error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+app.post("/reset-password", async (req, res) => {
+  try {
+    const { token, password } = req.body;
+    if (!token || !password)
+      return res.status(400).json({ message: "Token and password are required" });
+
+    const stored = resetTokenStore.get(token);
+    if (!stored || Date.now() > stored.expiresAt) {
+      resetTokenStore.delete(token);
+      return res.status(400).json({ message: "Invalid or expired reset link" });
+    }
+
+    const user = await User.findById(stored.userId);
+    if (!user) return res.status(400).json({ message: "User not found" });
+
+    user.password = await bcrypt.hash(password, 10);
+    await user.save();
+    resetTokenStore.delete(token);
+
+    return res.json({ message: "Password reset successfully. You can now login." });
+  } catch (err) {
+    console.error("Reset password error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 });

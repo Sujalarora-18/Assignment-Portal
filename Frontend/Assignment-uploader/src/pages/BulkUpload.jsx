@@ -1,4 +1,3 @@
-// src/pages/BulkUpload.jsx
 import React, { useState } from "react";
 import api from "../Api/api";
 import { useNavigate } from "react-router-dom";
@@ -65,7 +64,6 @@ export default function BulkUpload() {
 
       setMsg(`Uploaded ${res.data?.created?.length || files.length} files ✔`);
 
-      // Redirect after a short delay
       setTimeout(() => nav("/student/assignments"), 900);
     } catch (err) {
       console.error("Bulk upload error:", err);

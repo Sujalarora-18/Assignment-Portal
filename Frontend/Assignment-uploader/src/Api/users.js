@@ -1,4 +1,3 @@
-// src/Api/users.js
 import { axiosInstance } from "./api";
 
 export async function getUserForEdit(id) {

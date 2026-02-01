@@ -1,6 +1,8 @@
 import "./App.css";
 import Login from "./pages/login";
 import Signup from "./pages/signup";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import Home from "./pages/home";
 import CreateDepartment from "./pages/CreateDepartment";
 import DepartmentList from "./pages/DepartmentsList";
@@ -23,7 +25,8 @@ import ResubmitAssignment from "./pages/ResubmitAssignment";
 
 import ProfessorDashboard from "./pages/ProfessorDashboard";
 import ReviewAssignment from "./pages/ReviewAssignment";
-
+import HODDashboard from "./pages/HODDashboard";
+import HODReviewAssignment from "./pages/HODReviewAssignment";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -35,6 +38,8 @@ function App() {
 
         <Route path="/" element={<Login />} />    
         <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/home" element={<Home />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/departments" element={<DepartmentList />} />
@@ -83,6 +88,22 @@ function App() {
     </PrivateRoute>
   }
 />
+        <Route
+          path="/hod/dashboard"
+          element={
+            <PrivateRoute requiredRole="hod">
+              <HODDashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/hod/review/:id"
+          element={
+            <PrivateRoute requiredRole="hod">
+              <HODReviewAssignment />
+            </PrivateRoute>
+          }
+        />
 
       </Routes>
     </Router>

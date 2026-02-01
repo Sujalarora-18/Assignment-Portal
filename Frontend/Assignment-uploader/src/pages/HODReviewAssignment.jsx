@@ -2,25 +2,18 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../Api/api";
 
-export default function ReviewAssignment() {
+export default function HODReviewAssignment() {
   const { id } = useParams();
   const nav = useNavigate();
 
   const [assignment, setAssignment] = useState(null);
   const [remark, setRemark] = useState("");
   const [signature, setSignature] = useState("");
-  const [otp, setOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-  const [devOtp, setDevOtp] = useState(""); // For development only
   const [msg, setMsg] = useState("");
-  const [msgType, setMsgType] = useState("info"); // info, success, error
+  const [msgType, setMsgType] = useState("info");
   const [loading, setLoading] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectRemark, setRejectRemark] = useState("");
-  const [showForwardModal, setShowForwardModal] = useState(false);
-  const [colleagues, setColleagues] = useState([]);
-  const [forwardRecipientId, setForwardRecipientId] = useState("");
-  const [forwardNote, setForwardNote] = useState("");
 
   useEffect(() => {
     fetchAssignment();
@@ -28,35 +21,11 @@ export default function ReviewAssignment() {
 
   const fetchAssignment = async () => {
     try {
-      const res = await api.request(`/api/professor/assignments/${id}/review`);
+      const res = await api.request(`/api/hod/assignments/${id}/review`);
       setAssignment(res.assignment);
     } catch (err) {
       setMsg("Failed to load assignment");
       setMsgType("error");
-    }
-  };
-
-  const sendOtp = async () => {
-    try {
-      setLoading(true);
-      setMsg("");
-      
-      const res = await api.request(`/api/professor/assignments/${id}/send-otp`, {
-        method: "POST",
-      });
-
-      setOtpSent(true);
-      setMsg("OTP sent to your email");
-      setMsgType("success");
-      
-      if (res.devOtp) {
-        setDevOtp(res.devOtp);
-      }
-    } catch (err) {
-      setMsg(err?.message || "Failed to send OTP");
-      setMsgType("error");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -71,19 +40,14 @@ export default function ReviewAssignment() {
       setLoading(true);
       setMsg("");
 
-      await api.request(`/api/professor/assignments/${id}/approve`, {
+      await api.request(`/api/hod/assignments/${id}/approve`, {
         method: "POST",
-        body: JSON.stringify({ 
-          remark, 
-          signature,
-          otp: otpSent ? otp : undefined,
-          skipOtp: !otpSent // Skip OTP if not sent (for development)
-        }),
+        body: JSON.stringify({ remark, signature }),
       });
 
-      setMsg("Assignment approved successfully!");
+      setMsg("Assignment finally approved!");
       setMsgType("success");
-      setTimeout(() => nav("/professor/dashboard"), 1000);
+      setTimeout(() => nav("/hod/dashboard"), 1000);
     } catch (err) {
       setMsg(err?.message || "Approval failed");
       setMsgType("error");
@@ -109,7 +73,7 @@ export default function ReviewAssignment() {
       setLoading(true);
       setMsg("");
 
-      await api.request(`/api/professor/assignments/${id}/reject`, {
+      await api.request(`/api/hod/assignments/${id}/reject`, {
         method: "POST",
         body: JSON.stringify({ remark: trimmed }),
       });
@@ -118,50 +82,9 @@ export default function ReviewAssignment() {
       setMsgType("success");
       setShowRejectModal(false);
       setRejectRemark("");
-      setTimeout(() => nav("/professor/dashboard"), 1000);
+      setTimeout(() => nav("/hod/dashboard"), 1000);
     } catch (err) {
       setMsg(err?.message || err?.data?.message || "Rejection failed");
-      setMsgType("error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const openForwardModal = async () => {
-    setShowForwardModal(true);
-    setForwardRecipientId("");
-    setForwardNote("");
-    try {
-      const res = await api.request("/api/professor/colleagues");
-      setColleagues(res.colleagues || []);
-    } catch (err) {
-      setMsg("Failed to load colleagues");
-      setMsgType("error");
-    }
-  };
-
-  const forward = async () => {
-    if (!forwardRecipientId) {
-      setMsg("Please select a recipient");
-      setMsgType("error");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setMsg("");
-
-      await api.request(`/api/professor/assignments/${id}/forward`, {
-        method: "POST",
-        body: JSON.stringify({ recipientId: forwardRecipientId, note: forwardNote }),
-      });
-
-      setMsg("Assignment forwarded successfully");
-      setMsgType("success");
-      setShowForwardModal(false);
-      setTimeout(() => nav("/professor/dashboard"), 1000);
-    } catch (err) {
-      setMsg(err?.message || err?.data?.message || "Forward failed");
       setMsgType("error");
     } finally {
       setLoading(false);
@@ -195,9 +118,9 @@ export default function ReviewAssignment() {
     <div className="min-h-screen bg-slate-950 p-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-extrabold text-white">Review Assignment</h2>
+          <h2 className="text-2xl font-extrabold text-white">Finalize Assignment</h2>
           <Link
-            to="/professor/dashboard"
+            to="/hod/dashboard"
             className="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-bold border-2 border-slate-600"
           >
             Back to Dashboard
@@ -239,7 +162,6 @@ export default function ReviewAssignment() {
               <h3 className="text-xl font-bold text-gray-800 mb-3">
                 {assignment.title}
               </h3>
-              
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="text-gray-500">Student:</span>
@@ -312,10 +234,10 @@ export default function ReviewAssignment() {
                 </label>
                 <textarea
                   rows={3}
-                  placeholder="Add your review remarks..."
+                  placeholder="Add your approval remarks..."
                   value={remark}
                   onChange={(e) => setRemark(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                  className="input-strong resize-none disabled:opacity-70"
                   disabled={loading}
                 />
               </div>
@@ -329,75 +251,26 @@ export default function ReviewAssignment() {
                   placeholder="Enter your name as signature"
                   value={signature}
                   onChange={(e) => setSignature(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                  className="input-strong disabled:opacity-70"
                   disabled={loading}
                 />
               </div>
 
-              <div className="p-4 bg-gray-50 rounded-xl border">
-                <p className="text-sm text-gray-600 mb-3">
-                  For security, you can request an OTP to verify your identity before approval.
-                </p>
-                
-                {!otpSent ? (
-                  <button
-                    onClick={sendOtp}
-                    disabled={loading}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm disabled:opacity-50"
-                  >
-                    {loading ? "Sending..." : "Send OTP to Email"}
-                  </button>
-                ) : (
-                  <div className="space-y-2">
-                    <input
-                      type="text"
-                      placeholder="Enter OTP"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                      disabled={loading}
-                    />
-                    {devOtp && (
-                      <p className="text-xs text-orange-600">
-                        Dev OTP (remove in production): {devOtp}
-                      </p>
-                    )}
-                    <button
-                      onClick={sendOtp}
-                      disabled={loading}
-                      className="text-sm text-indigo-600 hover:underline"
-                    >
-                      Resend OTP
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex flex-col gap-3 pt-4">
-                <div className="flex gap-3">
-                  <button
-                    onClick={approve}
-                    disabled={loading || !signature.trim()}
-                    className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold shadow disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {loading ? "Processing..." : "Approve"}
-                  </button>
-
-                  <button
-                    onClick={() => setShowRejectModal(true)}
-                    disabled={loading}
-                    className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold shadow disabled:opacity-50"
-                  >
-                    Reject
-                  </button>
-                </div>
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={approve}
+                  disabled={loading || !signature.trim()}
+                  className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold shadow disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? "Processing..." : "Final Approve"}
+                </button>
 
                 <button
-                  onClick={openForwardModal}
+                  onClick={() => setShowRejectModal(true)}
                   disabled={loading}
-                  className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold shadow disabled:opacity-50"
+                  className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold shadow disabled:opacity-50"
                 >
-                  Forward to Another Reviewer
+                  Reject
                 </button>
               </div>
             </div>
@@ -406,14 +279,14 @@ export default function ReviewAssignment() {
       </div>
 
       {showRejectModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md mx-4">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl border-2 border-slate-200 p-6 w-full max-w-md">
             <h3 className="text-xl font-bold text-gray-800 mb-4">
               Reject Assignment
             </h3>
 
             <p className="text-sm text-gray-600 mb-4">
-              Please provide feedback for the student (minimum 10 characters). This will be sent to the student and shown in the resubmission form.
+              Please provide feedback for the student (minimum 10 characters).
             </p>
 
             <textarea
@@ -421,7 +294,7 @@ export default function ReviewAssignment() {
               placeholder="Enter rejection feedback (min 10 characters)..."
               value={rejectRemark}
               onChange={(e) => setRejectRemark(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl mb-2"
+              className="input-strong resize-none mb-2"
               autoFocus
             />
             <p className="text-xs text-gray-500 mb-4">
@@ -434,86 +307,16 @@ export default function ReviewAssignment() {
                   setShowRejectModal(false);
                   setRejectRemark("");
                 }}
-                className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-xl"
+                className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-xl font-bold"
               >
                 Cancel
               </button>
               <button
                 onClick={reject}
                 disabled={loading || !rejectRemark.trim() || rejectRemark.trim().length < 10}
-                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl disabled:opacity-50"
+                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold disabled:opacity-50"
               >
                 {loading ? "Rejecting..." : "Confirm Reject"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showForwardModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md mx-4">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">
-              Forward Assignment
-            </h3>
-
-            <p className="text-sm text-gray-600 mb-4">
-              Forward this assignment to another professor or HOD in your department for review.
-            </p>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select Recipient *
-              </label>
-              <select
-                value={forwardRecipientId}
-                onChange={(e) => setForwardRecipientId(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-xl"
-              >
-                <option value="">-- Choose Professor or HOD --</option>
-                {colleagues.map((c) => (
-                  <option key={c._id} value={c._id}>
-                    {c.name} ({c.role})
-                  </option>
-                ))}
-              </select>
-              {colleagues.length === 0 && (
-                <p className="text-xs text-amber-600 mt-1">
-                  No colleagues found. Ensure you have a department assigned.
-                </p>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Forwarding Note (Optional)
-              </label>
-              <textarea
-                rows={3}
-                placeholder="Add a note for the new reviewer..."
-                value={forwardNote}
-                onChange={(e) => setForwardNote(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl"
-              />
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setShowForwardModal(false);
-                  setForwardRecipientId("");
-                  setForwardNote("");
-                }}
-                className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-xl"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={forward}
-                disabled={loading || !forwardRecipientId}
-                className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl disabled:opacity-50"
-              >
-                {loading ? "Forwarding..." : "Confirm Forward"}
               </button>
             </div>
           </div>

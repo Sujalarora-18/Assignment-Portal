@@ -1,4 +1,3 @@
-// src/pages/UploadAssignment.jsx
 import React, { useState } from "react";
 import api from "../Api/api";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +12,6 @@ export default function UploadAssignment() {
 
   const nav = useNavigate();
 
-  // Client-side validation
   const validateFile = (file) => {
     if (!file) return "Please select a PDF file.";
     if (file.type !== "application/pdf") return "Only PDF files are allowed.";
@@ -48,12 +46,10 @@ export default function UploadAssignment() {
 
       setMsg(`Uploaded successfully ✔ (ID: ${res.data?.id || "created"})`);
 
-      // Redirect to assignments list after short delay
       setTimeout(() => nav("/student/assignments"), 900);
     } catch (err) {
       console.error("Upload error:", err);
 
-      // Token expired / unauthorized
       if (err?.response?.status === 401) {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
@@ -70,12 +66,10 @@ export default function UploadAssignment() {
   return (
     <div className="min-h-screen bg-slate-950 flex justify-center items-start py-10 px-4">
       <div className="w-full max-w-2xl bg-white shadow-2xl rounded-2xl p-8 border-2 border-slate-200">
-        {/* Title */}
         <h2 className="text-3xl font-extrabold text-slate-900 mb-6">
           Upload Assignment
         </h2>
 
-        {/* Message */}
         {msg && (
           <div
             className={`mb-4 px-4 py-3 rounded-xl border-2 font-bold ${
@@ -88,9 +82,7 @@ export default function UploadAssignment() {
           </div>
         )}
 
-        {/* Form */}
         <form onSubmit={submit} className="grid gap-5">
-          {/* Title */}
           <div>
             <label className="block text-slate-700 font-bold mb-1">Title</label>
             <input
@@ -104,7 +96,6 @@ export default function UploadAssignment() {
             />
           </div>
 
-          {/* Description */}
           <div>
             <label className="block text-slate-700 font-bold mb-1">Description</label>
             <textarea
@@ -117,7 +108,6 @@ export default function UploadAssignment() {
             />
           </div>
 
-          {/* Category */}
           <div>
             <label className="block text-slate-700 font-bold mb-1">Category</label>
             <select
@@ -132,7 +122,6 @@ export default function UploadAssignment() {
             </select>
           </div>
 
-          {/* File Upload */}
           <div>
             <label className="block text-slate-700 font-bold mb-1">Upload PDF File</label>
             <input
@@ -145,7 +134,6 @@ export default function UploadAssignment() {
             <p className="text-sm font-medium text-slate-600 mt-1">Max size: 10MB</p>
           </div>
 
-          {/* Buttons */}
           <div className="flex gap-4 mt-4">
             <button
               type="submit"

@@ -1,4 +1,3 @@
-// src/pages/MyAssignments.jsx
 import React, { useEffect, useState } from "react";
 import api from "../Api/api";
 import { Link, useNavigate } from "react-router-dom";
@@ -49,7 +48,6 @@ export default function MyAssignments() {
 
   return (
     <div className="min-h-screen bg-slate-950 p-6">
-      {/* Title */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-extrabold text-white">My Assignments</h2>
 
@@ -60,9 +58,7 @@ export default function MyAssignments() {
         </Link>
       </div>
 
-      {/* Filters */}
       <div className="flex flex-wrap items-center gap-6 bg-slate-800/90 p-5 rounded-xl mb-6 border-2 border-slate-600">
-        {/* Status Filter */}
         <div className="flex items-center gap-3">
           <label className="text-slate-200 font-bold">Status:</label>
           <select
@@ -79,7 +75,6 @@ export default function MyAssignments() {
           </select>
         </div>
 
-        {/* Sort Filter */}
         <div className="flex items-center gap-3">
           <label className="text-slate-200 font-bold">Sort:</label>
           <select
@@ -93,14 +88,12 @@ export default function MyAssignments() {
         </div>
       </div>
 
-      {/* Error */}
       {error && (
         <div className="mb-4 px-4 py-3 rounded-xl bg-red-50 border-2 border-red-200 text-red-700 font-bold">
           {error}
         </div>
       )}
 
-      {/* Table */}
       <div className="bg-white rounded-2xl shadow-xl border-2 border-slate-200 overflow-hidden">
         <table className="w-full table-strong">
           <thead>
@@ -164,7 +157,6 @@ export default function MyAssignments() {
                   </td>
 
                   <td className="px-6">
-                    {/* Draft → Submit */}
                     {a.status === "draft" && (
                       <Link
                         to={`/student/assignments/${a._id}`}
@@ -174,7 +166,6 @@ export default function MyAssignments() {
                       </Link>
                     )}
 
-                    {/* Rejected → Resubmit */}
                     {a.status === "rejected" && (
                       <Link
                         to={`/student/assignments/${a._id}/resubmit`}
@@ -184,7 +175,6 @@ export default function MyAssignments() {
                       </Link>
                     )}
 
-                    {/* View for submitted/forwarded/approved */}
                     {a.status !== "draft" && a.status !== "rejected" && (
                       <Link
                         to={`/student/assignments/${a._id}`}
@@ -203,9 +193,6 @@ export default function MyAssignments() {
   );
 }
 
-/* =========================
-   Status Badge Component
-========================= */
 function StatusBadge({ status }) {
   const colors = {
     approved: "badge-approved",

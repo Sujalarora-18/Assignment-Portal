@@ -1,4 +1,3 @@
-// src/Api/departments.js
 import { request } from "./api";
 
 export function listDepartments({ page = 1, limit = 10, search = "", type = "All" } = {}) {

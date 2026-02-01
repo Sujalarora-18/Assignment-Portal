@@ -73,7 +73,6 @@ export default function ProfessorDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-950 p-6">
-      {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div className="flex items-center gap-4">
           <h2 className="text-3xl font-extrabold text-white">Professor Dashboard</h2>
@@ -86,7 +85,6 @@ export default function ProfessorDashboard() {
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Notifications Bell */}
           <div className="relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
@@ -113,7 +111,6 @@ export default function ProfessorDashboard() {
               )}
             </button>
 
-            {/* Notifications Dropdown */}
             {showNotifications && (
               <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border-2 border-slate-200 z-50 max-h-96 overflow-y-auto">
                 <div className="p-4 border-b-2 border-slate-200">
@@ -159,7 +156,6 @@ export default function ProfessorDashboard() {
         </div>
       </div>
 
-      {/* Stats Card */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-slate-800/90 rounded-xl p-6 border-2 border-slate-600">
           <p className="text-slate-300 text-sm font-bold">Pending Reviews</p>
@@ -179,7 +175,6 @@ export default function ProfessorDashboard() {
         </div>
       </div>
 
-      {/* Assignments List */}
       <h3 className="text-xl font-extrabold text-white mb-4">
         Pending Assignments
       </h3>
@@ -214,7 +209,6 @@ export default function ProfessorDashboard() {
               </div>
 
               <div className="flex items-center gap-4">
-                {/* Days Pending Badge */}
                 <span
                   className={`px-3 py-1 rounded-full text-sm font-medium ${getDaysPendingColor(
                     a.daysPending

@@ -1,4 +1,3 @@
-// Routes/professor.js
 const express = require("express");
 const router = express.Router();
 const path = require("path");
@@ -10,10 +9,8 @@ const Notification = require("../models/Notification");
 const User = require("../models/User");
 const { verifyToken, isProfessor, authorizeRoles } = require("../middleware/auth");
 
-// In-memory OTP store (use Redis in production)
 const otpStore = new Map();
 
-// Email transporter (configure in .env)
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || "smtp.gmail.com",
   port: process.env.SMTP_PORT || 587,
@@ -23,11 +20,6 @@ const transporter = nodemailer.createTransport({
     pass: process.env.SMTP_PASS,
   },
 });
-
-/* ===========================
-   USER STORY 8
-   Professor Dashboard
-=========================== */
 
 router.get("/dashboard", verifyToken, isProfessor, async (req, res) => {
   try {
@@ -41,9 +33,8 @@ router.get("/dashboard", verifyToken, isProfessor, async (req, res) => {
       ]
     })
       .populate("student", "name email")
-      .sort({ createdAt: 1 }); // oldest first
+      .sort({ createdAt: 1 });
 
-    // Calculate days pending for each assignment
     const assignmentsWithDays = pendingAssignments.map(a => {
       const daysPending = Math.floor(
         (Date.now() - new Date(a.createdAt).getTime()) / (1000 * 60 * 60 * 24)
@@ -63,10 +54,6 @@ router.get("/dashboard", verifyToken, isProfessor, async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 });
-
-/* ===========================
-   Professor Notifications
-=========================== */
 
 router.get("/notifications", verifyToken, isProfessor, async (req, res) => {
   try {
@@ -88,10 +75,6 @@ router.get("/notifications", verifyToken, isProfessor, async (req, res) => {
   }
 });
 
-/* ===========================
-   Mark Notification as Read
-=========================== */
-
 router.patch("/notifications/:id/read", verifyToken, isProfessor, async (req, res) => {
   try {
     const notification = await Notification.findOneAndUpdate(
@@ -111,11 +94,6 @@ router.patch("/notifications/:id/read", verifyToken, isProfessor, async (req, re
   }
 });
 
-/* ===========================
-   USER STORY 9
-   Review Assignment (Details)
-=========================== */
-
 router.get(
   "/assignments/:id/review",
   verifyToken,
@@ -129,7 +107,6 @@ router.get(
       if (!assignment)
         return res.status(404).json({ message: "Assignment not found" });
 
-      // Ensure this professor is the assigned reviewer
       if (
         assignment.currentReviewer?.toString() !== req.user.id &&
         assignment.reviewerId?.toString() !== req.user.id
@@ -144,10 +121,6 @@ router.get(
     }
   }
 );
-
-/* ===========================
-   Send OTP for Approval
-=========================== */
 
 router.post(
   "/assignments/:id/send-otp",
@@ -178,17 +151,14 @@ router.post(
         return res.status(400).json({ message: "Professor email not found" });
       }
 
-      // Generate OTP
       const otp = crypto.randomInt(100000, 999999).toString();
-      const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
+      const expiresAt = Date.now() + 10 * 60 * 1000;
 
-      // Store OTP
       otpStore.set(`${req.params.id}_${req.user.id}`, {
         otp,
         expiresAt,
       });
 
-      // Send email (skip if SMTP not configured)
       if (process.env.SMTP_USER && process.env.SMTP_PASS) {
         try {
           await transporter.sendMail({
@@ -206,13 +176,11 @@ router.post(
           });
         } catch (emailErr) {
           console.error("Email send error:", emailErr);
-          // Continue even if email fails in development
         }
       }
 
       return res.json({
         message: "OTP sent to your email",
-        // For development/testing - remove in production
         ...(process.env.NODE_ENV !== "production" && { devOtp: otp }),
       });
     } catch (err) {
@@ -221,11 +189,6 @@ router.post(
     }
   }
 );
-
-/* ===========================
-   USER STORY 9
-   Approve Assignment (with OTP)
-=========================== */
 
 router.post(
   "/assignments/:id/approve",
@@ -252,7 +215,6 @@ router.post(
           .json({ message: "Only submitted assignments can be approved" });
       }
 
-      // Verify OTP (can be skipped in development)
       if (!skipOtp) {
         const storedOtp = otpStore.get(`${req.params.id}_${req.user.id}`);
         
@@ -269,16 +231,13 @@ router.post(
           return res.status(400).json({ message: "Invalid OTP" });
         }
 
-        // Clear OTP after successful verification
         otpStore.delete(`${req.params.id}_${req.user.id}`);
       }
 
-      // Create signature hash
       const signatureHash = signature
         ? crypto.createHash("sha256").update(signature).digest("hex")
         : "";
 
-      // Update assignment
       assignment.status = "approved";
 
       assignment.history = assignment.history || [];
@@ -292,7 +251,6 @@ router.post(
 
       await assignment.save();
 
-      // Notify student
       const professor = await User.findById(req.user.id).select("name");
       await Notification.create({
         user: assignment.student,
@@ -309,10 +267,6 @@ router.post(
     }
   }
 );
-
-/* ===========================
-   Reject Assignment (with mandatory feedback)
-=========================== */
 
 router.post(
   "/assignments/:id/reject",
@@ -352,7 +306,6 @@ router.post(
 
       const professor = await User.findById(req.user.id).select("name email");
 
-      // Update assignment - clear reviewerId to allow reselection on resubmit
       assignment.status = "rejected";
       assignment.reviewerId = undefined;
       assignment.currentReviewer = undefined;
@@ -367,14 +320,12 @@ router.post(
 
       await assignment.save();
 
-      // In-app notification for student
       await Notification.create({
         user: assignment.student,
         message: `Your assignment "${assignment.title}" has been rejected. Feedback: ${trimmedRemark}`,
         relatedAssignment: assignment._id
       });
 
-      // Email notification to student
       const student = await User.findById(assignment.student).select("email name");
       if (student?.email && process.env.SMTP_USER && process.env.SMTP_PASS) {
         try {
@@ -406,10 +357,6 @@ router.post(
   }
 );
 
-/* ===========================
-   Get Professors/HODs in same department (for forwarding)
-=========================== */
-
 router.get(
   "/colleagues",
   verifyToken,
@@ -439,10 +386,6 @@ router.get(
     }
   }
 );
-
-/* ===========================
-   Forward Assignment
-=========================== */
 
 const canReview = authorizeRoles("professor", "hod");
 
@@ -475,7 +418,6 @@ router.post(
           .json({ message: "Only submitted assignments can be forwarded" });
       }
 
-      // Verify recipient is professor or HOD in same department
       const currentUser = await User.findById(req.user.id).select("departmentId");
       const recipient = await User.findById(recipientId).select("role departmentId name");
       
@@ -494,7 +436,6 @@ router.post(
       const previousReviewerId = req.user.id;
       const previousReviewer = await User.findById(previousReviewerId).select("name");
 
-      // Update assignment
       assignment.status = "forwarded";
       assignment.reviewerId = recipientId;
       assignment.currentReviewer = recipientId;
@@ -509,7 +450,6 @@ router.post(
 
       await assignment.save();
 
-      // Notify new reviewer
       await Notification.create({
         user: recipientId,
         message: `Assignment "${assignment.title}" has been forwarded to you by ${previousReviewer?.name || "a colleague"} for review`,

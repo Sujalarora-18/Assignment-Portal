@@ -1,14 +1,8 @@
-// backend/middleware/auth.js
 const jwt = require("jsonwebtoken");
 const path = require("path");
 
-// Load dotenv here to ensure JWT_SECRET is available
 require("dotenv").config({ path: path.join(__dirname, "..", "my.env") });
 
-/**
- * verifyToken: reads token from Authorization header (Bearer ...) or cookie
- * sets req.user = decodedPayload
- */
 function verifyToken(req, res, next) {
   const token =
     req.cookies?.token ||
@@ -27,7 +21,7 @@ function verifyToken(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded; // payload should contain { id, role, ... }
+    req.user = decoded;
     return next();
   } catch (err) {
     console.error("JWT verify error:", err.message);
@@ -35,9 +29,6 @@ function verifyToken(req, res, next) {
   }
 }
 
-/**
- * authorizeRoles: factory to allow only specific roles
- */
 function authorizeRoles(...allowedRoles) {
   return (req, res, next) => {
     if (!req.user || !allowedRoles.includes(req.user.role)) {

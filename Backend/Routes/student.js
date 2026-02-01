@@ -1,4 +1,3 @@
-// Routes/student.js
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
@@ -11,15 +10,9 @@ const Notification = require("../models/Notification");
 const User = require("../models/User");
 const { verifyToken, isStudent } = require("../middleware/auth");
 
-/* ===========================
-   UPLOAD CONFIG
-=========================== */
-
-// Upload directory
 const UPLOAD_DIR = path.join(__dirname, "..", "uploads");
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
-// Multer config
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, UPLOAD_DIR);
@@ -40,13 +33,8 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+  limits: { fileSize: 10 * 1024 * 1024 },
 });
-
-/* ===========================
-   Get Professors List
-   For student to select reviewer
-=========================== */
 
 router.get("/professors", verifyToken, isStudent, async (req, res) => {
   try {
@@ -68,11 +56,6 @@ router.get("/professors", verifyToken, isStudent, async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 });
-
-/* ===========================
-   USER STORY 1
-   Student Dashboard
-=========================== */
 
 router.get("/dashboard", verifyToken, isStudent, async (req, res) => {
   try {
@@ -180,11 +163,6 @@ router.post(
   }
 );
 
-/* ===========================
-   USER STORY 4
-   View All Assignments
-=========================== */
-
 router.get("/assignments", verifyToken, isStudent, async (req, res) => {
   try {
     const { status, sort = "desc" } = req.query;
@@ -201,11 +179,6 @@ router.get("/assignments", verifyToken, isStudent, async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 });
-
-/* ===========================
-   USER STORY 4 (DETAILS)
-   View Assignment Details
-=========================== */
 
 router.get("/assignments/:id", verifyToken, isStudent, async (req, res) => {
   try {
@@ -224,11 +197,6 @@ router.get("/assignments/:id", verifyToken, isStudent, async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 });
-
-/* ===========================
-   USER STORY 5
-   Submit for Review
-=========================== */
 
 router.post(
   "/assignments/:id/submit",
@@ -283,11 +251,6 @@ router.post(
   }
 );
 
-/* ===========================
-   USER STORY 6
-   Assignment History
-=========================== */
-
 router.get(
   "/assignments/:id/history",
   verifyToken,
@@ -315,11 +278,6 @@ router.get(
     }
   }
 );
-
-/* ===========================
-   USER STORY 6
-   Download Assignment
-=========================== */
 
 router.get(
   "/assignments/:id/download",
@@ -349,16 +307,11 @@ router.get(
 );
 
 
-/**
- * USER STORY 7
- * Resubmit a rejected assignment
- * POST /api/student/assignments/:id/resubmit
- */
 router.post(
   "/assignments/:id/resubmit",
   verifyToken,
   isStudent,
-  upload.single("file"), // optional new file
+  upload.single("file"),
   async (req, res) => {
     try {
       const { description = "" } = req.body;
@@ -368,28 +321,23 @@ router.post(
         return res.status(404).json({ message: "Assignment not found" });
       }
 
-      // Ownership check
       if (assignment.student.toString() !== req.user.id) {
         return res.status(403).json({ message: "Forbidden" });
       }
 
-      // Only rejected assignments can be resubmitted
       if (assignment.status !== "rejected") {
         return res
           .status(400)
           .json({ message: "Only rejected assignments can be resubmitted" });
       }
 
-      // Reviewer may have been cleared on rejection - allow reselection
       let newReviewerId = req.body.reviewerId || assignment.currentReviewer || assignment.reviewerId;
       if (!newReviewerId) {
         return res.status(400).json({ message: "Please select a professor to review your resubmission" });
       }
 
-      // Store the previous reviewer for history (may be null if cleared)
       const previousReviewerId = assignment.currentReviewer || assignment.reviewerId;
 
-      // Preserve old file in history (if new file uploaded)
       assignment.history = assignment.history || [];
 
       if (req.file) {
@@ -397,7 +345,7 @@ router.post(
           reviewerId: previousReviewerId,
           action: "resubmitted",
           remark: "Previous file replaced",
-          oldFilePath: assignment.filePath, // storing old file reference
+          oldFilePath: assignment.filePath,
           date: new Date()
         });
 
@@ -413,19 +361,16 @@ router.post(
         });
       }
 
-      // Update description if provided
       if (description) {
         assignment.description = description;
       }
 
-      // Reset workflow - set new reviewer
       assignment.status = "submitted";
       assignment.reviewerId = newReviewerId;
       assignment.currentReviewer = newReviewerId;
 
       await assignment.save();
 
-      // Create notification for the new reviewer
       if (newReviewerId) {
         const student = await User.findById(req.user.id).select("name");
         await Notification.create({
@@ -445,10 +390,6 @@ router.post(
   }
 );
 
-/* ===========================
-   Get Student Notifications
-=========================== */
-
 router.get("/notifications", verifyToken, isStudent, async (req, res) => {
   try {
     const notifications = await Notification.find({ user: req.user.id })
@@ -463,10 +404,6 @@ router.get("/notifications", verifyToken, isStudent, async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 });
-
-/* ===========================
-   Mark Notification as Read
-=========================== */
 
 router.patch("/notifications/:id/read", verifyToken, isStudent, async (req, res) => {
   try {

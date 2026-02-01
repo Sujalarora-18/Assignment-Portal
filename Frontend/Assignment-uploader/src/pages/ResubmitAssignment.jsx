@@ -36,7 +36,6 @@ export default function ResubmitAssignment() {
     }
   };
 
-  // Get the last rejection remark
   const getLastRejectionRemark = () => {
     const rejections = history.filter((h) => h.action === "rejected");
     if (rejections.length > 0) {
@@ -121,7 +120,6 @@ export default function ResubmitAssignment() {
           </Link>
         </div>
 
-        {/* Message */}
         {msg && (
           <div className={`mb-4 p-4 rounded-xl border-2 font-bold ${getMessageStyles()}`}>
             {msg}

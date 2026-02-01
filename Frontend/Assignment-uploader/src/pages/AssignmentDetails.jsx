@@ -113,7 +113,6 @@ export default function AssignmentDetails() {
     }
   };
 
-  // Construct the PDF URL
   const pdfUrl = assignment?.filePath?.startsWith("http")
     ? assignment.filePath
     : `http://localhost:3000${assignment?.filePath}`;
@@ -129,7 +128,6 @@ export default function AssignmentDetails() {
   return (
     <div className="min-h-screen bg-slate-950 p-6">
       <div className="max-w-5xl mx-auto">
-        {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-extrabold text-white">Assignment Details</h2>
           <div className="flex gap-3">
@@ -148,7 +146,6 @@ export default function AssignmentDetails() {
           </div>
         </div>
 
-        {/* Message */}
         {msg && (
           <div className={`mb-4 p-4 rounded-xl border-2 font-bold ${getMessageStyles()}`}>
             {msg}
@@ -193,7 +190,6 @@ export default function AssignmentDetails() {
                 </div>
               )}
 
-              {/* File Download */}
               <div className="flex items-center gap-4 pt-4 border-t">
                 <a
                   href={pdfUrl}
@@ -225,9 +221,7 @@ export default function AssignmentDetails() {
             </div>
           </div>
 
-          {/* Right Column - Actions & History */}
           <div className="space-y-6">
-            {/* Submit for Review (only for draft) */}
             {assignment.status === "draft" && (
               <div className="bg-white rounded-2xl shadow-2xl border-2 border-slate-200 p-6">
                 <h4 className="font-semibold text-gray-800 mb-4">
@@ -265,7 +259,6 @@ export default function AssignmentDetails() {
               </div>
             )}
 
-            {/* Resubmit (only for rejected) */}
             {assignment.status === "rejected" && (
               <div className="bg-white rounded-2xl shadow-2xl border-2 border-slate-200 p-6">
                 <h4 className="font-semibold text-gray-800 mb-4">
@@ -275,7 +268,6 @@ export default function AssignmentDetails() {
                   Your assignment was rejected. You can resubmit with corrections.
                 </p>
                 
-                {/* Show rejection remark */}
                 {history.filter(h => h.action === "rejected").length > 0 && (
                   <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
                     <p className="text-sm font-medium text-red-700">Last rejection reason:</p>
