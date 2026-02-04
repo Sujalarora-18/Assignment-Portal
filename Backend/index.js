@@ -2,42 +2,32 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
-const fs = require("fs");
-const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
-const professorRoutes = require("./Routes/professor");
+const fs=require("fs");
 
-const resetTokenStore = new Map();
-const nodemailerTransporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.gmail.com",
-  port: process.env.SMTP_PORT || 587,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+require("dotenv").config(); // ✅ correct for local + Render
 
-
-require("dotenv").config({ path: path.join(__dirname, "my.env") });
-
-console.log(`[dotenv] loaded .env from: ${path.join(__dirname, ".env")}`);
-console.log("[dotenv] JWT_SECRET present?:", !!process.env.JWT_SECRET);
-
-const express = require("express");
-const cors = require("cors");
-const path = require("path");
+/* =======================
+   IMPORT ROUTES & MODELS
+======================= */
 
 const adminDepartments = require("./Routes/adminDepartments");
 const adminUsersRoutes = require("./Routes/adminUsers");
 const studentRoutes = require("./Routes/student");
 const hodRoutes = require("./Routes/hod");
 
+const User = require("./models/User");
+
+/* =======================
+   APP INIT
+======================= */
+
 const app = express();
 
-
+/* =======================
+   CORS (LOCAL + VERCEL)
+======================= */
 
 app.use(cors({
   origin: [
@@ -49,29 +39,38 @@ app.use(cors({
 
 app.use(express.json());
 
+/* =======================
+   STATIC FILES
+======================= */
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+/* =======================
+   API ROUTES
+======================= */
 
 app.use("/api/admin/departments", adminDepartments);
 app.use("/api/admin/users", adminUsersRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/hod", hodRoutes);
 
+/* =======================
+   HEALTH CHECK
+======================= */
 
 app.get("/api", (req, res) => {
   res.json({ message: "API running 🚀" });
 });
 
+/* =======================
+   JWT HELPERS
+======================= */
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
   console.error("❌ FATAL ERROR: JWT_SECRET missing");
   process.exit(1);
 }
-
-module.exports = app;
-
 
 function signToken(user) {
   return jwt.sign(
@@ -82,49 +81,58 @@ function signToken(user) {
 }
 
 function verifyToken(req, res, next) {
-  const authHeader = req.headers.authorization || req.headers.Authorization;
-
+  const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const token = authHeader.split(" ")[1];
-
   try {
-    const payload = jwt.verify(token, JWT_SECRET);
-    req.user = payload;
+    const token = authHeader.split(" ")[1];
+    req.user = jwt.verify(token, JWT_SECRET);
     next();
-  } catch (err) {
-    console.log("JWT Error:", err.message);
+  } catch {
     return res.status(401).json({ message: "Invalid token" });
   }
 }
 
 function isAdmin(req, res, next) {
-  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
-  if (req.user.role !== "admin")
-    return res.status(403).json({ message: "Forbidden - admins only" });
+  if (!req.user || req.user.role !== "admin") {
+    return res.status(403).json({ message: "Admins only" });
+  }
   next();
 }
 
-mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/loginDB", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+/* =======================
+   DB CONNECTION
+======================= */
+
+if (!process.env.MONGO_URI) {
+  console.error("❌ FATAL ERROR: MONGO_URI missing");
+  process.exit(1);
+}
+
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("MongoDB error:", err.message));
+  .catch(err => {
+    console.error("MongoDB error:", err.message);
+    process.exit(1);
+  });
+
+/* =======================
+   ADMIN OVERVIEW
+======================= */
 
 app.get("/api/admin/overview", verifyToken, isAdmin, async (req, res) => {
   try {
     const Department = require("./models/Department");
 
     const totalDepartments = await Department.countDocuments();
+    const totalUsers = await User.countDocuments();
     const totalStudents = await User.countDocuments({ role: "student" });
     const totalProfessors = await User.countDocuments({ role: "professor" });
     const totalHODs = await User.countDocuments({ role: "hod" });
-    const totalUsers = await User.countDocuments();
 
-    return res.json({
+    res.json({
       totalDepartments,
       totalUsers,
       totalStudents,
@@ -132,21 +140,26 @@ app.get("/api/admin/overview", verifyToken, isAdmin, async (req, res) => {
       totalHODs,
     });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-app.post("/signup", async (req, res) => {
+/* =======================
+   SIGNUP (FIXED PATH)
+======================= */
+
+app.post("/api/signup", async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
-    if (!name || !email || !password)
+    if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields required" });
+    }
 
     const existing = await User.findOne({ email });
-    if (existing)
+    if (existing) {
       return res.status(400).json({ message: "User already exists" });
+    }
 
     const hashed = await bcrypt.hash(password, 10);
 
@@ -159,15 +172,14 @@ app.post("/signup", async (req, res) => {
 
     await user.save();
 
-    return res.status(201).json({
-      message: "User registered successfully",
-      userId: user._id,
-    });
+    res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error" });
   }
 });
+
+module.exports = app;
+
 
 app.post("/login", async (req, res) => {
   try {
