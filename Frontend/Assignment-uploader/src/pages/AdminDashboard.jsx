@@ -27,7 +27,7 @@ export default function AdminDashboard() {
 
     (async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/admin/overview", {
+        const res = await axios.get(`${import.meta.VITE_API_URL}/login/api/admin/overview`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setData(res.data);
@@ -60,7 +60,7 @@ export default function AdminDashboard() {
       <aside className="hidden md:flex md:flex-col w-72 bg-slate-900 border-2 border-slate-600 p-4 sticky top-4 m-4 rounded-2xl h-[calc(100vh-2rem)] shadow-xl">
         <div className="mb-6 px-2">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white text-lg font-extrabold shadow-lg border-2 border-blue-500/50">
+            <div className="w-12 h-12 rounded-xl bg-linear-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white text-lg font-extrabold shadow-lg border-2 border-blue-500/50">
               AD
             </div>
             <div>

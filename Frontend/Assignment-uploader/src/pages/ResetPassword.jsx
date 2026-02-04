@@ -33,7 +33,7 @@ export default function ResetPassword() {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:3000/reset-password", {
+      const res = await axios.post(`${import.meta.VITE_API_URL}/reset-password`, {
         token,
         password,
       });
@@ -51,7 +51,7 @@ export default function ResetPassword() {
 
   if (!token) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
         <div className="bg-white rounded-2xl p-8 border-2 border-slate-200 max-w-md w-full">
           <p className="text-red-600 font-bold mb-4">Invalid or missing reset token.</p>
           <Link to="/forgot" className="text-blue-600 font-bold">Request a new reset link</Link>
@@ -63,7 +63,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
       <div className="w-full max-w-md">
         <div className="bg-white shadow-2xl rounded-2xl p-8 border-2 border-slate-200">
           <h1 className="text-2xl font-extrabold text-slate-900 mb-2">

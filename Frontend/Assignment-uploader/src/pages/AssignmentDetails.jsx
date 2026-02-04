@@ -115,7 +115,7 @@ export default function AssignmentDetails() {
 
   const pdfUrl = assignment?.filePath?.startsWith("http")
     ? assignment.filePath
-    : `http://localhost:3000${assignment?.filePath}`;
+    : `${import.meta.VITE_API_URL}${assignment?.filePath}`;
 
   if (!assignment) {
     return (

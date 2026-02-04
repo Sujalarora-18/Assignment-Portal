@@ -55,7 +55,7 @@ export default function UsersList() {
         if (departmentFilter) params.departmentId = departmentFilter;
         if (search.trim() !== "") params.search = search.trim();
 
-        const res = await axios.get("http://localhost:3000/admin/users", {
+        const res = await axios.get(`${import.meta.VITE_API_URL}/admin/users`, {
           params,
         });
 
@@ -78,7 +78,7 @@ export default function UsersList() {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:3000/admin/users/${userId}`);
+      await axios.delete(`${import.meta.VITE_API_URL}/admin/users/${userId}`);
       setUsers((prev) => prev.filter((u) => u._id !== userId));
     } catch (err) {
       console.error(err);

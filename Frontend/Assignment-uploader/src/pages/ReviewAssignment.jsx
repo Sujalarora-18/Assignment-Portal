@@ -189,7 +189,7 @@ export default function ReviewAssignment() {
 
   const pdfUrl = assignment.filePath?.startsWith("http")
     ? assignment.filePath
-    : `http://localhost:3000${assignment.filePath}`;
+    : `${import.meta.VITE_API_URL}${assignment.filePath}`;
 
   return (
     <div className="min-h-screen bg-slate-950 p-6">

@@ -22,7 +22,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:3000/login", {
+      const res = await axios.post(`${import.meta.VITE_API_URL}/login`, {
         email: form.email.trim(),
         password: form.password,
       });
@@ -61,11 +61,11 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
       <div className="w-full max-w-lg">
         <div className="bg-white shadow-2xl rounded-2xl p-8 md:p-12 border-2 border-slate-200">
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white text-2xl font-extrabold shadow-lg border-2 border-blue-500/50">
+            <div className="w-14 h-14 rounded-xl bg-linear-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white text-2xl font-extrabold shadow-lg border-2 border-blue-500/50">
               A
             </div>
             <div>

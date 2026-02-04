@@ -13,7 +13,7 @@ export default function Signup() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:3000/signup", form);
+      const res = await axios.post(`${import.meta.VITE_API_URL}/signup`, form);
       alert(res.data.message);
       navigate("/");
     } catch (err) {
@@ -23,7 +23,7 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
       <div className="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md border-2 border-slate-200">
         <h1 className="text-3xl font-extrabold text-center text-slate-900 mb-2">
           Sign Up

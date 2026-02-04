@@ -21,7 +21,7 @@ export default function CreateUser() {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/admin/departments", {
+        const res = await axios.get(`${import.meta.VITE_API_URL}/api/admin/departments`, {
           params: { limit: 500 },
         });
         const data = res.data;
@@ -51,7 +51,7 @@ export default function CreateUser() {
     setSubmitting(true);
 
     try {
-      const res = await axios.post("http://localhost:3000/admin/users/create", form);
+      const res = await axios.post(`${import.meta.VITE_API_URL}/admin/users/create`, form);
       setMessage(res.data.message || "User created successfully");
 
       if (res.data.defaultPassword) {
