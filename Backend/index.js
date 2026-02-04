@@ -26,33 +26,52 @@ require("dotenv").config({ path: path.join(__dirname, "my.env") });
 console.log(`[dotenv] loaded .env from: ${path.join(__dirname, ".env")}`);
 console.log("[dotenv] JWT_SECRET present?:", !!process.env.JWT_SECRET);
 
-const adminDepartments = require('./Routes/adminDepartments');
+const express = require("express");
+const cors = require("cors");
+const path = require("path");
+
+const adminDepartments = require("./Routes/adminDepartments");
 const adminUsersRoutes = require("./Routes/adminUsers");
 const studentRoutes = require("./Routes/student");
 const hodRoutes = require("./Routes/hod");
 
-const User = require("./models/User");
-
 const app = express();
 
-app.use(cors({ origin: "http://localhost:5173" }));
-app.use(express.json());
-app.use("/Uploads", express.static("Uploads"));
-app.use("/api/professor", professorRoutes);
 
+
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://assignment-portal-p52k.vercel.app"
+  ],
+  credentials: true
+}));
+
+app.use(express.json());
+
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+
+app.use("/api/admin/departments", adminDepartments);
+app.use("/api/admin/users", adminUsersRoutes);
+app.use("/api/student", studentRoutes);
+app.use("/api/hod", hodRoutes);
+
+
+app.get("/api", (req, res) => {
+  res.json({ message: "API running 🚀" });
+});
 
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
-  console.error("❌ FATAL ERROR: JWT_SECRET missing in .env");
+  console.error("❌ FATAL ERROR: JWT_SECRET missing");
   process.exit(1);
 }
 
-app.use('/api', adminDepartments);
-app.use("/admin", adminUsersRoutes);
-app.use("/api/student", studentRoutes);
-app.use("/api/hod", hodRoutes);
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+module.exports = app;
+
 
 function signToken(user) {
   return jwt.sign(
