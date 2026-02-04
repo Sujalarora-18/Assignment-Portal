@@ -1,6 +1,10 @@
 import axios from "axios";
 
-const BASE = process.env.REACT_APP_API_BASE || "http://localhost:3000";
+// Base URL for backend API
+// In Vite, environment variables are accessed via import.meta.env
+// Make sure to define VITE_API_URL in your Vercel project,
+// e.g. https://your-backend-on-render.com
+const BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 function authHeader() {
   const token = localStorage.getItem("token");

@@ -27,7 +27,7 @@ export default function AdminDashboard() {
 
     (async () => {
       try {
-        const res = await axios.get(`${import.meta.VITE_API_URL}/login/api/admin/overview`, {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/overview`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setData(res.data);

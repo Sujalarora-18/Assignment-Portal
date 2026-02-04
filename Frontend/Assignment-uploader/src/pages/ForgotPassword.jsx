@@ -15,7 +15,7 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const res = await axios.post(`${import.meta.VITE_API_URL}/forgot-password`, {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/forgot-password`, {
         email: email.trim(),
       });
       setMessage(res.data?.message || "If this email is registered, you will receive password reset instructions.");

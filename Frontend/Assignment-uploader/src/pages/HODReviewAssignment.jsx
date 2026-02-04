@@ -112,7 +112,7 @@ export default function HODReviewAssignment() {
 
   const pdfUrl = assignment.filePath?.startsWith("http")
     ? assignment.filePath
-    : `${import.meta.VITE_API_URL}${assignment.filePath}`;
+    : `${import.meta.env.VITE_API_URL}${assignment.filePath}`;
 
   return (
     <div className="min-h-screen bg-slate-950 p-6">

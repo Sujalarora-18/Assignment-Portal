@@ -33,7 +33,7 @@ export default function ResetPassword() {
     setLoading(true);
 
     try {
-      const res = await axios.post(`${import.meta.VITE_API_URL}/reset-password`, {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/reset-password`, {
         token,
         password,
       });

@@ -29,13 +29,10 @@ const app = express();
    CORS (LOCAL + VERCEL)
 ======================= */
 
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://assignment-portal-p52k.vercel.app"
-  ],
-  credentials: true
-}));
+// Allow frontend (Vercel) + local dev to call the API.
+// Since we use JWT in Authorization headers (not cookies),
+// we don't need credentials:true here.
+app.use(cors());
 
 app.use(express.json());
 
@@ -220,7 +217,7 @@ app.post("/forgot-password", async (req, res) => {
       const expiresAt = Date.now() + 15 * 60 * 1000;
       resetTokenStore.set(token, { userId: user._id.toString(), expiresAt });
 
-      const resetUrl = `http://localhost:3000/reset-password?token=${token}`;
+      const resetUrl = `${process.env.FRONTEND_URL || "http://localhost:5173"}/reset-password?token=${token}`;
       await nodemailerTransporter.sendMail({
         from: process.env.SMTP_USER,
         to: user.email,
