@@ -4,9 +4,9 @@ const cors = require("cors");
 const path = require("path");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const fs=require("fs");
-
-require("dotenv").config(); // ✅ correct for local + Render
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
+require("dotenv").config();
 
 /* =======================
    IMPORT ROUTES & MODELS
@@ -16,7 +16,6 @@ const adminDepartments = require("./Routes/adminDepartments");
 const adminUsersRoutes = require("./Routes/adminUsers");
 const studentRoutes = require("./Routes/student");
 const hodRoutes = require("./Routes/hod");
-
 const User = require("./models/User");
 
 /* =======================
@@ -26,35 +25,16 @@ const User = require("./models/User");
 const app = express();
 
 /* =======================
-   CORS (LOCAL + VERCEL)
+   CORS (ALLOW ALL – SAFE HERE)
 ======================= */
 
-// Very explicit CORS handler so preflight (OPTIONS) always succeeds
-// and all API responses include Access-Control-Allow-Origin.
-// Using "*" here so any frontend (Vercel, localhost, etc.) can call the API.
-// This is safe because auth is handled via Bearer tokens, not cookies.
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Methods",
-    "GET,POST,PUT,PATCH,DELETE,OPTIONS"
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-
-  next();
-});
+app.use(cors());
+app.options("*", cors());
 
 app.use(express.json());
 
 /* =======================
-   STATIC FILES
+   STATIC FILES (uploads only)
 ======================= */
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -82,7 +62,7 @@ app.get("/api", (req, res) => {
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
-  console.error("❌ FATAL ERROR: JWT_SECRET missing");
+  console.error("❌ JWT_SECRET missing");
   process.exit(1);
 }
 
@@ -94,38 +74,17 @@ function signToken(user) {
   );
 }
 
-function verifyToken(req, res, next) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-
-  try {
-    const token = authHeader.split(" ")[1];
-    req.user = jwt.verify(token, JWT_SECRET);
-    next();
-  } catch {
-    return res.status(401).json({ message: "Invalid token" });
-  }
-}
-
-function isAdmin(req, res, next) {
-  if (!req.user || req.user.role !== "admin") {
-    return res.status(403).json({ message: "Admins only" });
-  }
-  next();
-}
-
 /* =======================
-   DB CONNECTION
+   DATABASE
 ======================= */
 
 if (!process.env.MONGO_URI) {
-  console.error("❌ FATAL ERROR: MONGO_URI missing");
+  console.error("❌ MONGO_URI missing");
   process.exit(1);
 }
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB connected"))
   .catch(err => {
     console.error("MongoDB error:", err.message);
@@ -133,33 +92,7 @@ mongoose.connect(process.env.MONGO_URI)
   });
 
 /* =======================
-   ADMIN OVERVIEW
-======================= */
-
-app.get("/api/admin/overview", verifyToken, isAdmin, async (req, res) => {
-  try {
-    const Department = require("./models/Department");
-
-    const totalDepartments = await Department.countDocuments();
-    const totalUsers = await User.countDocuments();
-    const totalStudents = await User.countDocuments({ role: "student" });
-    const totalProfessors = await User.countDocuments({ role: "professor" });
-    const totalHODs = await User.countDocuments({ role: "hod" });
-
-    res.json({
-      totalDepartments,
-      totalUsers,
-      totalStudents,
-      totalProfessors,
-      totalHODs,
-    });
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-/* =======================
-   SIGNUP (FIXED PATH)
+   AUTH ROUTES (ALL UNDER /api)
 ======================= */
 
 app.post("/api/signup", async (req, res) => {
@@ -187,15 +120,12 @@ app.post("/api/signup", async (req, res) => {
     await user.save();
 
     res.status(201).json({ message: "User registered successfully" });
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Server error" });
   }
 });
 
-module.exports = app;
-
-
-app.post("/login", async (req, res) => {
+app.post("/api/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -203,7 +133,8 @@ app.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Email and password required" });
 
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Invalid credentials" });
+    if (!user)
+      return res.status(400).json({ message: "Invalid credentials" });
 
     const match = await bcrypt.compare(password, user.password);
     if (!match)
@@ -211,95 +142,90 @@ app.post("/login", async (req, res) => {
 
     const token = signToken(user);
 
-    return res.json({
+    res.json({
       message: "Login successful",
-      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
       token,
     });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Server error" });
+  } catch {
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-app.post("/forgot-password", async (req, res) => {
+/* =======================
+   PASSWORD RESET
+======================= */
+
+const resetTokenStore = new Map();
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
+
+app.post("/api/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
-    if (!email || !email.trim())
-      return res.status(400).json({ message: "Email is required" });
+    const user = await User.findOne({ email });
 
-    const user = await User.findOne({ email: email.trim().toLowerCase() });
     if (user && process.env.SMTP_USER && process.env.SMTP_PASS) {
       const token = crypto.randomBytes(32).toString("hex");
-      const expiresAt = Date.now() + 15 * 60 * 1000;
-      resetTokenStore.set(token, { userId: user._id.toString(), expiresAt });
+      resetTokenStore.set(token, {
+        userId: user._id,
+        expires: Date.now() + 15 * 60 * 1000,
+      });
 
-      const resetUrl = `${process.env.FRONTEND_URL || "http://localhost:5173"}/reset-password?token=${token}`;
-      await nodemailerTransporter.sendMail({
-        from: process.env.SMTP_USER,
+      const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+
+      await transporter.sendMail({
         to: user.email,
-        subject: "Password Reset - Assignment Uploader",
-        html: `
-          <h2>Password Reset Request</h2>
-          <p>Click the link below to reset your password (valid for 15 minutes):</p>
-          <p><a href="${resetUrl}">${resetUrl}</a></p>
-          <p>If you did not request this, please ignore this email.</p>
-        `,
+        subject: "Password Reset",
+        html: `<a href="${resetUrl}">Reset Password</a>`,
       });
     }
 
-    return res.json({
-      message: "If this email is registered, you will receive password reset instructions.",
+    res.json({
+      message: "If email exists, reset instructions were sent",
     });
-  } catch (err) {
-    console.error("Forgot password error:", err);
-    return res.status(500).json({ message: "Server error" });
+  } catch {
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-app.post("/reset-password", async (req, res) => {
+app.post("/api/reset-password", async (req, res) => {
   try {
     const { token, password } = req.body;
-    if (!token || !password)
-      return res.status(400).json({ message: "Token and password are required" });
+    const data = resetTokenStore.get(token);
 
-    const stored = resetTokenStore.get(token);
-    if (!stored || Date.now() > stored.expiresAt) {
-      resetTokenStore.delete(token);
-      return res.status(400).json({ message: "Invalid or expired reset link" });
+    if (!data || Date.now() > data.expires) {
+      return res.status(400).json({ message: "Invalid or expired token" });
     }
 
-    const user = await User.findById(stored.userId);
-    if (!user) return res.status(400).json({ message: "User not found" });
-
+    const user = await User.findById(data.userId);
     user.password = await bcrypt.hash(password, 10);
     await user.save();
+
     resetTokenStore.delete(token);
 
-    return res.json({ message: "Password reset successfully. You can now login." });
-  } catch (err) {
-    console.error("Reset password error:", err);
-    return res.status(500).json({ message: "Server error" });
+    res.json({ message: "Password reset successful" });
+  } catch {
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-const distPath = path.join(__dirname, "../Frontend/Assignment-uploader/dist");
-
-if (fs.existsSync(distPath)) {
-  app.use(express.static(distPath));
-
-  app.use((req, res) => {
-    res.sendFile(path.join(distPath, "index.html"));
-  });
-} else {
-  console.warn("⚠ Frontend build not found:", distPath);
-
-  app.get("/", (req, res) => {
-    res.send("Backend running. Frontend build not found.");
-  });
-}
+/* =======================
+   START SERVER
+======================= */
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>
-  console.log(`🚀 Server running on port ${PORT}`)
+  console.log(`🚀 Backend running on port ${PORT}`)
 );
