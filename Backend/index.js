@@ -29,10 +29,26 @@ const app = express();
    CORS (LOCAL + VERCEL)
 ======================= */
 
-// Allow frontend (Vercel) + local dev to call the API.
-// Since we use JWT in Authorization headers (not cookies),
-// we don't need credentials:true here.
-app.use(cors());
+// Very explicit CORS handler so preflight (OPTIONS) always succeeds
+// and all API responses include Access-Control-Allow-Origin.
+app.use((req, res, next) => {
+  const allowedOrigin = process.env.FRONTEND_URL || "*";
+  res.header("Access-Control-Allow-Origin", allowedOrigin);
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+  );
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
 
 app.use(express.json());
 
