@@ -31,9 +31,10 @@ const app = express();
 
 // Very explicit CORS handler so preflight (OPTIONS) always succeeds
 // and all API responses include Access-Control-Allow-Origin.
+// Using "*" here so any frontend (Vercel, localhost, etc.) can call the API.
+// This is safe because auth is handled via Bearer tokens, not cookies.
 app.use((req, res, next) => {
-  const allowedOrigin = process.env.FRONTEND_URL || "*";
-  res.header("Access-Control-Allow-Origin", allowedOrigin);
+  res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Methods",
     "GET,POST,PUT,PATCH,DELETE,OPTIONS"
