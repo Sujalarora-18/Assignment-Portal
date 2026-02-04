@@ -29,27 +29,14 @@ const app = express();
    CORS (LOCAL + VERCEL)
 ======================= */
 
-// Very explicit CORS handler so preflight (OPTIONS) always succeeds
-// and all API responses include Access-Control-Allow-Origin.
-// Using "*" here so any frontend (Vercel, localhost, etc.) can call the API.
-// This is safe because auth is handled via Bearer tokens, not cookies.
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Methods",
-    "GET,POST,PUT,PATCH,DELETE,OPTIONS"
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-
-  next();
-});
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://assignment-portal-p52k.vercel.app",
+    "https://assignment-portal-btclzr64a-sujals-projects-b76485e3.vercel.app",
+  ],
+  credentials: true,
+}));
 
 app.use(express.json());
 
