@@ -28,15 +28,13 @@ const app = express();
 /* =======================
    CORS (LOCAL + VERCEL)
 ======================= */
+app.use(
+  cors({
+    origin: true,   // reflect request origin
+    credentials: true,
+  })
+);
 
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://assignment-portal-p52k.vercel.app",
-    "https://assignment-portal-btclzr64a-sujals-projects-b76485e3.vercel.app",
-  ],
-  credentials: true,
-}));
 
 app.use(express.json());
 
