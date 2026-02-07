@@ -108,7 +108,7 @@ export default function DepartmentsList({ refreshSignal }) {
 
         <div className="bg-white rounded-2xl shadow-2xl border-2 border-slate-200 p-6">
           <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
-            <div className="flex-1 min-w-[240px]">
+            <div className="flex-1 min-w-60">
               <label className="block text-xs font-bold text-slate-700 mb-1 uppercase tracking-wider">Search</label>
               <input
                 className="input-strong py-2"
