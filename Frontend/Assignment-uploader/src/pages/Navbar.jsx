@@ -4,7 +4,7 @@ const Navbar = () => {
   return (
     <header
       style={{
-        height: "64px",
+        height: "63px",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
