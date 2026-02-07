@@ -6,7 +6,7 @@ const { verifyToken } = require("./middleware/auth");
 
 const router = express.Router();
 
-const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
+const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = "7d";
 
 // POST /api/auth/login
@@ -46,8 +46,8 @@ router.post("/login", async (req, res) => {
     res
       .cookie("token", token, {
         httpOnly: true,
-        secure: false, // set true in production with HTTPS
-        sameSite: "lax",
+        secure: true, // set true in production with HTTPS
+          sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       })
       .json({

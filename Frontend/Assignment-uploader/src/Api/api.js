@@ -5,7 +5,7 @@ import axios from "axios";
  * Must be defined in Vercel / local env as:
  * VITE_API_URL=https://your-backend.onrender.com
  */
-const BASE = import.meta.env.VITE_API_URL;
+const BASE = import.meta.env.VITE_API_URL?.replace(/\/+$/, "");
 
 if (!BASE) {
   console.error("❌ VITE_API_URL is not defined");
