@@ -6,7 +6,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const fs=require("fs");
 
-require("dotenv").config(); // ✅ correct for local + Render
+require("dotenv").config(); 
 
 /* =======================
    IMPORT ROUTES & MODELS
@@ -25,6 +25,8 @@ const User = require("./models/User");
 
 const app = express();
 
+
+app.use(cookieParser());
 /* =======================
    CORS (LOCAL + VERCEL)
 ======================= */
