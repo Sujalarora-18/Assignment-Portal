@@ -1,16 +1,27 @@
 import axios from "axios";
 
-// Base URL for backend API
-// In Vite, environment variables are accessed via import.meta.env
-// Make sure to define VITE_API_URL in your Vercel project,
-// e.g. https://your-backend-on-render.com
-const BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
+/**
+ * Backend base URL
+ * Must be defined in Vercel / local env as:
+ * VITE_API_URL=https://your-backend.onrender.com
+ */
+const BASE = import.meta.env.VITE_API_URL;
 
+if (!BASE) {
+  console.error("❌ VITE_API_URL is not defined");
+}
+
+/**
+ * Attach auth token if present
+ */
 function authHeader() {
   const token = localStorage.getItem("token");
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+/**
+ * Fetch wrapper (used by all API calls)
+ */
 export async function request(url, options = {}) {
   const headers = {
     "Content-Type": "application/json",
@@ -20,40 +31,48 @@ export async function request(url, options = {}) {
 
   let body = options.body;
   if (options.data && !body) {
-    body = typeof options.data === "string" 
-      ? options.data 
-      : JSON.stringify(options.data);
+    body =
+      typeof options.data === "string"
+        ? options.data
+        : JSON.stringify(options.data);
   }
 
-  const res = await fetch(BASE + url, {
-    headers,
+  const res = await fetch(`${BASE}${url}`, {
     method: options.method || "GET",
+    headers,
     body,
-    cache: options.cache || "no-store",
-    credentials: options.credentials || "same-origin",
-    redirect: options.redirect || "follow",
-    signal: options.signal || null,
+    credentials: "include", // ✅ REQUIRED for cross-origin (Vercel ↔ Render)
+    cache: "no-store",
   });
 
   const data = await res.json().catch(() => ({}));
+
   if (!res.ok) {
     const error = new Error(data.message || "Request failed");
     error.status = res.status;
     error.data = data;
     throw error;
   }
+
   return data;
 }
 
+/**
+ * Axios instance (optional usage)
+ */
 export const axiosInstance = axios.create({
   baseURL: BASE,
+  withCredentials: true, // ✅ same as fetch credentials: "include"
 });
 
-axiosInstance.interceptors.request.use((cfg) => {
-  const token = localStorage.getItem("token");
-  if (token) cfg.headers.Authorization = `Bearer ${token}`;
-  return cfg;
-}, (err) => Promise.reject(err));
+axiosInstance.interceptors.request.use(
+  (cfg) => {
+    const token = localStorage.getItem("token");
+    if (token) cfg.headers.Authorization = `Bearer ${token}`;
+    return cfg;
+  },
+  (err) => Promise.reject(err)
+);
 
 export default {
   BASE,
