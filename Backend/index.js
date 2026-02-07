@@ -51,7 +51,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
    API ROUTES
 ======================= */
 
-app.use("/admin/departments", adminDepartments);
+app.use("/", adminDepartments);
 app.use("/admin/users", adminUsersRoutes);
 app.use("/student", studentRoutes);
 app.use("/hod", hodRoutes);
