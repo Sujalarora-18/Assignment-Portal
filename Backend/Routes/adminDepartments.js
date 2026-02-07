@@ -7,7 +7,7 @@ const User = require('../models/User');
 
 
 
-router.get('/:id', async (req, res) => {
+router.get('/admin/departments/:id', async (req, res) => {
   try {
     const { id } = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ ok: false, message: 'Invalid id' });
@@ -29,7 +29,7 @@ router.get('/:id', async (req, res) => {
 });
 
 
-router.post('/', async (req, res) => {
+router.post('/admin/departments', async (req, res) => {
   try {
     const { name, type, address } = req.body;
     const errors = [];
@@ -48,7 +48,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
+router.get('/admin/departments', async (req, res) => {
   try {
     const page = Math.max(1, parseInt(req.query.page || '1', 10));
     const limit = Math.max(1, parseInt(req.query.limit || '10', 10));
@@ -112,7 +112,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/admin/departments/:id', async (req, res) => {
   try {
     const { id } = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ ok: false, message: 'Invalid id' });
@@ -140,7 +140,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/admin/departments/:id', async (req, res) => {
   try {
     const { id } = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
