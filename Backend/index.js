@@ -53,7 +53,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/", adminDepartments);
 app.use("/admin", adminUsersRoutes);
-app.use("/student", studentRoutes);
+app.use("/api/student", studentRoutes);
 app.use("/hod", hodRoutes);
 
 /* =======================
