@@ -17,6 +17,7 @@ const adminDepartments = require("./Routes/adminDepartments");
 const adminUsersRoutes = require("./Routes/adminUsers");
 const studentRoutes = require("./Routes/student");
 const hodRoutes = require("./Routes/hod");
+const professorRoutes=require("./Routes/professor");
 
 const User = require("./models/User");
 
@@ -55,6 +56,8 @@ app.use("/", adminDepartments);
 app.use("/admin", adminUsersRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/hod", hodRoutes);
+app.use("/api/professor", professorRoutes);
+
 
 /* =======================
    HEALTH CHECK
