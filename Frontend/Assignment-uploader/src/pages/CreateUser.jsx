@@ -21,7 +21,7 @@ export default function CreateUser() {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/departments`, {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/departments`, {
           params: { limit: 500 },
         });
         const data = res.data;
