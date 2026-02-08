@@ -46,7 +46,7 @@ app.use(express.json());
    STATIC FILES
 ======================= */
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "Uploads")));
 
 /* =======================
    API ROUTES
