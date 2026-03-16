@@ -1,6 +1,8 @@
+
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
+import Logo from "../assets/react.svg";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "", remember: false });
@@ -61,22 +63,20 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
-      <div className="w-full max-w-lg">
-        <div className="bg-white shadow-2xl rounded-2xl p-8 md:p-12 border-2 border-slate-200">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-14 h-14 rounded-xl bg-linear-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white text-2xl font-extrabold shadow-lg border-2 border-blue-500/50">
-              A
-            </div>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">
-                Welcome back
-              </h1>
-              <p className="text-sm font-medium text-slate-600">
-                Sign in to your account to continue
-              </p>
-            </div>
-          </div>
+    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      {/* Left: Logo, Name, Tagline */}
+      <div className="md:w-1/2 flex flex-col items-center justify-center text-center p-10 bg-gradient-to-br from-blue-700 via-blue-800 to-slate-900 text-white">
+        <img src={Logo} alt="Project Logo" className="w-32 h-32 mx-auto mb-6 drop-shadow-xl" />
+        <h1 className="text-4xl font-extrabold mb-2 tracking-tight drop-shadow-lg">Assignment Uploader</h1>
+        <p className="text-xl font-semibold mb-4 opacity-90">Empowering seamless assignment management</p>
+        <span className="text-base opacity-70">Your digital platform for easy, secure, and efficient assignment submissions.</span>
+      </div>
+
+      {/* Right: Login Form */}
+      <div className="md:w-1/2 flex items-center justify-center p-8">
+        <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl p-8 md:p-12 border-2 border-slate-200">
+          <h2 className="text-3xl font-extrabold text-slate-900 mb-2 text-center">Welcome back</h2>
+          <p className="text-center text-slate-600 font-medium mb-6">Sign in to your account to continue</p>
 
           {error && (
             <div className="mb-4 rounded-xl bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 font-semibold">
@@ -85,9 +85,6 @@ export default function Login() {
           )}
 
           <form onSubmit={handleSubmit} className="grid gap-4">
-            <label className="sr-only" htmlFor="email">
-              Email
-            </label>
             <input
               id="email"
               name="email"
@@ -100,9 +97,6 @@ export default function Login() {
               className="input-strong"
             />
 
-            <label className="sr-only" htmlFor="password">
-              Password
-            </label>
             <input
               id="password"
               name="password"
@@ -183,13 +177,13 @@ export default function Login() {
               Home
             </Link>
           </div>
-        </div>
 
-        <p className="mt-4 text-center text-xs font-medium text-slate-500">
-          By continuing you agree to our{" "}
-          <span className="underline">Terms</span> and{" "}
-          <span className="underline">Privacy Policy</span>.
-        </p>
+          <p className="mt-4 text-center text-xs font-medium text-slate-500">
+            By continuing you agree to our {" "}
+            <span className="underline">Terms</span> and {" "}
+            <span className="underline">Privacy Policy</span>.
+          </p>
+        </div>
       </div>
     </div>
   );
