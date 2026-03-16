@@ -16,16 +16,17 @@ const Navbar = () => {
       {/* LOGO */}
       <Link to="/home" style={{ textDecoration: "none" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <svg width="36" height="36" viewBox="0 0 36 36">
-            <rect width="36" height="36" rx="8" fill="#2563EB" />
-            <path
-              d="M8 18h14M16 10l8 8-8 8"
-              stroke="white"
-              strokeWidth="2"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
+          <svg width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            {/* Blue rounded square background */}
+            <rect x="10" y="10" width="100" height="100" rx="18" fill="#2563eb" />
+            
+            {/* White arrow icon */}
+            <g transform="translate(35, 35)">
+              {/* Arrow shaft */}
+              <line x1="10" y1="25" x2="40" y2="25" stroke="white" strokeWidth="4" strokeLinecap="round" />
+              {/* Arrow head */}
+              <polyline points="40,25 35,20 40,25 35,30" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            </g>
           </svg>
 
           <span

@@ -2,7 +2,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
-import Logo from "../assets/react.svg";
+import Logo from "../assets/campusflow-logo.svg";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "", remember: false });
@@ -63,23 +63,37 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      {/* Left: Logo, Name, Tagline */}
-      <div className="md:w-1/2 flex flex-col items-center justify-center text-center p-10 bg-gradient-to-br from-blue-700 via-blue-800 to-slate-900 text-white">
-        <img src={Logo} alt="Project Logo" className="w-32 h-32 mx-auto mb-6 drop-shadow-xl" />
-        <h1 className="text-4xl font-extrabold mb-2 tracking-tight drop-shadow-lg">Assignment Uploader</h1>
-        <p className="text-xl font-semibold mb-4 opacity-90">Empowering seamless assignment management</p>
-        <span className="text-base opacity-70">Your digital platform for easy, secure, and efficient assignment submissions.</span>
+    <div className="min-h-screen flex flex-col md:flex-row bg-gray-800">
+      {/* Left: Logo */}
+      <div className="md:w-1/2 flex flex-col items-center justify-center text-center p-10 bg-gray-400 text-gray-900">
+        <img src={Logo} alt="CampusFlow Logo" className="w-80 h-auto mb-8" />
+        <h1 className="text-4xl font-bold text-gray-900 mb-3">Welcome Back</h1>
+        <p className="text-xl font-semibold text-gray-700 mb-6">Manage Assignments Effortlessly</p>
+        <div className="max-w-sm space-y-4 text-left">
+          <div className="flex items-start gap-3">
+            <span className="text-blue-600 font-bold text-lg">✓</span>
+            <p className="text-gray-700 font-medium">Track and submit assignments in one place</p>
+          </div>
+          <div className="flex items-start gap-3">
+            <span className="text-blue-600 font-bold text-lg">✓</span>
+            <p className="text-gray-700 font-medium">Get instant feedback from faculty</p>
+          </div>
+          <div className="flex items-start gap-3">
+            <span className="text-blue-600 font-bold text-lg">✓</span>
+            <p className="text-gray-700 font-medium">Streamlined workflow for educators</p>
+          </div>
+        </div>
+        <p className="text-sm text-gray-600 mt-8">Built for universities and institutions</p>
       </div>
 
       {/* Right: Login Form */}
-      <div className="md:w-1/2 flex items-center justify-center p-8">
-        <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl p-8 md:p-12 border-2 border-slate-200">
-          <h2 className="text-3xl font-extrabold text-slate-900 mb-2 text-center">Welcome back</h2>
-          <p className="text-center text-slate-600 font-medium mb-6">Sign in to your account to continue</p>
+      <div className="md:w-1/2 flex items-center justify-center p-8 bg-white">
+        <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl p-8 md:p-12 border border-gray-200">
+          <h2 className="text-3xl font-extrabold text-gray-900 mb-2 text-center">Welcome back</h2>
+          <p className="text-center text-gray-600 font-medium mb-6">Sign in to your account to continue</p>
 
           {error && (
-            <div className="mb-4 rounded-xl bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 font-semibold">
+            <div className="mb-4 rounded-xl bg-gray-100 border border-gray-300 text-gray-900 px-4 py-3 font-semibold">
               {error}
             </div>
           )}
@@ -94,7 +108,7 @@ export default function Login() {
               placeholder="you@company.com"
               autoComplete="email"
               required
-              className="input-strong"
+              className="w-full px-4 py-3 rounded-xl border border-gray-400 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:border-gray-900 placeholder-gray-400 font-medium"
             />
 
             <input
@@ -106,24 +120,24 @@ export default function Login() {
               placeholder="Your password"
               autoComplete="current-password"
               required
-              className="input-strong"
+              className="w-full px-4 py-3 rounded-xl border border-gray-400 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:border-gray-900 placeholder-gray-400 font-medium"
             />
 
             <div className="flex items-center justify-between text-sm">
-              <label className="inline-flex items-center gap-2 font-semibold text-slate-700">
+              <label className="inline-flex items-center gap-2 font-semibold text-gray-700">
                 <input
                   type="checkbox"
                   name="remember"
                   checked={form.remember}
                   onChange={handleChange}
-                  className="w-4 h-4 rounded border-2 border-slate-400 text-blue-600 focus:ring-blue-500"
+                  className="w-4 h-4 rounded border border-gray-400 text-gray-800 focus:ring-gray-700"
                 />
                 Remember me
               </label>
 
               <Link
                 to="/forgot"
-                className="text-blue-600 hover:text-blue-700 font-bold"
+                className="text-gray-700 hover:underline font-bold"
               >
                 Forgot?
               </Link>
@@ -132,7 +146,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full py-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="w-full py-3 rounded-xl font-bold bg-gray-900 text-white hover:bg-gray-700 transition disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -164,21 +178,21 @@ export default function Login() {
             </button>
           </form>
 
-          <div className="mt-6 text-center text-sm font-semibold text-slate-600">
+          <div className="mt-6 text-center text-sm font-semibold text-gray-700">
             Don’t have an account?{" "}
             <Link
               to="/signup"
-              className="text-blue-600 hover:text-blue-700 font-bold"
+              className="text-gray-900 hover:underline font-bold"
             >
               Sign up
             </Link>
-            <span className="mx-2 text-gray-300">|</span>
-            <Link to="/home" className="text-gray-600 hover:underline">
+            <span className="mx-2 text-gray-400">|</span>
+            <Link to="/home" className="text-gray-700 hover:underline">
               Home
             </Link>
           </div>
 
-          <p className="mt-4 text-center text-xs font-medium text-slate-500">
+          <p className="mt-4 text-center text-xs font-medium text-gray-500">
             By continuing you agree to our {" "}
             <span className="underline">Terms</span> and {" "}
             <span className="underline">Privacy Policy</span>.

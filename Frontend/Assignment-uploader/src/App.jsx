@@ -31,13 +31,17 @@ import HODReviewAssignment from "./pages/HODReviewAssignment";
 
 import PrivateRoute from "./components/PrivateRoute";
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 
-function App() {
+function AppContent() {
+  const location = useLocation();
+  const hideNavbarRoutes = ["/", "/signup", "/forgot", "/reset-password"];
+  const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
+
   return (
-    <Router>
-      {/* ✅ Navbar appears on ALL pages */}
-      <Navbar />
+    <>
+      {/* Navbar hidden on auth pages */}
+      {shouldShowNavbar && <Navbar />}
 
       <Routes>
         <Route path="/" element={<Login />} />
@@ -143,6 +147,14 @@ function App() {
           }
         />
       </Routes>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }
