@@ -3,25 +3,37 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import Logo from "../assets/campusflow-logo.svg";
+import OTPVerificationModal from "../components/OTPVerificationModal";
 
 export default function Signup() {
   const [form, setForm] = useState({ name: "", email: "", password: "", role: "student" });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [signupEmail, setSignupEmail] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     setLoading(true);
     try {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/signup`, form);
-      alert(res.data.message);
-      navigate("/");
+      setSignupEmail(form.email);
+      setShowOTPModal(true);
+      setForm({ name: "", email: "", password: "", role: "student" });
     } catch (err) {
-      alert(err.response?.data?.message || "Signup failed");
+      setError(err.response?.data?.message || "Signup failed");
     }
     setLoading(false);
+  };
+
+  const handleOTPVerified = () => {
+    setShowOTPModal(false);
+    alert("Email verified successfully! You can now log in.");
+    navigate("/");
   };
 
   return (
@@ -97,6 +109,12 @@ export default function Signup() {
               <option value="admin">Admin</option>
             </select>
 
+            {error && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                {error}
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={loading}
@@ -114,6 +132,14 @@ export default function Signup() {
           </p>
         </div>
       </div>
+
+      {showOTPModal && (
+        <OTPVerificationModal
+          email={signupEmail}
+          onVerified={handleOTPVerified}
+          onClose={() => setShowOTPModal(false)}
+        />
+      )}
     </div>
   );
 }

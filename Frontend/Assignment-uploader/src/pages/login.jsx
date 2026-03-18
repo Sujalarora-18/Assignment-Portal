@@ -93,7 +93,7 @@ export default function Login() {
           <p className="text-center text-gray-600 font-medium mb-6">Sign in to your account to continue</p>
 
           {error && (
-            <div className="mb-4 rounded-xl bg-gray-100 border border-gray-300 text-gray-900 px-4 py-3 font-semibold">
+            <div className="mb-4 rounded-xl bg-red-100 border border-red-400 text-red-700 px-4 py-3 font-semibold">
               {error}
             </div>
           )}

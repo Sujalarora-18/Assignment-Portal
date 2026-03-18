@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="200" height="200">
+  <!-- Blue rounded square background -->
+  <rect x="5" y="5" width="110" height="110" rx="22" fill="#2563eb" />
+  
+  <!-- White arrow icon -->
+  <g transform="translate(30, 30)">
+    <!-- Arrow shaft -->
+    <line x1="5" y1="30" x2="50" y2="30" stroke="white" stroke-width="7" stroke-linecap="round" />
+    <!-- Arrow head -->
+    <polyline points="50,30 40,20 50,30 40,40" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  </g>
+</svg>

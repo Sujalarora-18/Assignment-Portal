@@ -20,6 +20,7 @@ const hodRoutes = require("./Routes/hod");
 const professorRoutes=require("./Routes/professor");
 
 const User = require("./models/User");
+const { generateOTP, sendOTPEmail, sendWelcomeEmail } = require("./services/emailService");
 
 /* =======================
    APP INIT
@@ -150,7 +151,7 @@ app.get("/api/admin/overview", verifyToken, isAdmin, async (req, res) => {
 });
 
 /* =======================
-   SIGNUP (FIXED PATH)
+   SIGNUP (FIXED PATH) - SEND OTP
 ======================= */
 
 app.post("/api/signup", async (req, res) => {
@@ -167,18 +168,126 @@ app.post("/api/signup", async (req, res) => {
     }
 
     const hashed = await bcrypt.hash(password, 10);
+    const otp = generateOTP();
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
     const user = new User({
       name,
       email,
       password: hashed,
       role: role || "student",
+      otp,
+      otpExpiry,
+      isVerified: false,
     });
 
     await user.save();
 
-    res.status(201).json({ message: "User registered successfully" });
+    // Send OTP email
+    const emailSent = await sendOTPEmail(email, otp, name);
+    if (!emailSent) {
+      return res.status(500).json({ message: "Failed to send OTP. Please try again." });
+    }
+
+    res.status(201).json({ 
+      message: "User registered successfully. OTP sent to your email.",
+      email, 
+    });
   } catch (err) {
+    console.error("Signup error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+/* =======================
+   VERIFY OTP
+======================= */
+
+app.post("/api/verify-otp", async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({ message: "Email and OTP are required" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if OTP is already verified
+    if (user.isVerified) {
+      return res.status(400).json({ message: "User already verified" });
+    }
+
+    // Check OTP expiry
+    if (!user.otpExpiry || new Date() > user.otpExpiry) {
+      return res.status(400).json({ message: "OTP has expired. Please signup again." });
+    }
+
+    // Verify OTP
+    if (user.otp !== otp) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    // Mark as verified and clear OTP
+    user.isVerified = true;
+    user.otp = null;
+    user.otpExpiry = null;
+    await user.save();
+
+    // Send welcome email
+    await sendWelcomeEmail(user.email, user.name);
+
+    res.json({ 
+      message: "Email verified successfully. You can now log in.",
+      verified: true,
+    });
+  } catch (err) {
+    console.error("OTP verification error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+/* =======================
+   RESEND OTP
+======================= */
+
+app.post("/api/resend-otp", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: "User already verified" });
+    }
+
+    // Generate new OTP
+    const otp = generateOTP();
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+
+    user.otp = otp;
+    user.otpExpiry = otpExpiry;
+    await user.save();
+
+    // Send OTP email
+    const emailSent = await sendOTPEmail(email, otp, user.name);
+    if (!emailSent) {
+      return res.status(500).json({ message: "Failed to send OTP. Please try again." });
+    }
+
+    res.json({ message: "OTP resent successfully" });
+  } catch (err) {
+    console.error("Resend OTP error:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
