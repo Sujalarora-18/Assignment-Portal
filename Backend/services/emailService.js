@@ -1,15 +1,34 @@
 const nodemailer = require("nodemailer");
 
 // Create email transporter
+// NOTE: SMTP_PORT must be parsed as a number — .env values are always strings
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
-  secure: false,
+  port: parseInt(process.env.SMTP_PORT, 10),
+  secure: false, // true for port 465, false for 587 (STARTTLS)
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
+  tls: {
+    rejectUnauthorized: false, // allow self-signed certs in dev environments
+  },
 });
+
+/**
+ * Verify SMTP connection at startup
+ */
+async function verifyTransporter() {
+  try {
+    await transporter.verify();
+    console.log("✅ SMTP transporter ready — emails will work fine");
+    return true;
+  } catch (err) {
+    console.error("❌ SMTP transporter FAILED to connect:", err.message);
+    console.error("   → Check SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS in your .env");
+    return false;
+  }
+}
 
 /**
  * Generate a random OTP
@@ -88,4 +107,5 @@ module.exports = {
   generateOTP,
   sendOTPEmail,
   sendWelcomeEmail,
+  verifyTransporter,
 };

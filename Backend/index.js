@@ -20,7 +20,7 @@ const hodRoutes = require("./Routes/hod");
 const professorRoutes=require("./Routes/professor");
 
 const User = require("./models/User");
-const { generateOTP, sendOTPEmail, sendWelcomeEmail } = require("./services/emailService");
+const { generateOTP, sendOTPEmail, sendWelcomeEmail, verifyTransporter } = require("./services/emailService");
 
 /* =======================
    APP INIT
@@ -118,7 +118,11 @@ if (!process.env.MONGO_URI) {
 }
 
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
+  .then(async () => {
+    console.log("✅ MongoDB connected");
+    // Verify SMTP config right at startup so you know immediately if email will work
+    await verifyTransporter();
+  })
   .catch(err => {
     console.error("MongoDB error:", err.message);
     process.exit(1);
@@ -162,8 +166,9 @@ app.post("/api/signup", async (req, res) => {
       return res.status(400).json({ message: "All fields required" });
     }
 
+    // Check if already registered (and verified)
     const existing = await User.findOne({ email });
-    if (existing) {
+    if (existing && existing.isVerified) {
       return res.status(400).json({ message: "User already exists" });
     }
 
@@ -171,22 +176,30 @@ app.post("/api/signup", async (req, res) => {
     const otp = generateOTP();
     const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-    const user = new User({
-      name,
-      email,
-      password: hashed,
-      role: role || "student",
-      otp,
-      otpExpiry,
-      isVerified: false,
-    });
-
-    await user.save();
-
-    // Send OTP email
+    // ✅ FIX: Send OTP email FIRST — only save user to DB if email succeeds.
+    // This prevents orphaned (unverified) user records that block future signups.
     const emailSent = await sendOTPEmail(email, otp, name);
     if (!emailSent) {
       return res.status(500).json({ message: "Failed to send OTP. Please try again." });
+    }
+
+    // If there's an existing unverified record (previous failed attempt), update it
+    if (existing && !existing.isVerified) {
+      existing.password = hashed;
+      existing.otp = otp;
+      existing.otpExpiry = otpExpiry;
+      await existing.save();
+    } else {
+      const user = new User({
+        name,
+        email,
+        password: hashed,
+        role: role || "student",
+        otp,
+        otpExpiry,
+        isVerified: false,
+      });
+      await user.save();
     }
 
     res.status(201).json({ 
