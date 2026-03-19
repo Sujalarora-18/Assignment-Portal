@@ -76,12 +76,12 @@ export default function EditDepartment() {
   }
 
   if (loading) return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-      <div className="text-lg font-bold text-white">Loading department…</div>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="text-lg font-bold text-gray-900">Loading department…</div>
     </div>
   );
   if (loadError) return (
-    <div className="min-h-screen bg-slate-950 p-6">
+    <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-2xl mx-auto bg-white rounded-2xl p-6 border-2 border-red-200">
         <div className="text-red-600 font-bold mb-4">Error loading department: {loadError}</div>
         <Link to="/admin/departments" className="btn-primary inline-block">Back to list</Link>
@@ -90,25 +90,25 @@ export default function EditDepartment() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6">
+    <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-2xl mx-auto">
         <div className="mb-6">
           <Link to="/admin/departments" className="text-sm font-bold text-blue-600 hover:text-blue-700">← Back to Departments</Link>
         </div>
-        <div className="bg-white rounded-2xl shadow-2xl border-2 border-slate-200 p-8">
-          <h1 className="text-2xl font-extrabold text-slate-900 mb-6">Edit Department</h1>
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
+          <h1 className="text-2xl font-extrabold text-gray-900 mb-6">Edit Department</h1>
 
           {globalMsg && <div className="mb-4 p-4 rounded-xl font-bold bg-emerald-50 text-emerald-700 border-2 border-emerald-200">{globalMsg}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1">Department Name</label>
+              <label className="block text-sm font-bold text-gray-700 mb-1">Department Name</label>
               <input name="name" value={form.name} onChange={handleChange} className="input-strong" />
               {errors.name && <div className="text-red-600 font-bold text-sm mt-1">{errors.name}</div>}
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1">Program Type</label>
+              <label className="block text-sm font-bold text-gray-700 mb-1">Program Type</label>
               <select name="type" value={form.type} onChange={handleChange} className="input-strong">
                 <option value="">Select...</option>
                 <option value="UG">UG</option>
@@ -119,7 +119,7 @@ export default function EditDepartment() {
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1">Address</label>
+              <label className="block text-sm font-bold text-gray-700 mb-1">Address</label>
               <textarea name="address" value={form.address} onChange={handleChange} rows={4} className="input-strong" />
               {errors.address && <div className="text-red-600 font-bold text-sm mt-1">{errors.address}</div>}
             </div>
@@ -128,7 +128,7 @@ export default function EditDepartment() {
               <button type="submit" disabled={saving} className="btn-primary">
                 {saving ? 'Saving...' : 'Save Changes'}
               </button>
-              <button type="button" onClick={() => navigate('/admin/departments')} className="px-5 py-3 font-bold rounded-xl border-2 border-slate-300 text-slate-700 hover:bg-slate-100">
+              <button type="button" onClick={() => navigate('/admin/departments')} className="px-5 py-3 font-bold rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100">
                 Cancel
               </button>
             </div>

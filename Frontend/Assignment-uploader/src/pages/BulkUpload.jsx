@@ -86,11 +86,11 @@ export default function BulkUpload() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6">
-      <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl border-2 border-slate-200 p-8">
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
         <div className="flex items-start justify-between">
-          <h2 className="text-2xl font-extrabold text-slate-900">Bulk Upload</h2>
-          <div className="text-sm font-bold text-slate-600">
+          <h2 className="text-2xl font-extrabold text-gray-900">Bulk Upload</h2>
+          <div className="text-sm font-bold text-gray-500">
             Upload up to 5 PDF files
           </div>
         </div>
@@ -109,7 +109,7 @@ export default function BulkUpload() {
 
         <form onSubmit={submit} className="grid gap-4 mt-6">
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-1">Common description</label>
+            <label className="block text-sm font-bold text-gray-700 mb-1">Common description</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -121,7 +121,7 @@ export default function BulkUpload() {
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-1">Category</label>
+            <label className="block text-sm font-bold text-gray-700 mb-1">Category</label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -135,27 +135,27 @@ export default function BulkUpload() {
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-1">Select PDF files</label>
+            <label className="block text-sm font-bold text-gray-700 mb-1">Select PDF files</label>
             <input
               type="file"
               accept="application/pdf"
               multiple
               disabled={uploading}
               onChange={onFilesChange}
-              className="text-slate-700 font-medium"
+              className="text-gray-700 font-medium"
             />
-            <p className="mt-1 text-xs font-medium text-slate-600">
+            <p className="mt-1 text-xs font-medium text-gray-500">
               Maximum 5 files — each must be PDF and ≤ 10MB
             </p>
           </div>
 
           <div>
-            <div className="text-sm font-bold text-slate-700 mb-2">
+            <div className="text-sm font-bold text-gray-700 mb-2">
               Files to upload ({files.length}/5)
             </div>
 
             {files.length === 0 ? (
-              <div className="text-slate-500 text-sm font-medium">
+              <div className="text-gray-500 text-sm font-medium">
                 No files selected yet.
               </div>
             ) : (
@@ -163,7 +163,7 @@ export default function BulkUpload() {
                 {files.map((f, idx) => (
                   <li
                     key={idx}
-                    className="flex items-center justify-between bg-slate-50 p-3 rounded-xl border-2 border-slate-200"
+                    className="flex items-center justify-between bg-gray-50 p-3 rounded-xl border border-gray-200"
                   >
                     <div>
                       <div className="font-medium text-gray-800">
@@ -193,7 +193,7 @@ export default function BulkUpload() {
               type="button"
               onClick={() => nav(-1)}
               disabled={uploading}
-              className="px-4 py-2 rounded-xl bg-slate-600 hover:bg-slate-500 text-white font-bold disabled:opacity-70"
+              className="px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold disabled:opacity-70"
             >
               Cancel
             </button>
@@ -205,7 +205,7 @@ export default function BulkUpload() {
                 setFiles([]);
                 setMsg("");
               }}
-              className="ml-auto px-3 py-2 rounded-xl border-2 border-slate-300 text-sm font-bold text-slate-700 hover:bg-slate-100"
+              className="ml-auto px-3 py-2 rounded-xl border border-gray-300 text-sm font-bold text-gray-700 hover:bg-gray-100"
             >
               Clear selection
             </button>

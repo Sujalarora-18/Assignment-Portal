@@ -94,10 +94,10 @@ export default function UsersList() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6">
+    <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-extrabold text-white">All Users</h1>
+          <h1 className="text-3xl font-extrabold text-gray-900">All Users</h1>
           <button
             onClick={() => navigate("/admin/users/new")}
             className="btn-primary px-5 py-2.5 text-sm"
@@ -106,10 +106,10 @@ export default function UsersList() {
           </button>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-2xl border-2 border-slate-200 p-6">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1 uppercase tracking-wider">Filter by Role</label>
+            <label className="block text-xs font-bold text-gray-600 mb-1 uppercase tracking-wider">Filter by Role</label>
             <select
               value={roleFilter}
               onChange={(e) => {
@@ -126,7 +126,7 @@ export default function UsersList() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1 uppercase tracking-wider">Filter by Department</label>
+            <label className="block text-xs font-bold text-gray-600 mb-1 uppercase tracking-wider">Filter by Department</label>
             <select
               value={departmentFilter}
               onChange={(e) => {
@@ -145,7 +145,7 @@ export default function UsersList() {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-xs font-bold text-slate-700 mb-1 uppercase tracking-wider">
+            <label className="block text-xs font-bold text-gray-600 mb-1 uppercase tracking-wider">
               Search by Name or Email
             </label>
             <input
@@ -165,7 +165,7 @@ export default function UsersList() {
           <Link to="/admin/dashboard" className="text-sm font-bold text-blue-600 hover:text-blue-700">← Back to Dashboard</Link>
           <button
             onClick={handleResetFilters}
-            className="text-xs font-bold text-slate-600 hover:text-slate-800"
+            className="text-xs font-bold text-gray-500 hover:text-gray-800"
           >
             Reset filters
           </button>
@@ -174,11 +174,11 @@ export default function UsersList() {
           )}
         </div>
 
-        <div className="overflow-x-auto rounded-xl border-2 border-slate-200">
+        <div className="overflow-x-auto rounded-xl border border-gray-200">
           {loading ? (
-            <p className="p-6 font-bold text-slate-600">Loading users...</p>
+            <p className="p-6 font-bold text-gray-500">Loading users...</p>
           ) : users.length === 0 ? (
-            <p className="p-6 font-bold text-slate-600">No users found.</p>
+            <p className="p-6 font-bold text-gray-500">No users found.</p>
           ) : (
             <table className="min-w-full text-sm table-strong">
               <thead>
@@ -196,11 +196,11 @@ export default function UsersList() {
                   const deptName = user.department?.name || "N/A";
                   return (
                     <tr key={user._id}>
-                      <td className="font-semibold text-slate-900">{user.name}</td>
-                      <td className="text-slate-700">{user.email}</td>
-                      <td className="text-slate-700">{user.role}</td>
-                      <td className="text-slate-700">{deptName}</td>
-                      <td className="text-slate-700">{user.status}</td>
+                      <td className="font-semibold text-gray-900">{user.name}</td>
+                      <td className="text-gray-700">{user.email}</td>
+                      <td className="text-gray-700">{user.role}</td>
+                      <td className="text-gray-700">{deptName}</td>
+                      <td className="text-gray-700">{user.status}</td>
                       <td className="text-center">
                         <button
                           onClick={() => navigate(`/admin/users/${user._id}/edit`)}
@@ -223,14 +223,14 @@ export default function UsersList() {
           )}
         </div>
 
-        <div className="flex justify-between items-center mt-4 font-bold text-slate-700">
+        <div className="flex justify-between items-center mt-4 font-bold text-gray-700">
           <span>Page {page} of {totalPages}</span>
           <div className="space-x-2">
             <button
               disabled={page <= 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className={`px-4 py-2 rounded-xl border-2 font-bold ${
-                page <= 1 ? "opacity-50 cursor-not-allowed border-slate-300" : "border-slate-400 hover:bg-slate-100"
+              className={`px-4 py-2 rounded-xl border font-bold ${
+                page <= 1 ? "opacity-50 cursor-not-allowed border-gray-200" : "border-gray-300 hover:bg-gray-100"
               }`}
             >
               Previous
@@ -238,8 +238,8 @@ export default function UsersList() {
             <button
               disabled={page >= totalPages}
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              className={`px-4 py-2 rounded-xl border-2 font-bold ${
-                page >= totalPages ? "opacity-50 cursor-not-allowed border-slate-300" : "border-slate-400 hover:bg-slate-100"
+              className={`px-4 py-2 rounded-xl border font-bold ${
+                page >= totalPages ? "opacity-50 cursor-not-allowed border-gray-200" : "border-gray-300 hover:bg-gray-100"
               }`}
             >
               Next

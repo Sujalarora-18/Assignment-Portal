@@ -31,31 +31,31 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
       <div className="w-full max-w-md">
-        <div className="bg-white shadow-2xl rounded-2xl p-8 border-2 border-slate-200">
+        <div className="bg-white shadow-xl rounded-2xl p-8 border border-gray-200">
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-14 h-14 rounded-xl bg-linear-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white text-2xl font-extrabold shadow-lg border-2 border-blue-500/50">
+            <div className="w-14 h-14 rounded-xl bg-blue-600 flex items-center justify-center text-white text-2xl font-extrabold shadow-md">
               ?
             </div>
             <div>
-              <h1 className="text-2xl font-extrabold text-slate-900">
+              <h1 className="text-2xl font-extrabold text-gray-900">
                 Forgot Password
               </h1>
-              <p className="text-sm font-medium text-slate-600">
+              <p className="text-sm font-medium text-gray-600">
                 Enter your email to receive reset instructions
               </p>
             </div>
           </div>
 
           {error && (
-            <div className="mb-4 rounded-xl bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 font-semibold">
+            <div className="mb-4 rounded-xl bg-red-50 border border-red-200 text-red-700 px-4 py-3 font-semibold">
               {error}
             </div>
           )}
 
           {message && (
-            <div className="mb-4 rounded-xl bg-emerald-50 border-2 border-emerald-200 text-emerald-700 px-4 py-3 font-semibold">
+            <div className="mb-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 font-semibold">
               {message}
             </div>
           )}

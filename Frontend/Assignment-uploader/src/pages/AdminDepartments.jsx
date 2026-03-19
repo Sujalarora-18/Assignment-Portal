@@ -13,11 +13,11 @@ export default function AdminDepartments() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6">
+    <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-extrabold text-white mb-4">Manage Departments</h1>
+        <h1 className="text-3xl font-extrabold text-gray-900 mb-4">Manage Departments</h1>
 
-        {creating && <div className="mb-4 p-3 rounded-xl bg-emerald-50 border-2 border-emerald-200 text-emerald-800 font-bold">Department created — refreshing list…</div>}
+        {creating && <div className="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold">Department created — refreshing list…</div>}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>

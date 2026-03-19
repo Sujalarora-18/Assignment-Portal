@@ -42,12 +42,12 @@ export default function HODDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6">
+    <div className="min-h-screen bg-gray-50 p-6">
       <div className="flex justify-between items-center mb-8">
         <div className="flex items-center gap-4">
-          <h2 className="text-3xl font-extrabold text-white">HOD Dashboard</h2>
+          <h2 className="text-3xl font-extrabold text-gray-900">HOD Dashboard</h2>
           {pendingCount > 0 && (
-            <span className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-bold border-2 border-emerald-500/50 shadow-lg">
+            <span className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-bold border border-emerald-500 shadow-md">
               {pendingCount} Pending Final Approval{pendingCount !== 1 ? "s" : ""}
             </span>
           )}
@@ -55,7 +55,7 @@ export default function HODDashboard() {
 
         <div className="flex gap-3">
           <Link to="/home">
-            <button className="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-bold border-2 border-slate-600">
+            <button className="px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 rounded-xl font-bold border border-gray-300">
               Home
             </button>
           </Link>
@@ -66,21 +66,21 @@ export default function HODDashboard() {
       </div>
 
       <div className="mb-6">
-        <p className="text-slate-400 font-medium">
+        <p className="text-gray-600 font-medium">
           Finalize assignments forwarded to you by professors. Approve or reject to complete the workflow.
         </p>
       </div>
 
-      <h3 className="text-xl font-extrabold text-white mb-4">
+      <h3 className="text-xl font-extrabold text-gray-900 mb-4">
         Pending Assignments
       </h3>
 
       {loading ? (
-        <div className="text-center py-10 font-bold text-slate-400">
+        <div className="text-center py-10 font-bold text-gray-500">
           Loading...
         </div>
       ) : assignments.length === 0 ? (
-        <div className="bg-slate-800/90 rounded-xl p-8 text-center font-bold text-slate-400 border-2 border-slate-600">
+        <div className="bg-white rounded-xl p-8 text-center font-bold text-gray-500 border border-gray-200 shadow-md">
           No pending assignments. Assignments forwarded to you will appear here.
         </div>
       ) : (
@@ -88,11 +88,11 @@ export default function HODDashboard() {
           {assignments.map((a) => (
             <div
               key={a._id}
-              className="bg-slate-800/90 p-5 rounded-xl border-2 border-slate-600 flex justify-between items-center hover:border-emerald-500/50 transition"
+              className="bg-white p-5 rounded-xl border border-gray-200 shadow-md flex justify-between items-center hover:border-emerald-500/50 transition"
             >
               <div className="flex-1">
-                <p className="font-extrabold text-lg text-white">{a.title}</p>
-                <div className="flex flex-wrap gap-4 mt-2 text-sm font-medium text-slate-400">
+                <p className="font-extrabold text-lg text-gray-900">{a.title}</p>
+                <div className="flex flex-wrap gap-4 mt-2 text-sm font-medium text-gray-600">
                   <span>
                     <strong>Student:</strong> {a.student?.name || "Unknown"}
                   </span>

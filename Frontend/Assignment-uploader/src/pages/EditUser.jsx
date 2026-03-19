@@ -89,19 +89,19 @@ export default function EditUser() {
   }
 
   if (loading) return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-      <div className="text-lg font-bold text-white">Loading user...</div>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="text-lg font-bold text-gray-900">Loading user...</div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6">
+    <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-xl mx-auto">
         <div className="mb-6">
           <Link to="/admin/users" className="text-sm font-bold text-blue-600 hover:text-blue-700">← Back to Users</Link>
         </div>
-        <div className="bg-white shadow-2xl rounded-2xl border-2 border-slate-200 p-8">
-          <h1 className="text-2xl font-extrabold text-slate-900 mb-6">Edit User</h1>
+        <div className="bg-white shadow-xl rounded-2xl border border-gray-200 p-8">
+          <h1 className="text-2xl font-extrabold text-gray-900 mb-6">Edit User</h1>
 
           {error && (
             <div className="mb-4 p-4 text-red-700 font-bold bg-red-50 border-2 border-red-200 rounded-xl">
@@ -116,22 +116,22 @@ export default function EditUser() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block mb-1 font-bold text-slate-700" htmlFor="name">Name</label>
+              <label className="block mb-1 font-bold text-gray-700" htmlFor="name">Name</label>
               <input id="name" name="name" className="input-strong" value={form.name} onChange={handleChange} required />
             </div>
 
             <div>
-              <label className="block mb-1 font-bold text-slate-700" htmlFor="email">Email</label>
+              <label className="block mb-1 font-bold text-gray-700" htmlFor="email">Email</label>
               <input id="email" name="email" type="email" className="input-strong" value={form.email} onChange={handleChange} required />
             </div>
 
             <div>
-              <label className="block mb-1 font-bold text-slate-700" htmlFor="phone">Phone</label>
+              <label className="block mb-1 font-bold text-gray-700" htmlFor="phone">Phone</label>
               <input id="phone" name="phone" className="input-strong" value={form.phone} onChange={handleChange} />
             </div>
 
             <div>
-              <label className="block mb-1 font-bold text-slate-700" htmlFor="departmentId">Department</label>
+              <label className="block mb-1 font-bold text-gray-700" htmlFor="departmentId">Department</label>
               <select id="departmentId" name="departmentId" className="input-strong" value={form.departmentId || ""} onChange={handleChange} required>
                 <option value="">-- Select Department --</option>
                 {departments.map((dep) => (
@@ -141,13 +141,13 @@ export default function EditUser() {
             </div>
 
             <div>
-              <label className="block mb-1 font-bold text-slate-700" htmlFor="role">Role</label>
-              <input id="role" name="role" className="input-strong bg-slate-100" value={form.role} disabled readOnly />
-              <p className="text-xs font-medium text-slate-500 mt-1">Role cannot be changed (security restriction).</p>
+              <label className="block mb-1 font-bold text-gray-700" htmlFor="role">Role</label>
+              <input id="role" name="role" className="input-strong bg-gray-100" value={form.role} disabled readOnly />
+              <p className="text-xs font-medium text-gray-500 mt-1">Role cannot be changed (security restriction).</p>
             </div>
 
             <div>
-              <label className="block mb-1 font-bold text-slate-700" htmlFor="status">Status</label>
+              <label className="block mb-1 font-bold text-gray-700" htmlFor="status">Status</label>
               <select id="status" name="status" className="input-strong" value={form.status} onChange={handleChange}>
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
@@ -155,7 +155,7 @@ export default function EditUser() {
             </div>
 
             <div>
-              <label className="block mb-1 font-bold text-slate-700" htmlFor="password">Password</label>
+              <label className="block mb-1 font-bold text-gray-700" htmlFor="password">Password</label>
               <input id="password" name="password" type="password" className="input-strong" value={form.password} onChange={handleChange} placeholder="Leave blank to keep current password" />
             </div>
 
@@ -163,7 +163,7 @@ export default function EditUser() {
               <button type="submit" disabled={saving} className="btn-primary disabled:opacity-70">
                 {saving ? "Saving..." : "Update User"}
               </button>
-              <button type="button" className="px-5 py-3 font-bold rounded-xl border-2 border-slate-300 text-slate-700 hover:bg-slate-100" onClick={() => navigate("/admin/users")}>
+              <button type="button" className="px-5 py-3 font-bold rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100" onClick={() => navigate("/admin/users")}>
                 Cancel
               </button>
             </div>

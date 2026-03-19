@@ -181,8 +181,8 @@ export default function ReviewAssignment() {
 
   if (!assignment) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-lg font-bold text-white">Loading assignment...</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-lg font-bold text-gray-900">Loading assignment...</div>
       </div>
     );
   }
@@ -192,13 +192,13 @@ export default function ReviewAssignment() {
     : `${import.meta.env.VITE_API_URL}${assignment.filePath}`;
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6">
+    <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-extrabold text-white">Review Assignment</h2>
+          <h2 className="text-2xl font-extrabold text-gray-900">Review Assignment</h2>
           <Link
             to="/professor/dashboard"
-            className="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-bold border-2 border-slate-600"
+            className="px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 rounded-xl font-bold border border-gray-300"
           >
             Back to Dashboard
           </Link>
@@ -211,9 +211,9 @@ export default function ReviewAssignment() {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-2xl shadow-2xl border-2 border-slate-200 overflow-hidden">
-            <div className="p-4 border-b-2 border-slate-200 bg-slate-50">
-              <h3 className="font-extrabold text-slate-800">Document Preview</h3>
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+            <div className="p-4 border-b border-gray-200 bg-gray-50">
+              <h3 className="font-extrabold text-gray-800">Document Preview</h3>
             </div>
             <div className="h-[600px]">
               <iframe
@@ -234,7 +234,7 @@ export default function ReviewAssignment() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-2xl border-2 border-slate-200 p-6">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
             <div className="mb-6">
               <h3 className="text-xl font-bold text-gray-800 mb-3">
                 {assignment.title}

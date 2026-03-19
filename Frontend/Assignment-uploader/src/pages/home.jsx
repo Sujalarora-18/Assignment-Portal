@@ -41,21 +41,21 @@ const cardConfig = [
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-12 px-6">
+    <div className="min-h-screen bg-gray-50 py-12 px-6">
       <div className="max-w-6xl mx-auto">
         <header className="flex items-center justify-between mb-10">
-          <h1 className="text-4xl font-extrabold text-white tracking-tight">
+          <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">
             Assignment Uploader
           </h1>
           <nav className="flex items-center gap-4">
             <Link
-              className="px-4 py-2 font-bold text-slate-300 hover:text-white border-2 border-slate-600 rounded-xl hover:border-slate-500 transition"
+              className="px-4 py-2 font-bold text-gray-600 hover:text-gray-900 border border-gray-300 rounded-xl hover:bg-gray-100 transition"
               to="/"
             >
               Login
             </Link>
             <Link
-              className="px-4 py-2 font-bold text-white bg-blue-600 hover:bg-blue-500 border-2 border-blue-500 rounded-xl transition shadow-lg"
+              className="px-4 py-2 font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-md"
               to="/signup"
             >
               Signup
@@ -67,11 +67,11 @@ export default function Home() {
           {cardConfig.map((c) => (
             <article
               key={c.id}
-              className={`bg-white rounded-2xl shadow-2xl p-8 border-2 ${c.borderColor} hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1`}
+              className={`bg-white rounded-2xl shadow-xl p-8 border border-gray-200 hover:shadow-2xl hover:border-${c.borderColor.replace('border-', '')} transition-all duration-300 hover:-translate-y-1`}
             >
               <div className="flex flex-col items-center text-center">
                 <div
-                  className={`w-20 h-20 rounded-xl flex items-center justify-center text-4xl mb-4 ${c.bgAccent} text-white border-2 border-black/10 shadow-lg`}
+                  className={`w-20 h-20 rounded-xl flex items-center justify-center text-4xl mb-4 ${c.bgAccent} text-white shadow-md`}
                   aria-hidden
                 >
                   {c.icon}
@@ -90,7 +90,7 @@ export default function Home() {
                 <div className="mt-auto">
                   <Link
                     to="/"
-                    className={`inline-block px-5 py-2.5 rounded-xl border-2 font-bold text-sm ${c.linkClass} transition`}
+                    className={`inline-block px-5 py-2.5 rounded-xl border font-bold text-sm ${c.linkClass} transition`}
                   >
                     View {c.title}
                   </Link>

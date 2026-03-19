@@ -73,13 +73,13 @@ export default function CreateUser() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex justify-center p-6">
+    <div className="min-h-screen bg-gray-50 flex justify-center p-6">
       <div className="w-full max-w-xl">
         <div className="mb-6">
           <Link to="/admin/users" className="text-sm font-bold text-blue-600 hover:text-blue-700">← Back to Users</Link>
         </div>
-        <div className="bg-white shadow-2xl rounded-2xl border-2 border-slate-200 p-8">
-          <h1 className="text-2xl font-extrabold text-slate-900 mb-6">Create User</h1>
+        <div className="bg-white shadow-xl rounded-2xl border border-gray-200 p-8">
+          <h1 className="text-2xl font-extrabold text-gray-900 mb-6">Create User</h1>
 
           {message && (
             <div className="mb-4 text-sm font-bold text-blue-700 bg-blue-50 p-4 rounded-xl border-2 border-blue-200">
@@ -88,11 +88,11 @@ export default function CreateUser() {
           )}
 
           {loadingDepts ? (
-            <p className="font-bold text-slate-600">Loading departments...</p>
+            <p className="font-bold text-gray-500">Loading departments...</p>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">Name</label>
+                <label className="block text-sm font-bold text-gray-700 mb-1">Name</label>
                 <input
                   type="text"
                   name="name"
@@ -104,7 +104,7 @@ export default function CreateUser() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">Email</label>
+                <label className="block text-sm font-bold text-gray-700 mb-1">Email</label>
                 <input
                   type="email"
                   name="email"
@@ -116,7 +116,7 @@ export default function CreateUser() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">
+                <label className="block text-sm font-bold text-gray-700 mb-1">
                   Password (optional, leave blank for auto-generation)
                 </label>
                 <input
@@ -130,7 +130,7 @@ export default function CreateUser() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">Phone</label>
+                <label className="block text-sm font-bold text-gray-700 mb-1">Phone</label>
                 <input
                   type="text"
                   name="phone"
@@ -142,7 +142,7 @@ export default function CreateUser() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">Department</label>
+                <label className="block text-sm font-bold text-gray-700 mb-1">Department</label>
                 <select
                   name="departmentId"
                   value={form.departmentId}
@@ -160,7 +160,7 @@ export default function CreateUser() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">Role</label>
+                <label className="block text-sm font-bold text-gray-700 mb-1">Role</label>
                 <select
                   name="role"
                   value={form.role}

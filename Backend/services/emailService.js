@@ -11,7 +11,7 @@ const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
 function getBrevoConfig() {
   return {
     apiKey: process.env.SMTP_PASS, // User provided API key here
-    senderEmail: process.env.SMTP_USER || "noreply@campusflow.com", 
+    senderEmail: process.env.SMTP_USER , 
     senderName: "CampusFlow",
   };
 }
