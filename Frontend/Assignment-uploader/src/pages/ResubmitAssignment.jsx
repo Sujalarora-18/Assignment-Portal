@@ -108,13 +108,13 @@ export default function ResubmitAssignment() {
   const lastRejection = getLastRejectionRemark();
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6">
+    <div className="min-h-screen bg-gray-50 p-6 md:p-10">
       <div className="max-w-2xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-extrabold text-white">Resubmit Assignment</h2>
+          <h2 className="text-2xl font-extrabold text-gray-900">Resubmit Assignment</h2>
           <Link
             to={`/student/assignments/${id}`}
-            className="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-bold border-2 border-slate-600"
+            className="px-5 py-2.5 bg-white hover:bg-gray-100 text-gray-900 rounded-xl font-bold border border-gray-300 shadow-sm"
           >
             Back to Details
           </Link>
@@ -127,7 +127,7 @@ export default function ResubmitAssignment() {
         )}
 
         {assignment && (
-          <div className="bg-white rounded-2xl shadow-2xl border-2 border-slate-200 p-6 mb-6">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6 mb-6">
             <h3 className="text-lg font-semibold text-gray-800 mb-2">
               {assignment.title}
             </h3>
@@ -163,7 +163,7 @@ export default function ResubmitAssignment() {
           </div>
         )}
 
-        <div className="bg-white rounded-2xl shadow-2xl border-2 border-slate-200 p-6">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
           <h4 className="font-semibold text-gray-800 mb-4">
             Submit Updated Version
           </h4>

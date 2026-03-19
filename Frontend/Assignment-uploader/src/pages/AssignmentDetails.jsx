@@ -119,21 +119,21 @@ export default function AssignmentDetails() {
 
   if (!assignment) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-lg font-bold text-white">Loading assignment...</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-lg font-bold text-gray-900">Loading assignment...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6">
+    <div className="min-h-screen bg-gray-50 p-6 md:p-10">
       <div className="max-w-5xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-extrabold text-white">Assignment Details</h2>
+          <h2 className="text-2xl font-extrabold text-gray-900">Assignment Details</h2>
           <div className="flex gap-3">
             <Link
               to="/student/assignments"
-              className="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-bold border-2 border-slate-600"
+              className="px-5 py-2.5 bg-white hover:bg-gray-100 text-gray-900 rounded-xl font-bold border border-gray-300 shadow-sm"
             >
               My Assignments
             </Link>
@@ -154,7 +154,7 @@ export default function AssignmentDetails() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-2xl shadow-2xl border-2 border-slate-200 p-6">
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
               <div className="flex justify-between items-start mb-4">
                 <h3 className="text-xl font-bold text-gray-800">
                   {assignment.title}
@@ -207,9 +207,9 @@ export default function AssignmentDetails() {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-2xl border-2 border-slate-200 overflow-hidden">
-              <div className="p-4 border-b-2 border-slate-200 bg-slate-50">
-                <h4 className="font-extrabold text-slate-800">Document Preview</h4>
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+              <div className="p-4 border-b border-gray-200 bg-gray-50">
+                <h4 className="font-extrabold text-gray-800">Document Preview</h4>
               </div>
               <div className="h-[500px]">
                 <iframe
@@ -223,7 +223,7 @@ export default function AssignmentDetails() {
 
           <div className="space-y-6">
             {assignment.status === "draft" && (
-              <div className="bg-white rounded-2xl shadow-2xl border-2 border-slate-200 p-6">
+              <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
                 <h4 className="font-semibold text-gray-800 mb-4">
                   Submit for Review
                 </h4>
@@ -260,7 +260,7 @@ export default function AssignmentDetails() {
             )}
 
             {assignment.status === "rejected" && (
-              <div className="bg-white rounded-2xl shadow-2xl border-2 border-slate-200 p-6">
+              <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
                 <h4 className="font-semibold text-gray-800 mb-4">
                   Assignment Rejected
                 </h4>
@@ -286,7 +286,7 @@ export default function AssignmentDetails() {
               </div>
             )}
 
-            <div className="bg-white rounded-2xl shadow-2xl border-2 border-slate-200 p-6">
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
               <h4 className="font-semibold text-gray-800 mb-4">
                 Approval History
               </h4>
@@ -329,7 +329,7 @@ export default function AssignmentDetails() {
 
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl border-2 border-slate-200 p-6 w-full max-w-md">
+          <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 w-full max-w-md">
             <h3 className="text-xl font-bold text-gray-800 mb-4">
               Confirm Submission
             </h3>

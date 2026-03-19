@@ -47,20 +47,20 @@ export default function MyAssignments() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6">
+    <div className="min-h-screen bg-gray-50 p-6 md:p-10">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-extrabold text-white">My Assignments</h2>
+        <h2 className="text-3xl font-extrabold text-gray-900">My Assignments</h2>
 
         <Link to="/student/upload">
-          <button className="btn-primary px-5 py-3">
+          <button className="btn-primary px-6 py-3 shadow-lg">
             Upload New
           </button>
         </Link>
       </div>
 
-      <div className="flex flex-wrap items-center gap-6 bg-slate-800/90 p-5 rounded-xl mb-6 border-2 border-slate-600">
+      <div className="flex flex-wrap items-center gap-6 bg-white p-5 rounded-2xl mb-6 border border-gray-200 shadow-sm">
         <div className="flex items-center gap-3">
-          <label className="text-slate-200 font-bold">Status:</label>
+          <label className="text-gray-700 font-bold">Status:</label>
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
@@ -76,7 +76,7 @@ export default function MyAssignments() {
         </div>
 
         <div className="flex items-center gap-3">
-          <label className="text-slate-200 font-bold">Sort:</label>
+          <label className="text-gray-700 font-bold">Sort:</label>
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value)}
@@ -89,12 +89,12 @@ export default function MyAssignments() {
       </div>
 
       {error && (
-        <div className="mb-4 px-4 py-3 rounded-xl bg-red-50 border-2 border-red-200 text-red-700 font-bold">
+        <div className="mb-4 px-4 py-3 rounded-xl bg-red-100 border border-red-400 text-red-700 font-bold">
           {error}
         </div>
       )}
 
-      <div className="bg-white rounded-2xl shadow-xl border-2 border-slate-200 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
         <table className="w-full table-strong">
           <thead>
             <tr className="text-left">
@@ -134,7 +134,7 @@ export default function MyAssignments() {
               assignments.map((a) => (
                 <tr
                   key={a._id}
-                  className="border-b border-gray-100 hover:bg-gray-50 transition"
+                  className="border-b border-gray-200 hover:bg-gray-50 transition"
                 >
                   <td className="py-4 px-6 font-bold text-blue-600 hover:underline">
                     <Link to={`/student/assignments/${a._id}`}>
@@ -142,17 +142,17 @@ export default function MyAssignments() {
                     </Link>
                   </td>
 
-                  <td className="px-6 font-medium text-slate-700">{a.category}</td>
+                  <td className="px-6 font-medium text-gray-700">{a.category}</td>
 
                   <td className="px-6">
                     <StatusBadge status={a.status} />
                   </td>
 
-                  <td className="px-6 font-medium text-slate-600">
+                  <td className="px-6 font-medium text-gray-600">
                     {new Date(a.createdAt).toLocaleString()}
                   </td>
 
-                  <td className="px-6 font-medium text-slate-600">
+                  <td className="px-6 font-medium text-gray-600">
                     {a.currentReviewer?.name || "-"}
                   </td>
 
