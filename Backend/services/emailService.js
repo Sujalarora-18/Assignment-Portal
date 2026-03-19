@@ -1,17 +1,17 @@
 const nodemailer = require("nodemailer");
 
-// Create email transporter
-// NOTE: SMTP_PORT must be parsed as a number — .env values are always strings
+// Create Brevo SMTP transporter
+// Brevo works on Vercel/cloud servers (unlike Gmail which blocks cloud IPs)
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT, 10),
-  secure: false, // true for port 465, false for 587 (STARTTLS)
+  host: process.env.SMTP_HOST,       // smtp-relay.brevo.com
+  port: parseInt(process.env.SMTP_PORT, 10), // 587
+  secure: false,
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
+    user: process.env.SMTP_USER,     // your Brevo login email
+    pass: process.env.SMTP_PASS,     // your Brevo SMTP key (not login password)
   },
   tls: {
-    rejectUnauthorized: false, // allow self-signed certs in dev environments
+    rejectUnauthorized: false,
   },
 });
 
@@ -31,7 +31,7 @@ async function verifyTransporter() {
 }
 
 /**
- * Generate a random OTP
+ * Generate a random 6-digit OTP
  */
 function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -43,7 +43,7 @@ function generateOTP() {
 async function sendOTPEmail(email, otp, userName) {
   try {
     const mailOptions = {
-      from: process.env.SMTP_USER,
+      from: `"CampusFlow" <${process.env.SMTP_USER}>`,
       to: email,
       subject: "CampusFlow - Email Verification OTP",
       html: `
@@ -77,7 +77,7 @@ async function sendOTPEmail(email, otp, userName) {
 async function sendWelcomeEmail(email, userName) {
   try {
     const mailOptions = {
-      from: process.env.SMTP_USER,
+      from: `"CampusFlow" <${process.env.SMTP_USER}>`,
       to: email,
       subject: "Welcome to CampusFlow!",
       html: `
