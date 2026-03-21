@@ -1,6 +1,20 @@
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
+  const getDashboardPath = () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const role = String(user.role || "").toLowerCase();
+      if (role === "admin") return "/admin/dashboard";
+      if (role === "student") return "/student/dashboard";
+      if (role === "professor") return "/professor/dashboard";
+      if (role === "hod") return "/hod/dashboard";
+    } catch (err) {
+      console.error(err);
+    }
+    return "/"; // fallback if no valid role
+  };
+
   return (
     <header
       style={{
@@ -14,7 +28,7 @@ const Navbar = () => {
       }}
     >
       {/* LOGO */}
-      <Link to="/home" style={{ textDecoration: "none" }}>
+      <Link to={getDashboardPath()} style={{ textDecoration: "none" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <svg width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
             {/* Blue rounded square background */}

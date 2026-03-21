@@ -5,7 +5,6 @@ import Login from "./pages/login";
 import Signup from "./pages/signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import Home from "./pages/home";
 
 import CreateDepartment from "./pages/CreateDepartment";
 import DepartmentList from "./pages/DepartmentsList";
@@ -49,7 +48,6 @@ function AppContent() {
         <Route path="/forgot" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        <Route path="/home" element={<Home />} />
 
         {/* ADMIN */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />

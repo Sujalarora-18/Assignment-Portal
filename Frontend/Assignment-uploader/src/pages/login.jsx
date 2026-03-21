@@ -48,7 +48,7 @@ export default function Login() {
       } else if (role === "hod") {
         navigate("/hod/dashboard", { replace: true });
       } else {
-        navigate("/home", { replace: true });
+        navigate("/", { replace: true });
       }
     } catch (err) {
       console.error("LOGIN ERROR:", err?.response ?? err);
@@ -185,10 +185,6 @@ export default function Login() {
               className="text-gray-900 hover:underline font-bold"
             >
               Sign up
-            </Link>
-            <span className="mx-2 text-gray-400">|</span>
-            <Link to="/home" className="text-gray-700 hover:underline">
-              Home
             </Link>
           </div>
 
