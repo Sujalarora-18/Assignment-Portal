@@ -9,9 +9,6 @@ export default function ReviewAssignment() {
   const [assignment, setAssignment] = useState(null);
   const [remark, setRemark] = useState("");
   const [signature, setSignature] = useState("");
-  const [otp, setOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-  const [devOtp, setDevOtp] = useState(""); // For development only
   const [msg, setMsg] = useState("");
   const [msgType, setMsgType] = useState("info"); // info, success, error
   const [loading, setLoading] = useState(false);
@@ -36,29 +33,6 @@ export default function ReviewAssignment() {
     }
   };
 
-  const sendOtp = async () => {
-    try {
-      setLoading(true);
-      setMsg("");
-      
-      const res = await api.request(`/api/professor/assignments/${id}/send-otp`, {
-        method: "POST",
-      });
-
-      setOtpSent(true);
-      setMsg("OTP sent to your email");
-      setMsgType("success");
-      
-      if (res.devOtp) {
-        setDevOtp(res.devOtp);
-      }
-    } catch (err) {
-      setMsg(err?.message || "Failed to send OTP");
-      setMsgType("error");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const approve = async () => {
     if (!signature.trim()) {
@@ -76,8 +50,7 @@ export default function ReviewAssignment() {
         body: JSON.stringify({ 
           remark, 
           signature,
-          otp: otpSent ? otp : undefined,
-          skipOtp: !otpSent // Skip OTP if not sent (for development)
+          skipOtp: true // Skip OTP for professor as requested
         }),
       });
 
@@ -334,44 +307,6 @@ export default function ReviewAssignment() {
                 />
               </div>
 
-              <div className="p-4 bg-gray-50 rounded-xl border">
-                <p className="text-sm text-gray-600 mb-3">
-                  For security, you can request an OTP to verify your identity before approval.
-                </p>
-                
-                {!otpSent ? (
-                  <button
-                    onClick={sendOtp}
-                    disabled={loading}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm disabled:opacity-50"
-                  >
-                    {loading ? "Sending..." : "Send OTP to Email"}
-                  </button>
-                ) : (
-                  <div className="space-y-2">
-                    <input
-                      type="text"
-                      placeholder="Enter OTP"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                      disabled={loading}
-                    />
-                    {devOtp && (
-                      <p className="text-xs text-orange-600">
-                        Dev OTP (remove in production): {devOtp}
-                      </p>
-                    )}
-                    <button
-                      onClick={sendOtp}
-                      disabled={loading}
-                      className="text-sm text-indigo-600 hover:underline"
-                    >
-                      Resend OTP
-                    </button>
-                  </div>
-                )}
-              </div>
 
               <div className="flex flex-col gap-3 pt-4">
                 <div className="flex gap-3">
