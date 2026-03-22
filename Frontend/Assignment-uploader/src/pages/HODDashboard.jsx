@@ -97,6 +97,10 @@ export default function HODDashboard() {
                     <strong>Student:</strong> {a.student?.name || "Unknown"}
                   </span>
                   <span>
+                    <strong>Approved By (Prof):</strong>{" "}
+                    {a.history?.slice().reverse().find(h => h.action === 'approved' || h.action === 'forwarded')?.reviewerId?.name || "Professor"}
+                  </span>
+                  <span>
                     <strong>Category:</strong> {a.category}
                   </span>
                   <span>

@@ -239,7 +239,13 @@ router.post(
         : "";
 
       const professorUser = await User.findById(req.user.id).select("departmentId");
-      const hod = await User.findOne({ role: "hod", departmentId: professorUser.departmentId });
+      let hod = null;
+      if (professorUser.departmentId) {
+        hod = await User.findOne({ role: "hod", departmentId: professorUser.departmentId });
+      }
+      if (!hod) {
+        hod = await User.findOne({ role: "hod" });
+      }
 
       assignment.status = "forwarded";
       if (hod) {

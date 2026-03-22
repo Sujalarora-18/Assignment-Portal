@@ -213,6 +213,9 @@ export default function HODReviewAssignment() {
                       >
                         {h.action.toUpperCase()}
                       </span>
+                      <span className="text-gray-700 font-bold ml-2">
+                        by {h.reviewerId?.name || "System"}
+                      </span>
                       <span className="text-gray-500 ml-2">
                         {new Date(h.date).toLocaleString()}
                       </span>

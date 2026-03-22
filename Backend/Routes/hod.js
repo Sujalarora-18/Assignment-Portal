@@ -18,9 +18,14 @@ router.get("/dashboard", verifyToken, isHod, async (req, res) => {
     const hodId = req.user.id;
     const pendingAssignments = await Assignment.find({
       status: "forwarded",
-      currentReviewer: hodId,
+      $or: [
+        { currentReviewer: hodId },
+        { currentReviewer: { $exists: false } },
+        { currentReviewer: null }
+      ]
     })
       .populate("student", "name email")
+      .populate("history.reviewerId", "name email")
       .sort({ createdAt: 1 })
       .lean();
 
@@ -51,7 +56,7 @@ router.get("/assignments/:id/review", verifyToken, isHod, async (req, res) => {
     if (!assignment)
       return res.status(404).json({ message: "Assignment not found" });
 
-    if (assignment.currentReviewer?.toString() !== req.user.id) {
+    if (assignment.currentReviewer && assignment.currentReviewer.toString() !== req.user.id) {
       return res.status(403).json({ message: "Forbidden" });
     }
 
@@ -70,7 +75,7 @@ router.post("/assignments/:id/approve", verifyToken, isHod, async (req, res) => 
     if (!assignment)
       return res.status(404).json({ message: "Assignment not found" });
 
-    if (assignment.currentReviewer?.toString() !== req.user.id) {
+    if (assignment.currentReviewer && assignment.currentReviewer.toString() !== req.user.id) {
       return res.status(403).json({ message: "Forbidden" });
     }
 
@@ -127,7 +132,7 @@ router.post("/assignments/:id/reject", verifyToken, isHod, async (req, res) => {
     if (!assignment)
       return res.status(404).json({ message: "Assignment not found" });
 
-    if (assignment.currentReviewer?.toString() !== req.user.id) {
+    if (assignment.currentReviewer && assignment.currentReviewer.toString() !== req.user.id) {
       return res.status(403).json({ message: "Forbidden" });
     }
 
