@@ -194,6 +194,10 @@ export default function MyAssignments() {
 }
 
 function StatusBadge({ status }) {
+  let displayStatus = status?.toUpperCase();
+  if (status === "forwarded") displayStatus = "APPROVED, WAITING FOR HOD";
+  if (status === "approved") displayStatus = "ASSIGNMENT SUBMITTED";
+
   const colors = {
     approved: "badge-approved",
     rejected: "badge-rejected",
@@ -204,7 +208,7 @@ function StatusBadge({ status }) {
 
   return (
     <span className={colors[status] || "badge-draft"}>
-      {status?.toUpperCase()}
+      {displayStatus}
     </span>
   );
 }

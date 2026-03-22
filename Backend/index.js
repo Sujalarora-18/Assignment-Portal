@@ -20,7 +20,7 @@ const hodRoutes = require("./Routes/hod");
 const professorRoutes=require("./Routes/professor");
 
 const User = require("./models/User");
-const { generateOTP, sendOTPEmail, sendWelcomeEmail, verifyTransporter } = require("./services/emailService");
+const { generateOTP, sendOTPEmail, sendWelcomeEmail, sendPasswordResetOTP, verifyTransporter } = require("./services/emailService");
 
 /* =======================
    APP INIT
@@ -335,30 +335,25 @@ app.post("/login", async (req, res) => {
   }
 });
 
+const resetOtpStore = new Map();
+
 app.post("/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
     if (!email || !email.trim())
       return res.status(400).json({ message: "Email is required" });
 
-    const user = await User.findOne({ email: email.trim().toLowerCase() });
-    if (user && process.env.SMTP_USER && process.env.SMTP_PASS) {
-      const token = crypto.randomBytes(32).toString("hex");
-      const expiresAt = Date.now() + 15 * 60 * 1000;
-      resetTokenStore.set(token, { userId: user._id.toString(), expiresAt });
+    const userEmail = email.trim().toLowerCase();
+    const user = await User.findOne({ email: userEmail });
+    if (user) {
+      const otp = generateOTP();
+      const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
+      resetOtpStore.set(userEmail, { otp, expiresAt });
 
-      const resetUrl = `${process.env.FRONTEND_URL || "http://localhost:5173"}/reset-password?token=${token}`;
-      await nodemailerTransporter.sendMail({
-        from: process.env.SMTP_USER,
-        to: user.email,
-        subject: "Password Reset - Assignment Uploader",
-        html: `
-          <h2>Password Reset Request</h2>
-          <p>Click the link below to reset your password (valid for 15 minutes):</p>
-          <p><a href="${resetUrl}">${resetUrl}</a></p>
-          <p>If you did not request this, please ignore this email.</p>
-        `,
-      });
+      const emailSent = await sendPasswordResetOTP(user.email, otp, user.name);
+      if (!emailSent) {
+        return res.status(500).json({ message: "Failed to send OTP email" });
+      }
     }
 
     return res.json({
@@ -372,22 +367,32 @@ app.post("/forgot-password", async (req, res) => {
 
 app.post("/reset-password", async (req, res) => {
   try {
-    const { token, password } = req.body;
-    if (!token || !password)
-      return res.status(400).json({ message: "Token and password are required" });
+    const { email, otp, password } = req.body;
+    if (!email || !otp || !password)
+      return res.status(400).json({ message: "Email, OTP, and password are required" });
 
-    const stored = resetTokenStore.get(token);
-    if (!stored || Date.now() > stored.expiresAt) {
-      resetTokenStore.delete(token);
-      return res.status(400).json({ message: "Invalid or expired reset link" });
+    const userEmail = email.trim().toLowerCase();
+    const stored = resetOtpStore.get(userEmail);
+    
+    if (!stored) {
+      return res.status(400).json({ message: "Invalid or expired reset session" });
+    }
+    
+    if (Date.now() > stored.expiresAt) {
+      resetOtpStore.delete(userEmail);
+      return res.status(400).json({ message: "OTP expired. Please request a new one." });
+    }
+    
+    if (stored.otp !== otp) {
+      return res.status(400).json({ message: "Invalid OTP" });
     }
 
-    const user = await User.findById(stored.userId);
+    const user = await User.findOne({ email: userEmail });
     if (!user) return res.status(400).json({ message: "User not found" });
 
     user.password = await bcrypt.hash(password, 10);
     await user.save();
-    resetTokenStore.delete(token);
+    resetOtpStore.delete(userEmail);
 
     return res.json({ message: "Password reset successfully. You can now login." });
   } catch (err) {

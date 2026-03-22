@@ -238,7 +238,17 @@ router.post(
         ? crypto.createHash("sha256").update(signature).digest("hex")
         : "";
 
-      assignment.status = "approved";
+      const professorUser = await User.findById(req.user.id).select("departmentId");
+      const hod = await User.findOne({ role: "hod", departmentId: professorUser.departmentId });
+
+      assignment.status = "forwarded";
+      if (hod) {
+        assignment.currentReviewer = hod._id;
+        assignment.reviewerId = hod._id;
+      } else {
+        assignment.currentReviewer = undefined;
+        assignment.reviewerId = undefined;
+      }
 
       assignment.history = assignment.history || [];
       assignment.history.push({
@@ -382,85 +392,6 @@ router.get(
       return res.json({ colleagues });
     } catch (err) {
       console.error("Colleagues Error:", err);
-      return res.status(500).json({ message: "Server error" });
-    }
-  }
-);
-
-const canReview = authorizeRoles("professor", "hod");
-
-router.post(
-  "/assignments/:id/forward",
-  verifyToken,
-  canReview,
-  async (req, res) => {
-    try {
-      const { recipientId, note = "" } = req.body;
-
-      if (!recipientId) {
-        return res.status(400).json({ message: "Recipient is required" });
-      }
-
-      const assignment = await Assignment.findById(req.params.id);
-      if (!assignment)
-        return res.status(404).json({ message: "Assignment not found" });
-
-      if (
-        assignment.currentReviewer?.toString() !== req.user.id &&
-        assignment.reviewerId?.toString() !== req.user.id
-      ) {
-        return res.status(403).json({ message: "Forbidden" });
-      }
-
-      if (assignment.status !== "submitted" && assignment.status !== "forwarded") {
-        return res
-          .status(400)
-          .json({ message: "Only submitted assignments can be forwarded" });
-      }
-
-      const currentUser = await User.findById(req.user.id).select("departmentId");
-      const recipient = await User.findById(recipientId).select("role departmentId name");
-      
-      if (!recipient || !["professor", "hod"].includes(recipient.role)) {
-        return res.status(400).json({ message: "Recipient must be a professor or HOD" });
-      }
-
-      if (
-        currentUser?.departmentId &&
-        recipient.departmentId &&
-        currentUser.departmentId.toString() !== recipient.departmentId.toString()
-      ) {
-        return res.status(400).json({ message: "Recipient must be in the same department" });
-      }
-
-      const previousReviewerId = req.user.id;
-      const previousReviewer = await User.findById(previousReviewerId).select("name");
-
-      assignment.status = "forwarded";
-      assignment.reviewerId = recipientId;
-      assignment.currentReviewer = recipientId;
-
-      assignment.history = assignment.history || [];
-      assignment.history.push({
-        reviewerId: previousReviewerId,
-        action: "forwarded",
-        remark: note || `Forwarded to ${recipient.name}`,
-        date: new Date()
-      });
-
-      await assignment.save();
-
-      await Notification.create({
-        user: recipientId,
-        message: `Assignment "${assignment.title}" has been forwarded to you by ${previousReviewer?.name || "a colleague"} for review`,
-        relatedAssignment: assignment._id
-      });
-
-      return res.json({
-        message: "Assignment forwarded successfully"
-      });
-    } catch (err) {
-      console.error("Forward Error:", err);
       return res.status(500).json({ message: "Server error" });
     }
   }

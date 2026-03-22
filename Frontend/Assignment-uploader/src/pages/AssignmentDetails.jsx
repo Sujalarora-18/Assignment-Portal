@@ -71,6 +71,10 @@ export default function AssignmentDetails() {
   };
 
   const getStatusBadge = (status) => {
+    let displayStatus = status?.toUpperCase();
+    if (status === "forwarded") displayStatus = "APPROVED, WAITING FOR HOD";
+    if (status === "approved") displayStatus = "ASSIGNMENT SUBMITTED";
+
     const styles = {
       draft: "bg-gray-500",
       submitted: "bg-yellow-500",
@@ -84,7 +88,7 @@ export default function AssignmentDetails() {
           styles[status] || "bg-gray-500"
         }`}
       >
-        {status?.toUpperCase()}
+        {displayStatus}
       </span>
     );
   };

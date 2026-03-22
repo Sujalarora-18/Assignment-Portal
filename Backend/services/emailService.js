@@ -131,9 +131,39 @@ async function sendWelcomeEmail(email, userName) {
   }
 }
 
+/**
+ * Send password reset OTP email
+ */
+async function sendPasswordResetOTP(email, otp, userName) {
+  try {
+    const htmlContent = `
+      <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+        <h2 style="color: #2563eb; text-align: center;">CampusFlow Password Reset</h2>
+        <p>Hello <strong>${userName}</strong>,</p>
+        <p>We received a request to reset your password. Your OTP is:</p>
+        <div style="background: #f3f4f6; padding: 15px; border-radius: 6px; text-align: center; margin: 20px 0;">
+          <p style="font-size: 32px; font-weight: bold; color: #dc2626; margin: 0; letter-spacing: 5px;">${otp}</p>
+        </div>
+        <p style="color: #666;">This OTP will expire in <strong>10 minutes</strong>.</p>
+        <p style="color: #666;">If you didn't request this, please ignore this email. Your password won't change until you access the link above and create a new one.</p>
+        <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+        <p style="text-align: center; color: #999; font-size: 12px;">© ${new Date().getFullYear()} CampusFlow. All rights reserved.</p>
+      </div>
+    `;
+
+    await sendBrevoEmail(email, userName, "CampusFlow - Password Reset OTP", htmlContent);
+    console.log(`✅ Password reset OTP sent to ${email} via Brevo API`);
+    return true;
+  } catch (err) {
+    console.error(`❌ Error sending password reset email: ${err.message}`);
+    return false;
+  }
+}
+
 module.exports = {
   generateOTP,
   sendOTPEmail,
   sendWelcomeEmail,
+  sendPasswordResetOTP,
   verifyTransporter,
 };

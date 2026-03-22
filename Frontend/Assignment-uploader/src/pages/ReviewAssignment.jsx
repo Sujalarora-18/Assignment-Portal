@@ -14,10 +14,6 @@ export default function ReviewAssignment() {
   const [loading, setLoading] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectRemark, setRejectRemark] = useState("");
-  const [showForwardModal, setShowForwardModal] = useState(false);
-  const [colleagues, setColleagues] = useState([]);
-  const [forwardRecipientId, setForwardRecipientId] = useState("");
-  const [forwardNote, setForwardNote] = useState("");
 
   useEffect(() => {
     fetchAssignment();
@@ -94,47 +90,6 @@ export default function ReviewAssignment() {
       setTimeout(() => nav("/professor/dashboard"), 1000);
     } catch (err) {
       setMsg(err?.message || err?.data?.message || "Rejection failed");
-      setMsgType("error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const openForwardModal = async () => {
-    setShowForwardModal(true);
-    setForwardRecipientId("");
-    setForwardNote("");
-    try {
-      const res = await api.request("/api/professor/colleagues");
-      setColleagues(res.colleagues || []);
-    } catch (err) {
-      setMsg("Failed to load colleagues");
-      setMsgType("error");
-    }
-  };
-
-  const forward = async () => {
-    if (!forwardRecipientId) {
-      setMsg("Please select a recipient");
-      setMsgType("error");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setMsg("");
-
-      await api.request(`/api/professor/assignments/${id}/forward`, {
-        method: "POST",
-        body: JSON.stringify({ recipientId: forwardRecipientId, note: forwardNote }),
-      });
-
-      setMsg("Assignment forwarded successfully");
-      setMsgType("success");
-      setShowForwardModal(false);
-      setTimeout(() => nav("/professor/dashboard"), 1000);
-    } catch (err) {
-      setMsg(err?.message || err?.data?.message || "Forward failed");
       setMsgType("error");
     } finally {
       setLoading(false);
@@ -326,14 +281,6 @@ export default function ReviewAssignment() {
                     Reject
                   </button>
                 </div>
-
-                <button
-                  onClick={openForwardModal}
-                  disabled={loading}
-                  className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold shadow disabled:opacity-50"
-                >
-                  Forward to Another Reviewer
-                </button>
               </div>
             </div>
           </div>
@@ -379,76 +326,6 @@ export default function ReviewAssignment() {
                 className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl disabled:opacity-50"
               >
                 {loading ? "Rejecting..." : "Confirm Reject"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showForwardModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md mx-4">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">
-              Forward Assignment
-            </h3>
-
-            <p className="text-sm text-gray-600 mb-4">
-              Forward this assignment to another professor or HOD in your department for review.
-            </p>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select Recipient *
-              </label>
-              <select
-                value={forwardRecipientId}
-                onChange={(e) => setForwardRecipientId(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-xl"
-              >
-                <option value="">-- Choose Professor or HOD --</option>
-                {colleagues.map((c) => (
-                  <option key={c._id} value={c._id}>
-                    {c.name} ({c.role})
-                  </option>
-                ))}
-              </select>
-              {colleagues.length === 0 && (
-                <p className="text-xs text-amber-600 mt-1">
-                  No colleagues found. Ensure you have a department assigned.
-                </p>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Forwarding Note (Optional)
-              </label>
-              <textarea
-                rows={3}
-                placeholder="Add a note for the new reviewer..."
-                value={forwardNote}
-                onChange={(e) => setForwardNote(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl"
-              />
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setShowForwardModal(false);
-                  setForwardRecipientId("");
-                  setForwardNote("");
-                }}
-                className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-xl"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={forward}
-                disabled={loading || !forwardRecipientId}
-                className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl disabled:opacity-50"
-              >
-                {loading ? "Forwarding..." : "Confirm Forward"}
               </button>
             </div>
           </div>

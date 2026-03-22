@@ -1,14 +1,20 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function ForgotPassword() {
+  const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const nav = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleRequestOtp = async (e) => {
     e.preventDefault();
     setError("");
     setMessage("");
@@ -18,12 +24,48 @@ export default function ForgotPassword() {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/forgot-password`, {
         email: email.trim(),
       });
-      setMessage(res.data?.message || "If this email is registered, you will receive password reset instructions.");
+      setMessage(res.data?.message || "OTP sent if the email is registered.");
+      setStep(2);
     } catch (err) {
       setError(
         err?.response?.data?.message ||
           err?.message ||
           "Request failed. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    setError("");
+    setMessage("");
+    
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/reset-password`, {
+        email: email.trim(),
+        otp,
+        password,
+      });
+      setMessage(res.data?.message || "Password reset successfully.");
+      setTimeout(() => nav("/"), 2000);
+    } catch (err) {
+      setError(
+        err?.response?.data?.message ||
+          err?.message ||
+          "Reset failed. The OTP might be invalid or expired."
       );
     } finally {
       setLoading(false);
@@ -40,10 +82,10 @@ export default function ForgotPassword() {
             </div>
             <div>
               <h1 className="text-2xl font-extrabold text-gray-900">
-                Forgot Password
+                {step === 1 ? "Forgot Password" : "Reset Password"}
               </h1>
               <p className="text-sm font-medium text-gray-600">
-                Enter your email to receive reset instructions
+                {step === 1 ? "Enter your email to receive an OTP" : "Enter the OTP sent to your email"}
               </p>
             </div>
           </div>
@@ -60,24 +102,64 @@ export default function ForgotPassword() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              className="input-strong"
-              required
-            />
+          {step === 1 ? (
+            <form onSubmit={handleRequestOtp} className="space-y-4">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                className="input-strong"
+                required
+              />
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full py-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
-            >
-              {loading ? "Sending..." : "Send Reset Link"}
-            </button>
-          </form>
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-primary w-full py-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                {loading ? "Sending..." : "Send Reset OTP"}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleResetPassword} className="space-y-4">
+              <input
+                type="text"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                placeholder="Enter 6-digit OTP"
+                className="input-strong tracking-widest"
+                required
+                maxLength={6}
+              />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="New Password"
+                className="input-strong"
+                required
+                minLength={6}
+              />
+               <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm New Password"
+                className="input-strong"
+                required
+                minLength={6}
+              />
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-primary w-full py-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                {loading ? "Resetting..." : "Reset Password"}
+              </button>
+            </form>
+          )}
 
           <div className="mt-6 text-center">
             <Link

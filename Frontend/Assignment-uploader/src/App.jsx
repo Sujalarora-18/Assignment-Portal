@@ -4,7 +4,6 @@ import Navbar from "./pages/Navbar";
 import Login from "./pages/login";
 import Signup from "./pages/signup";
 import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
 
 import CreateDepartment from "./pages/CreateDepartment";
 import DepartmentList from "./pages/DepartmentsList";
@@ -34,7 +33,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 
 function AppContent() {
   const location = useLocation();
-  const hideNavbarRoutes = ["/", "/signup", "/forgot", "/reset-password"];
+  const hideNavbarRoutes = ["/", "/signup", "/forgot"];
   const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
 
   return (
@@ -46,7 +45,6 @@ function AppContent() {
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
 
 
         {/* ADMIN */}
