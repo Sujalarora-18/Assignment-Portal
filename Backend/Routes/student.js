@@ -9,6 +9,7 @@ const Assignment = require("../models/Assignment");
 const Notification = require("../models/Notification");
 const User = require("../models/User");
 const { verifyToken, isStudent } = require("../middleware/auth");
+const { extractTextFromPDF, checkPlagiarism } = require("../utils/plagiarismChecker");
 
 const UPLOAD_DIR = path.join(__dirname, "..", "uploads");
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
@@ -100,6 +101,11 @@ router.post(
       if (!title)
         return res.status(400).json({ message: "Title is required" });
 
+      const filePathFull = path.join(UPLOAD_DIR, req.file.filename);
+      const extractedText = await extractTextFromPDF(filePathFull);
+      
+      const { maxScore, matchId } = await checkPlagiarism(extractedText, req.user.id, category);
+
       const a = new Assignment({
         title,
         description,
@@ -109,6 +115,9 @@ router.post(
         fileSize: req.file.size,
         student: req.user.id,
         status: "draft",
+        extractedText,
+        plagiarismScore: maxScore,
+        plagiarismMatch: matchId || undefined,
       });
 
       await a.save();
@@ -141,6 +150,10 @@ router.post(
       const created = [];
 
       for (const f of files) {
+        const filePathFull = path.join(UPLOAD_DIR, f.filename);
+        const extractedText = await extractTextFromPDF(filePathFull);
+        const { maxScore, matchId } = await checkPlagiarism(extractedText, req.user.id, category);
+
         const a = new Assignment({
           title: f.originalname,
           description,
@@ -150,6 +163,9 @@ router.post(
           fileSize: f.size,
           student: req.user.id,
           status: "draft",
+          extractedText,
+          plagiarismScore: maxScore,
+          plagiarismMatch: matchId || undefined,
         });
         await a.save();
         created.push(a);
@@ -352,6 +368,14 @@ router.post(
         assignment.fileOriginalName = req.file.originalname;
         assignment.filePath = "/uploads/" + req.file.filename;
         assignment.fileSize = req.file.size;
+
+        const filePathFull = path.join(UPLOAD_DIR, req.file.filename);
+        const extractedText = await extractTextFromPDF(filePathFull);
+        const { maxScore, matchId } = await checkPlagiarism(extractedText, req.user.id, assignment.category || "Assignment");
+        
+        assignment.extractedText = extractedText;
+        assignment.plagiarismScore = maxScore;
+        assignment.plagiarismMatch = matchId || undefined;
       } else {
         assignment.history.push({
           reviewerId: previousReviewerId,

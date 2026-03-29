@@ -50,6 +50,11 @@ router.get("/assignments/:id/review", verifyToken, isHod, async (req, res) => {
   try {
     const assignment = await Assignment.findById(req.params.id)
       .populate("student", "name email")
+      .populate({
+        path: "plagiarismMatch",
+        select: "title student",
+        populate: { path: "student", select: "name" }
+      })
       .populate("history.reviewerId", "name email")
       .lean();
 

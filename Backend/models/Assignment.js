@@ -82,6 +82,21 @@ const assignmentSchema = new mongoose.Schema(
       ref: "Department"
     },
 
+    plagiarismScore: {
+      type: Number,
+      default: 0
+    },
+
+    plagiarismMatch: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Assignment"
+    },
+
+    extractedText: {
+      type: String,
+      select: false
+    },
+
     history: [historySchema]
   },
   {
