@@ -66,11 +66,7 @@ export default function StudentDashboard() {
         </h1>
 
         <div className="flex gap-3">
-          <Link to="/home">
-            <button className="px-5 py-2.5 bg-white hover:bg-gray-100 text-gray-900 rounded-xl font-bold border border-gray-300 transition shadow-sm">
-              Home
-            </button>
-          </Link>
+
           <button
             onClick={logout}
             className="px-5 py-2.5 bg-gray-900 hover:bg-gray-700 text-white rounded-xl font-bold border border-gray-900 transition shadow-sm"

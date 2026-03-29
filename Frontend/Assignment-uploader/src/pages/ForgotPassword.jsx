@@ -47,8 +47,9 @@ export default function ForgotPassword() {
       return;
     }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      setError("Password must be at least 8 characters, contain one uppercase letter and one special character.");
       return;
     }
 
@@ -139,7 +140,7 @@ export default function ForgotPassword() {
                 placeholder="New Password"
                 className="input-strong"
                 required
-                minLength={6}
+                minLength={8}
               />
                <input
                 type="password"
@@ -148,7 +149,7 @@ export default function ForgotPassword() {
                 placeholder="Confirm New Password"
                 className="input-strong"
                 required
-                minLength={6}
+                minLength={8}
               />
 
               <button

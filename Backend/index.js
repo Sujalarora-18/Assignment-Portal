@@ -166,6 +166,13 @@ app.post("/api/signup", async (req, res) => {
       return res.status(400).json({ message: "All fields required" });
     }
 
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({ 
+        message: "Password must be at least 8 characters long, contain at least one uppercase letter, and at least one unique (special) character" 
+      });
+    }
+
     // Check if already registered (and verified)
     const existing = await User.findOne({ email });
     if (existing && existing.isVerified) {
@@ -370,6 +377,13 @@ app.post("/reset-password", async (req, res) => {
     const { email, otp, password } = req.body;
     if (!email || !otp || !password)
       return res.status(400).json({ message: "Email, OTP, and password are required" });
+
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({ 
+        message: "Password must be at least 8 characters long, contain at least one uppercase letter, and at least one unique (special) character" 
+      });
+    }
 
     const userEmail = email.trim().toLowerCase();
     const stored = resetOtpStore.get(userEmail);

@@ -18,6 +18,13 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if (!passwordRegex.test(form.password)) {
+      setError("Password must be at least 8 characters, contain one uppercase letter and one special character.");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/signup`, form);

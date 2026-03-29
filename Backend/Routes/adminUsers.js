@@ -32,7 +32,14 @@ router.post("/users/create", async (req, res) => {
 
     let plainPassword = password;
     if (!plainPassword) {
-      plainPassword = Math.random().toString(36).slice(-8);
+      plainPassword = "P@" + Math.random().toString(36).slice(-6) + "A";
+    } else {
+      const passwordRegex = /^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+      if (!passwordRegex.test(plainPassword)) {
+        return res.status(400).json({ 
+          message: "Password must be at least 8 characters long, contain at least one uppercase letter, and at least one unique (special) character" 
+        });
+      }
     }
 
     const hashedPassword = await bcrypt.hash(plainPassword, 10);
@@ -232,6 +239,12 @@ router.put("/users/:id/update", async (req, res) => {
     }
 
     if (password && password.trim().length > 0) {
+      const passwordRegex = /^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+      if (!passwordRegex.test(password.trim())) {
+        return res.status(400).json({ 
+          message: "Password must be at least 8 characters long, contain at least one uppercase letter, and at least one unique (special) character" 
+        });
+      }
       const hashedPassword = await bcrypt.hash(password.trim(), 10);
       user.password = hashedPassword;
     }

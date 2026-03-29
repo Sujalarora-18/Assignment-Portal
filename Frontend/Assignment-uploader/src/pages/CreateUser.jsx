@@ -48,6 +48,15 @@ export default function CreateUser() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(null);
+
+    if (form.password) {
+      const passwordRegex = /^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+      if (!passwordRegex.test(form.password)) {
+        setMessage("Password must be at least 8 characters, contain one uppercase letter and one special character.");
+        return;
+      }
+    }
+
     setSubmitting(true);
 
     try {

@@ -141,11 +141,7 @@ export default function ProfessorDashboard() {
             )}
           </div>
 
-          <Link to="/home">
-            <button className="px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 rounded-xl font-bold border border-gray-300">
-              Home
-            </button>
-          </Link>
+
 
           <button
             onClick={logout}
