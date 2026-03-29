@@ -25,12 +25,17 @@ async function testExtraction() {
          return process.exit(0);
     }
     
-    const text = await extractTextFromPDF(filePath);
-    console.log("Extracted text length:", text.length);
-    if (text.length > 0) {
-        console.log("Success:", text.substring(0, 50));
-    } else {
-        console.log("Extraction returned empty string");
+    console.log("File exists! Extracting...");
+    try {
+      const text = await extractTextFromPDF(filePath);
+      console.log("Extracted text length:", text.length);
+      if (text.length > 0) {
+          console.log("Success:", text.substring(0, 50));
+      } else {
+          console.log("Extraction returned empty string");
+      }
+    } catch (e) {
+      console.error("Extraction crashed:", e);
     }
     
     process.exit(0);
