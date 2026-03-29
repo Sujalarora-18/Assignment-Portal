@@ -1,0 +1,289 @@
+[
+  {
+    "_id": "698467fe4f552ed9366f388f",
+    "student": "698467e24f552ed9366f388a",
+    "title": "dq",
+    "description": "24g",
+    "category": "Assignment",
+    "filePath": "/uploads/1770285054149-145070262.pdf",
+    "fileOriginalName": "1.pdf",
+    "fileSize": 57767,
+    "status": "submitted",
+    "history": [
+      {
+        "reviewerId": "69846d24b1c8c4aa83103f1d",
+        "action": "submitted",
+        "date": "2026-02-05T10:14:50.612Z",
+        "_id": "69846d9ab1c8c4aa83103f6a"
+      }
+    ],
+    "createdAt": "2026-02-05T09:50:54.174Z",
+    "updatedAt": "2026-02-05T10:14:50.613Z",
+    "__v": 1,
+    "currentReviewer": "69846d24b1c8c4aa83103f1d",
+    "reviewerId": "69846d24b1c8c4aa83103f1d"
+  },
+  {
+    "_id": "69846d66b1c8c4aa83103f23",
+    "student": "698467e24f552ed9366f388a",
+    "title": "1.pdf",
+    "description": "2ef2",
+    "category": "Assignment",
+    "filePath": "/uploads/1770286438661-764235957.pdf",
+    "fileOriginalName": "1.pdf",
+    "fileSize": 57767,
+    "status": "submitted",
+    "history": [
+      {
+        "reviewerId": "69846d24b1c8c4aa83103f1d",
+        "action": "submitted",
+        "date": "2026-02-05T10:14:37.746Z",
+        "_id": "69846d8db1c8c4aa83103f55"
+      }
+    ],
+    "createdAt": "2026-02-05T10:13:58.866Z",
+    "updatedAt": "2026-02-05T10:14:37.747Z",
+    "__v": 1,
+    "currentReviewer": "69846d24b1c8c4aa83103f1d",
+    "reviewerId": "69846d24b1c8c4aa83103f1d"
+  },
+  {
+    "_id": "69846d66b1c8c4aa83103f25",
+    "student": "698467e24f552ed9366f388a",
+    "title": "2.pdf",
+    "description": "2ef2",
+    "category": "Assignment",
+    "filePath": "/uploads/1770286438701-184040006.pdf",
+    "fileOriginalName": "2.pdf",
+    "fileSize": 357408,
+    "status": "submitted",
+    "history": [
+      {
+        "reviewerId": "69846d24b1c8c4aa83103f1d",
+        "action": "submitted",
+        "date": "2026-02-05T10:14:23.485Z",
+        "_id": "69846d7fb1c8c4aa83103f41"
+      }
+    ],
+    "createdAt": "2026-02-05T10:13:58.932Z",
+    "updatedAt": "2026-02-05T10:14:23.486Z",
+    "__v": 1,
+    "currentReviewer": "69846d24b1c8c4aa83103f1d",
+    "reviewerId": "69846d24b1c8c4aa83103f1d"
+  },
+  {
+    "_id": "69846d66b1c8c4aa83103f27",
+    "student": "698467e24f552ed9366f388a",
+    "title": "dsa.pdf",
+    "description": "2ef2",
+    "category": "Assignment",
+    "filePath": "/uploads/1770286438822-614882641.pdf",
+    "fileOriginalName": "dsa.pdf",
+    "fileSize": 365578,
+    "status": "submitted",
+    "history": [
+      {
+        "reviewerId": "69846d24b1c8c4aa83103f1d",
+        "action": "submitted",
+        "date": "2026-02-05T10:14:10.485Z",
+        "_id": "69846d72b1c8c4aa83103f2e"
+      }
+    ],
+    "createdAt": "2026-02-05T10:13:58.998Z",
+    "updatedAt": "2026-02-05T10:14:10.489Z",
+    "__v": 1,
+    "currentReviewer": "69846d24b1c8c4aa83103f1d",
+    "reviewerId": "69846d24b1c8c4aa83103f1d"
+  },
+  {
+    "_id": "69882e157cc224411325848f",
+    "student": "698467e24f552ed9366f388a",
+    "title": "qef",
+    "description": "2",
+    "category": "Assignment",
+    "filePath": "/uploads/1770532373225-328287667.pdf",
+    "fileOriginalName": "dsa.pdf",
+    "fileSize": 365578,
+    "status": "submitted",
+    "history": [
+      {
+        "reviewerId": "69846d24b1c8c4aa83103f1d",
+        "action": "submitted",
+        "date": "2026-02-08T06:33:07.848Z",
+        "_id": "69882e237cc224411325849b"
+      }
+    ],
+    "createdAt": "2026-02-08T06:32:53.472Z",
+    "updatedAt": "2026-02-08T06:33:07.851Z",
+    "__v": 1,
+    "currentReviewer": "69846d24b1c8c4aa83103f1d",
+    "reviewerId": "69846d24b1c8c4aa83103f1d"
+  },
+  {
+    "_id": "69bc41b54f4f8734577296ea",
+    "student": "698467e24f552ed9366f388a",
+    "title": "ff",
+    "description": "ff",
+    "category": "Thesis",
+    "filePath": "/uploads/1773945269205-153585582.pdf",
+    "fileOriginalName": "INTERNA Graduate Trainee Engineer Technical Support Job Description (1).pdf",
+    "fileSize": 147812,
+    "status": "forwarded",
+    "history": [
+      {
+        "reviewerId": "69846d24b1c8c4aa83103f1d",
+        "action": "submitted",
+        "date": "2026-03-19T18:35:01.265Z",
+        "_id": "69bc41d54f4f8734577296f7"
+      },
+      {
+        "reviewerId": "69846d24b1c8c4aa83103f1d",
+        "action": "approved",
+        "remark": "",
+        "signature": "a044a02093b89e9666d668e43fc75bf59eae79084c5b187e9192f284f2f3adf4",
+        "date": "2026-03-22T11:00:22.670Z",
+        "_id": "69bfcbc69a53cbcbf00eedf5"
+      }
+    ],
+    "createdAt": "2026-03-19T18:34:29.319Z",
+    "updatedAt": "2026-03-22T11:00:22.680Z",
+    "__v": 2,
+    "currentReviewer": "69883917c703ae338a394259",
+    "reviewerId": "69883917c703ae338a394259"
+  },
+  {
+    "_id": "69be264e64682c4cb228dfce",
+    "student": "69bbd1b56013b63ff1274639",
+    "title": "resume_uTrade.pdf",
+    "description": "all",
+    "category": "Assignment",
+    "filePath": "/uploads/1774069326155-859572752.pdf",
+    "fileOriginalName": "resume_uTrade.pdf",
+    "fileSize": 102035,
+    "status": "approved",
+    "history": [
+      {
+        "reviewerId": "69846d24b1c8c4aa83103f1d",
+        "action": "submitted",
+        "date": "2026-03-21T05:03:07.089Z",
+        "_id": "69be268b64682c4cb228dfea"
+      },
+      {
+        "reviewerId": "69846d24b1c8c4aa83103f1d",
+        "action": "approved",
+        "remark": "",
+        "signature": "a871c47a7f48a12b38a994e48a9659fab5d6376f3dbce37559bcb617efe8662d",
+        "date": "2026-03-21T05:13:24.936Z",
+        "_id": "69be28f43e0647a66287bc30"
+      }
+    ],
+    "createdAt": "2026-03-21T05:02:06.231Z",
+    "updatedAt": "2026-03-21T05:13:24.943Z",
+    "__v": 2,
+    "currentReviewer": "69846d24b1c8c4aa83103f1d",
+    "reviewerId": "69846d24b1c8c4aa83103f1d"
+  },
+  {
+    "_id": "69be264e64682c4cb228dfd0",
+    "student": "69bbd1b56013b63ff1274639",
+    "title": "resume_RM_applications.pdf",
+    "description": "all",
+    "category": "Assignment",
+    "filePath": "/uploads/1774069326187-904738435.pdf",
+    "fileOriginalName": "resume_RM_applications.pdf",
+    "fileSize": 102304,
+    "status": "forwarded",
+    "history": [
+      {
+        "reviewerId": "69846d24b1c8c4aa83103f1d",
+        "action": "submitted",
+        "date": "2026-03-21T05:02:42.103Z",
+        "_id": "69be267264682c4cb228dfd7"
+      },
+      {
+        "reviewerId": "69846d24b1c8c4aa83103f1d",
+        "action": "approved",
+        "remark": "",
+        "signature": "9b7ecc6eeb83abf9ade10fe38865df4499be3568dcc507ae2ec3b44989cb0093",
+        "date": "2026-03-22T10:40:55.860Z",
+        "_id": "69bfc737ee5d7ec7e2966a46"
+      }
+    ],
+    "createdAt": "2026-03-21T05:02:06.326Z",
+    "updatedAt": "2026-03-22T10:40:55.861Z",
+    "__v": 2,
+    "currentReviewer": "69883917c703ae338a394259",
+    "reviewerId": "69883917c703ae338a394259"
+  },
+  {
+    "_id": "69be29ee3e0647a66287bc55",
+    "student": "69bbd1b56013b63ff1274639",
+    "title": "usu",
+    "description": "xrt",
+    "category": "Assignment",
+    "filePath": "/uploads/1774070254750-498692642.pdf",
+    "fileOriginalName": "Multi.pdf",
+    "fileSize": 6588,
+    "status": "draft",
+    "history": [],
+    "createdAt": "2026-03-21T05:17:34.753Z",
+    "updatedAt": "2026-03-21T05:17:34.753Z",
+    "__v": 0
+  },
+  {
+    "_id": "69be2ba9d7b8ad9e830d9e17",
+    "student": "69bbd1b56013b63ff1274639",
+    "title": "11",
+    "description": "11",
+    "category": "Assignment",
+    "filePath": "/uploads/1774070697092-701915338.pdf",
+    "fileOriginalName": "autoCV__1_ (2).pdf",
+    "fileSize": 102116,
+    "status": "submitted",
+    "history": [
+      {
+        "reviewerId": "69846d24b1c8c4aa83103f1d",
+        "action": "submitted",
+        "date": "2026-03-21T05:25:12.398Z",
+        "_id": "69be2bb8d7b8ad9e830d9e22"
+      }
+    ],
+    "createdAt": "2026-03-21T05:24:57.166Z",
+    "updatedAt": "2026-03-21T05:25:12.401Z",
+    "__v": 1,
+    "currentReviewer": "69846d24b1c8c4aa83103f1d",
+    "reviewerId": "69846d24b1c8c4aa83103f1d"
+  },
+  {
+    "_id": "69bfc19e0b38d8dac8a19eb4",
+    "student": "69bbd1b56013b63ff1274639",
+    "title": "22",
+    "description": "2",
+    "category": "Assignment",
+    "filePath": "/uploads/1774174622178-413690227.pdf",
+    "fileOriginalName": "resume_uTrade.pdf",
+    "fileSize": 102035,
+    "status": "forwarded",
+    "history": [
+      {
+        "reviewerId": "69846d24b1c8c4aa83103f1d",
+        "action": "submitted",
+        "date": "2026-03-22T10:17:21.255Z",
+        "_id": "69bfc1b10b38d8dac8a19ec0"
+      },
+      {
+        "reviewerId": "69846d24b1c8c4aa83103f1d",
+        "action": "approved",
+        "remark": "",
+        "signature": "3337662c104f8d7a8871d838e033cbf6dce8d1dcf6466417c0bf9fa875a46bcb",
+        "date": "2026-03-22T10:38:56.192Z",
+        "_id": "69bfc6c0ee5d7ec7e2966a1d"
+      }
+    ],
+    "createdAt": "2026-03-22T10:17:02.205Z",
+    "updatedAt": "2026-03-22T10:38:56.200Z",
+    "__v": 2,
+    "currentReviewer": "69883917c703ae338a394259",
+    "reviewerId": "69883917c703ae338a394259"
+  }
+]

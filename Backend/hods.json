@@ -1,0 +1,12 @@
+[
+  {
+    "_id": "69883917c703ae338a394259",
+    "name": "hod",
+    "email": "hod@gmail.com",
+    "password": "$2b$10$10Fnma/qWdEaoJSv68JS/OixbC4KhSExMIcA2lbM9Wk0S9jvhYSRu",
+    "role": "hod",
+    "createdAt": "2026-02-08T07:19:52.031Z",
+    "updatedAt": "2026-02-08T07:19:52.031Z",
+    "__v": 0
+  }
+]
