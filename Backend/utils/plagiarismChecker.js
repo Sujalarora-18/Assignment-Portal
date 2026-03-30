@@ -1,34 +1,46 @@
 const fs = require('fs');
-const pdfParse = require('pdf-parse');
 const stringSimilarity = require('string-similarity');
 const Assignment = require('../models/Assignment');
 
 /**
- * Extracts text from a PDF file
- * @param {string} filePath - Path to the PDF file
- * @returns {Promise<string>} Extracted text
+ * Extracts text from a PDF file using pdfjs-dist (compatible with Node.js v22+)
+ * @param {string} filePath - Absolute path to the PDF file
+ * @returns {Promise<string>} Extracted and cleaned text
  */
 const extractTextFromPDF = async (filePath) => {
   try {
+    // Dynamic import because pdfjs-dist is an ES module
+    const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs');
+    
     const dataBuffer = fs.readFileSync(filePath);
-    const data = await pdfParse(dataBuffer);
-    
-    // Clean text: remove excessive whitespaces and make it lowercase
-    const cleanedText = (data.text || '').replace(/\s+/g, ' ').trim().toLowerCase();
-    
+    const uint8Array = new Uint8Array(dataBuffer);
+
+    const loadingTask = pdfjsLib.getDocument({ data: uint8Array });
+    const pdf = await loadingTask.promise;
+
+    let fullText = '';
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      const pageText = content.items.map(item => item.str).join(' ');
+      fullText += pageText + ' ';
+    }
+
+    const cleanedText = fullText.replace(/\s+/g, ' ').trim().toLowerCase();
+    console.log('[Plagiarism] Extracted text length from PDF:', cleanedText.length);
     return cleanedText;
   } catch (error) {
-    console.error('Error extracting text from PDF:', error);
+    console.error('[Plagiarism] Error extracting text from PDF:', error.message);
     return '';
   }
 };
 
 /**
- * Compares the new assignment's text against all other submissions
+ * Compares the new assignment's text against all other submissions in the DB
  * @param {string} newText - The extracted text of the new assignment
  * @param {string} studentId - The ID of the student submitting the assignment
- * @param {string} category - The category of the assignment (to only compare within the same category)
- * @returns {Promise<{ maxScore: number, matchId: string | null }>} Highest similarity score and matched assignment ID
+ * @param {string} category - The category of the assignment
+ * @returns {Promise<{ maxScore: number, matchId: string | null }>}
  */
 const checkPlagiarism = async (newText, studentId, category) => {
   if (!newText || newText.length < 50) {
@@ -36,19 +48,16 @@ const checkPlagiarism = async (newText, studentId, category) => {
     return { maxScore: 0, matchId: null };
   }
 
-  console.log('[Plagiarism] Checking text of length:', newText.length);
+  console.log('[Plagiarism] Checking text of length:', newText.length, 'for student:', studentId);
+
   try {
-    // Find all other assignments that have extracted text and belong to other students
-    // NOTE: '+extractedText' is required because the field has select:false in schema
+    // Find all other assignments with extracted text from other students
     const otherAssignments = await Assignment.find({
       student: { $ne: studentId },
       extractedText: { $exists: true, $ne: '' }
     }).select('extractedText _id');
 
     console.log('[Plagiarism] Found', otherAssignments.length, 'other assignments to compare against.');
-    otherAssignments.forEach((doc, i) => {
-      console.log(`  [${i}] id=${doc._id} textLength=${doc.extractedText ? doc.extractedText.length : 0}`);
-    });
 
     if (otherAssignments.length === 0) {
       return { maxScore: 0, matchId: null };
@@ -57,26 +66,20 @@ const checkPlagiarism = async (newText, studentId, category) => {
     let maxScore = 0;
     let matchId = null;
 
-    // Compare with all other texts
     for (const doc of otherAssignments) {
-        if (!doc.extractedText || doc.extractedText.length < 50) continue;
-        
-        // Use Dice's Coefficient to find similarity
-        const score = stringSimilarity.compareTwoStrings(newText, doc.extractedText);
-        
-        if (score > maxScore) {
-            maxScore = score;
-            matchId = doc._id;
-        }
+      if (!doc.extractedText || doc.extractedText.length < 50) continue;
+      const score = stringSimilarity.compareTwoStrings(newText, doc.extractedText);
+      if (score > maxScore) {
+        maxScore = score;
+        matchId = doc._id;
+      }
     }
 
-    // Convert score from 0-1 range to 0-100 percentage
     const roundedScore = Math.round(maxScore * 100);
     console.log('[Plagiarism] Final score:', roundedScore, '%, matchId:', matchId);
-
     return { maxScore: roundedScore, matchId };
   } catch (error) {
-    console.error('Error checking plagiarism:', error);
+    console.error('[Plagiarism] Error during comparison:', error.message);
     return { maxScore: 0, matchId: null };
   }
 };
