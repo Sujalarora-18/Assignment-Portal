@@ -94,7 +94,6 @@ const assignmentSchema = new mongoose.Schema(
 
     extractedText: {
       type: String,
-      select: false
     },
 
     history: [historySchema]

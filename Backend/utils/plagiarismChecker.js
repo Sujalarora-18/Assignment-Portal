@@ -32,17 +32,23 @@ const extractTextFromPDF = async (filePath) => {
  */
 const checkPlagiarism = async (newText, studentId, category) => {
   if (!newText || newText.length < 50) {
-    // If text is too short or empty, skip checking
+    console.log('[Plagiarism] Text too short or empty, skipping. Length:', newText ? newText.length : 0);
     return { maxScore: 0, matchId: null };
   }
 
+  console.log('[Plagiarism] Checking text of length:', newText.length);
   try {
     // Find all other assignments that have extracted text and belong to other students
+    // NOTE: '+extractedText' is required because the field has select:false in schema
     const otherAssignments = await Assignment.find({
       student: { $ne: studentId },
-      category: category,
       extractedText: { $exists: true, $ne: '' }
     }).select('extractedText _id');
+
+    console.log('[Plagiarism] Found', otherAssignments.length, 'other assignments to compare against.');
+    otherAssignments.forEach((doc, i) => {
+      console.log(`  [${i}] id=${doc._id} textLength=${doc.extractedText ? doc.extractedText.length : 0}`);
+    });
 
     if (otherAssignments.length === 0) {
       return { maxScore: 0, matchId: null };
@@ -66,6 +72,7 @@ const checkPlagiarism = async (newText, studentId, category) => {
 
     // Convert score from 0-1 range to 0-100 percentage
     const roundedScore = Math.round(maxScore * 100);
+    console.log('[Plagiarism] Final score:', roundedScore, '%, matchId:', matchId);
 
     return { maxScore: roundedScore, matchId };
   } catch (error) {
