@@ -3,6 +3,9 @@ const router = express.Router();
 const path = require("path");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+const fs = require("fs");
+const pdfParse = require("pdf-parse");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const Assignment = require("../models/Assignment");
 const Notification = require("../models/Notification");
@@ -408,4 +411,116 @@ router.get(
   }
 );
 
+// ===========================
+//  AI FEEDBACK GENERATION
+// ===========================
+
+router.post(
+  "/assignments/:id/generate-feedback",
+  verifyToken,
+  isProfessor,
+  async (req, res) => {
+    try {
+      const assignment = await Assignment.findById(req.params.id).populate(
+        "student",
+        "name"
+      );
+      if (!assignment)
+        return res.status(404).json({ message: "Assignment not found" });
+
+      // Authorization check
+      if (
+        assignment.currentReviewer?.toString() !== req.user.id &&
+        assignment.reviewerId?.toString() !== req.user.id
+      ) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
+      // --- Step 1: Get PDF text ---
+      let pdfText = assignment.extractedText || "";
+
+      if (!pdfText) {
+        // Resolve the file path
+        let filePath = assignment.filePath;
+        if (!path.isAbsolute(filePath)) {
+          filePath = path.join(__dirname, "..", filePath);
+        }
+
+        if (!fs.existsSync(filePath)) {
+          return res
+            .status(400)
+            .json({ message: "Assignment PDF not found on server." });
+        }
+
+        const dataBuffer = fs.readFileSync(filePath);
+        const parsed = await pdfParse(dataBuffer);
+        pdfText = parsed.text || "";
+
+        // Cache it on the assignment for future calls
+        if (pdfText) {
+          assignment.extractedText = pdfText;
+          await assignment.save();
+        }
+      }
+
+      if (!pdfText || pdfText.trim().length < 50) {
+        return res.status(400).json({
+          message:
+            "Could not extract enough text from the PDF. The file may be image-based or encrypted.",
+        });
+      }
+
+      // --- Step 2: Call Gemini ---
+      if (!process.env.GEMINI_API_KEY) {
+        return res
+          .status(500)
+          .json({ message: "AI service not configured. GEMINI_API_KEY missing." });
+      }
+
+      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+      const prompt = `You are an academic professor reviewing a student's ${assignment.category}.
+
+Assignment Title: "${assignment.title}"
+Student Name: ${assignment.student?.name || "Unknown"}
+${assignment.description ? `Assignment Description: ${assignment.description}` : ""}
+
+Here is the content extracted from the submission PDF:
+---
+${pdfText.substring(0, 8000)}
+---
+
+Please write a professional, constructive academic feedback for this submission. Structure your response with these sections:
+
+**Overall Assessment:** (1-2 sentences summarizing the work)
+
+**Strengths:**
+- List 2-3 strong points
+
+**Areas for Improvement:**
+- List 2-3 specific things the student should improve
+
+**Suggestions:**
+- List 1-2 actionable recommendations
+
+**Final Verdict:** (One of: Excellent work, Good work with minor revisions, Needs significant revision, or Does not meet requirements)
+
+Keep the tone professional, specific to the content, and constructive. Do not be generic.`;
+
+      const result = await model.generateContent(prompt);
+      const feedback = result.response.text();
+
+      return res.json({ feedback });
+    } catch (err) {
+      console.error("AI Feedback Generation Error:", err);
+      if (err.message?.includes("API_KEY")) {
+        return res.status(401).json({ message: "Invalid Gemini API key." });
+      }
+      return res.status(500).json({ message: "AI feedback generation failed." });
+    }
+  }
+);
+
 module.exports = router;
+

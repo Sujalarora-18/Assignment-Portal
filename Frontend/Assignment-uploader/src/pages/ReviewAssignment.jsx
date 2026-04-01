@@ -2,6 +2,30 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../Api/api";
 
+// Simple markdown-like renderer for Gemini output
+function FeedbackRenderer({ text }) {
+  if (!text) return null;
+  const lines = text.split("\n");
+  return (
+    <div className="feedback-render">
+      {lines.map((line, i) => {
+        if (line.startsWith("**") && line.endsWith("**")) {
+          return <h4 key={i} className="fb-heading">{line.replace(/\*\*/g, "")}</h4>;
+        }
+        if (/^\*\*(.*?)\*\*/.test(line)) {
+          const html = line.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+          return <p key={i} dangerouslySetInnerHTML={{ __html: html }} className="fb-para" />;
+        }
+        if (line.startsWith("- ")) {
+          return <li key={i} className="fb-li">{line.replace(/^- /, "")}</li>;
+        }
+        if (line.trim() === "") return <br key={i} />;
+        return <p key={i} className="fb-para">{line}</p>;
+      })}
+    </div>
+  );
+}
+
 export default function ReviewAssignment() {
   const { id } = useParams();
   const nav = useNavigate();
@@ -10,10 +34,16 @@ export default function ReviewAssignment() {
   const [remark, setRemark] = useState("");
   const [signature, setSignature] = useState("");
   const [msg, setMsg] = useState("");
-  const [msgType, setMsgType] = useState("info"); // info, success, error
+  const [msgType, setMsgType] = useState("info");
   const [loading, setLoading] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectRemark, setRejectRemark] = useState("");
+
+  // AI state
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiFeedback, setAiFeedback] = useState("");
+  const [aiError, setAiError] = useState("");
+  const [showAiPanel, setShowAiPanel] = useState(false);
 
   useEffect(() => {
     fetchAssignment();
@@ -29,6 +59,34 @@ export default function ReviewAssignment() {
     }
   };
 
+  const generateAiFeedback = async () => {
+    setAiLoading(true);
+    setAiError("");
+    setAiFeedback("");
+    setShowAiPanel(true);
+    try {
+      const res = await api.request(`/api/professor/assignments/${id}/generate-feedback`, {
+        method: "POST",
+      });
+      setAiFeedback(res.feedback);
+    } catch (err) {
+      setAiError(err?.message || err?.data?.message || "Failed to generate AI feedback. Please try again.");
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const useAsApprovalRemark = () => {
+    setRemark(aiFeedback);
+    setShowAiPanel(false);
+    document.getElementById("approval-remark-area")?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const useAsRejectionFeedback = () => {
+    setRejectRemark(aiFeedback);
+    setShowAiPanel(false);
+    setShowRejectModal(true);
+  };
 
   const approve = async () => {
     if (!signature.trim()) {
@@ -36,20 +94,17 @@ export default function ReviewAssignment() {
       setMsgType("error");
       return;
     }
-
     try {
       setLoading(true);
       setMsg("");
-
       await api.request(`/api/professor/assignments/${id}/approve`, {
         method: "POST",
-        body: JSON.stringify({ 
-          remark, 
+        body: JSON.stringify({
+          remark,
           signature,
-          skipOtp: true // Skip OTP for professor as requested
+          skipOtp: true,
         }),
       });
-
       setMsg("Assignment approved successfully!");
       setMsgType("success");
       setTimeout(() => nav("/professor/dashboard"), 1000);
@@ -73,16 +128,13 @@ export default function ReviewAssignment() {
       setMsgType("error");
       return;
     }
-
     try {
       setLoading(true);
       setMsg("");
-
       await api.request(`/api/professor/assignments/${id}/reject`, {
         method: "POST",
         body: JSON.stringify({ remark: trimmed }),
       });
-
       setMsg("Assignment rejected");
       setMsgType("success");
       setShowRejectModal(false);
@@ -96,21 +148,19 @@ export default function ReviewAssignment() {
     }
   };
 
-  const getMessageStyles = () => {
-    switch (msgType) {
-      case "success":
-        return "bg-green-50 border-green-200 text-green-700";
-      case "error":
-        return "bg-red-50 border-red-200 text-red-700";
-      default:
-        return "bg-blue-50 border-blue-200 text-blue-700";
-    }
+  const msgStyles = {
+    success: { bg: "#f0fdf4", border: "#86efac", color: "#15803d" },
+    error:   { bg: "#fef2f2", border: "#fca5a5", color: "#b91c1c" },
+    info:    { bg: "#eff6ff", border: "#93c5fd", color: "#1d4ed8" },
   };
 
   if (!assignment) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-lg font-bold text-gray-900">Loading assignment...</div>
+      <div style={{ minHeight: "100vh", background: "#f8fafc", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+          <div className="ai-spinner" style={{ width: 40, height: 40, borderWidth: 4 }} />
+          <p style={{ color: "#64748b", fontWeight: 600 }}>Loading assignment...</p>
+        </div>
       </div>
     );
   }
@@ -119,239 +169,428 @@ export default function ReviewAssignment() {
     ? assignment.filePath
     : `${import.meta.env.VITE_API_URL}${assignment.filePath}`;
 
+  const currentStyles = msgStyles[msgType] || msgStyles.info;
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-extrabold text-gray-900">Review Assignment</h2>
-          <Link
-            to="/professor/dashboard"
-            className="px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 rounded-xl font-bold border border-gray-300"
-          >
-            Back to Dashboard
-          </Link>
-        </div>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; }
 
-        {msg && (
-          <div className={`mb-4 p-4 rounded-xl border-2 font-bold ${getMessageStyles()}`}>
-            {msg}
+        .ra-page { min-height: 100vh; background: linear-gradient(135deg, #f0f4ff 0%, #f8fafc 60%, #f0fdf4 100%); padding: 24px; }
+        .ra-container { max-width: 1280px; margin: 0 auto; }
+
+        .ra-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .ra-title { font-size: 26px; font-weight: 800; color: #0f172a; margin: 0; }
+
+        .back-btn { 
+          padding: 10px 20px; background: white; border: 1.5px solid #e2e8f0; 
+          border-radius: 12px; color: #374151; font-weight: 600; font-size: 14px;
+          text-decoration: none; transition: all 0.2s; cursor: pointer;
+        }
+        .back-btn:hover { background: #f8fafc; border-color: #6366f1; color: #6366f1; }
+
+        .ra-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        @media (max-width: 900px) { .ra-grid { grid-template-columns: 1fr; } }
+
+        .ra-card { background: white; border-radius: 20px; border: 1.5px solid #e2e8f0; box-shadow: 0 4px 24px rgba(0,0,0,0.06); overflow: hidden; }
+
+        .card-header { padding: 16px 20px; border-bottom: 1.5px solid #f1f5f9; background: #f8fafc; display: flex; align-items: center; justify-content: space-between; }
+        .card-header h3 { margin: 0; font-size: 15px; font-weight: 700; color: #1e293b; }
+        .card-body { padding: 24px; }
+
+        /* PDF panel */
+        .pdf-frame { width: 100%; height: 550px; border: none; }
+        .pdf-footer { padding: 12px 16px; background: #f8fafc; border-top: 1.5px solid #f1f5f9; }
+        .pdf-link { color: #6366f1; text-decoration: none; font-size: 13px; font-weight: 600; }
+        .pdf-link:hover { text-decoration: underline; }
+
+        /* Assignment info */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .info-item label { display: block; font-size: 12px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .info-item p { margin: 0; font-size: 14px; font-weight: 600; color: #1e293b; }
+
+        /* Plagiarism badge */
+        .plag-card { margin-top: 16px; padding: 16px; border-radius: 14px; border: 1.5px solid #e2e8f0; background: #f8fafc; }
+        .plag-title { font-size: 13px; font-weight: 700; color: #374151; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        .plag-score-high { font-size: 28px; font-weight: 800; color: #dc2626; }
+        .plag-score-mid  { font-size: 28px; font-weight: 800; color: #d97706; }
+        .plag-score-low  { font-size: 28px; font-weight: 800; color: #16a34a; }
+
+        /* History */
+        .history-wrap { max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+        .history-item { padding: 10px 14px; background: #f8fafc; border-radius: 10px; border: 1.5px solid #f1f5f9; font-size: 13px; }
+        .h-approved { color: #16a34a; font-weight: 700; }
+        .h-rejected  { color: #dc2626; font-weight: 700; }
+        .h-forwarded { color: #7c3aed; font-weight: 700; }
+        .h-submitted { color: #2563eb; font-weight: 700; }
+        .h-date { color: #94a3b8; margin-left: 8px; }
+
+        /* Divider */
+        .divider { border: none; border-top: 1.5px solid #f1f5f9; margin: 20px 0; }
+
+        /* Form */
+        .form-label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+        .form-textarea { 
+          width: 100%; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; 
+          font-size: 14px; font-family: 'Inter', sans-serif; resize: vertical;
+          transition: border-color 0.2s;
+        }
+        .form-textarea:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+        .form-input { 
+          width: 100%; padding: 10px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; 
+          font-size: 14px; font-family: 'Inter', sans-serif;
+          transition: border-color 0.2s;
+        }
+        .form-input:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+
+        /* Buttons */
+        .btn { padding: 12px 20px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer; border: none; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-approve { background: linear-gradient(135deg, #16a34a, #15803d); color: white; flex: 1; }
+        .btn-approve:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(22,163,74,0.35); }
+        .btn-reject  { background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; flex: 1; }
+        .btn-reject:hover:not(:disabled)  { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(220,38,38,0.35); }
+        .btn-cancel  { background: #f1f5f9; color: #374151; flex: 1; }
+        .btn-cancel:hover  { background: #e2e8f0; }
+        .btn-confirm-reject { background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; flex: 1; }
+        .btn-confirm-reject:hover:not(:disabled) { transform: translateY(-1px); }
+
+        /* =================== AI FEEDBACK SECTION =================== */
+        .ai-generate-btn {
+          width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 15px; cursor: pointer; 
+          border: 2px dashed #a5b4fc;
+          background: linear-gradient(135deg, #eef2ff 0%, #f0fdf4 100%);
+          color: #4f46e5;
+          transition: all 0.25s;
+          display: flex; align-items: center; justify-content: center; gap: 10px;
+          margin-bottom: 20px;
+        }
+        .ai-generate-btn:hover:not(:disabled) { 
+          background: linear-gradient(135deg, #e0e7ff 0%, #dcfce7 100%);
+          border-color: #6366f1; 
+          transform: translateY(-1px);
+          box-shadow: 0 8px 30px rgba(99,102,241,0.2);
+        }
+        .ai-generate-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .ai-panel {
+          background: linear-gradient(135deg, #fafafe 0%, #f0fdf4 100%);
+          border: 1.5px solid #c7d2fe;
+          border-radius: 16px;
+          margin-bottom: 20px;
+          overflow: hidden;
+        }
+        .ai-panel-header {
+          padding: 14px 18px;
+          background: linear-gradient(90deg, #4f46e5, #7c3aed);
+          display: flex; align-items: center; justify-content: space-between;
+        }
+        .ai-panel-header span { color: white; font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .ai-panel-close { background: rgba(255,255,255,0.2); border: none; color: white; width: 28px; height: 28px; border-radius: 8px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+        .ai-panel-close:hover { background: rgba(255,255,255,0.35); }
+
+        .ai-panel-body { padding: 18px; }
+
+        .ai-loading-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 30px; }
+        .ai-spinner { 
+          width: 36px; height: 36px; border-radius: 50%;
+          border: 3px solid #c7d2fe;
+          border-top-color: #4f46e5;
+          animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .ai-loading-text { color: #6366f1; font-weight: 600; font-size: 14px; }
+        .ai-loading-sub  { color: #94a3b8; font-size: 12px; }
+
+        .ai-error-msg { color: #b91c1c; background: #fef2f2; border: 1.5px solid #fca5a5; padding: 12px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; }
+
+        .feedback-render { font-size: 14px; color: #1e293b; line-height: 1.75; }
+        .fb-heading { font-size: 14px; font-weight: 700; color: #4f46e5; margin: 14px 0 6px; }
+        .fb-para { margin: 4px 0; }
+        .fb-li { margin: 4px 0 4px 18px; color: #374151; }
+
+        .ai-actions { display: flex; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1.5px solid #e0e7ff; flex-wrap: wrap; }
+        .ai-use-approve { 
+          padding: 10px 16px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer;
+          background: linear-gradient(135deg, #16a34a, #15803d); color: white; border: none;
+          display: flex; align-items: center; gap: 6px; transition: all 0.2s;
+        }
+        .ai-use-approve:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(22,163,74,0.3); }
+        .ai-use-reject { 
+          padding: 10px 16px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer;
+          background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; border: none;
+          display: flex; align-items: center; gap: 6px; transition: all 0.2s;
+        }
+        .ai-use-reject:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(220,38,38,0.3); }
+        .ai-regen {
+          padding: 10px 16px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer;
+          background: #f1f5f9; color: #475569; border: none;
+          display: flex; align-items: center; gap: 6px; transition: all 0.2s;
+        }
+        .ai-regen:hover { background: #e2e8f0; }
+
+        .ai-note { font-size: 11px; color: #94a3b8; margin-top: 10px; display: flex; align-items: center; gap: 4px; }
+
+        /* Modal */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
+        .modal-box { background: white; border-radius: 20px; padding: 28px; width: 100%; max-width: 480px; box-shadow: 0 25px 60px rgba(0,0,0,0.2); }
+        .modal-title { font-size: 20px; font-weight: 800; color: #0f172a; margin: 0 0 8px; }
+        .modal-sub { font-size: 13px; color: #64748b; margin: 0 0 16px; }
+        .char-hint { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+        .modal-actions { display: flex; gap: 10px; }
+
+        /* Alert messages */
+        .alert-msg { margin-bottom: 16px; padding: 14px 18px; border-radius: 14px; font-weight: 600; font-size: 14px; border: 1.5px solid; }
+
+        .section-title { font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+
+        .form-group { margin-bottom: 16px; }
+        .action-row { display: flex; gap: 12px; padding-top: 8px; }
+      `}</style>
+
+      <div className="ra-page">
+        <div className="ra-container">
+
+          {/* Header */}
+          <div className="ra-header">
+            <h1 className="ra-title">📋 Review Assignment</h1>
+            <Link to="/professor/dashboard" className="back-btn">← Back to Dashboard</Link>
           </div>
-        )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-            <div className="p-4 border-b border-gray-200 bg-gray-50">
-              <h3 className="font-extrabold text-gray-800">Document Preview</h3>
+          {/* Alert */}
+          {msg && (
+            <div className="alert-msg" style={{ background: currentStyles.bg, borderColor: currentStyles.border, color: currentStyles.color }}>
+              {msgType === "success" ? "✅ " : msgType === "error" ? "⚠️ " : "ℹ️ "}{msg}
             </div>
-            <div className="h-[600px]">
-              <iframe
-                src={pdfUrl}
-                className="w-full h-full"
-                title="Assignment PDF"
-              />
-            </div>
-            <div className="p-3 bg-gray-50 border-t">
-              <a
-                href={pdfUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="text-indigo-600 hover:underline text-sm font-medium"
-              >
-                Open in new tab / Download
-              </a>
-            </div>
-          </div>
+          )}
 
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
-            <div className="mb-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-3">
-                {assignment.title}
-              </h3>
-              
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-gray-500">Student:</span>
-                  <p className="font-medium">{assignment.student?.name}</p>
-                </div>
-                <div>
-                  <span className="text-gray-500">Email:</span>
-                  <p className="font-medium">{assignment.student?.email}</p>
-                </div>
-                <div>
-                  <span className="text-gray-500">Category:</span>
-                  <p className="font-medium">{assignment.category}</p>
-                </div>
-                <div>
-                  <span className="text-gray-500">Submitted:</span>
-                  <p className="font-medium">
-                    {new Date(assignment.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
+          <div className="ra-grid">
+            {/* LEFT: PDF */}
+            <div className="ra-card">
+              <div className="card-header">
+                <h3>📄 Document Preview</h3>
               </div>
+              <iframe src={pdfUrl} className="pdf-frame" title="Assignment PDF" />
+              <div className="pdf-footer">
+                <a href={pdfUrl} target="_blank" rel="noreferrer" className="pdf-link">↗ Open in new tab / Download</a>
+              </div>
+            </div>
 
-              {assignment.description && (
-                <div className="mt-4">
-                  <span className="text-gray-500 text-sm">Description:</span>
-                  <p className="text-gray-700 mt-1">{assignment.description}</p>
-                </div>
-              )}
+            {/* RIGHT: Review panel */}
+            <div className="ra-card">
+              <div className="card-header">
+                <h3>🔍 Assignment Details</h3>
+              </div>
+              <div className="card-body">
 
-              {assignment.plagiarismScore !== undefined && (
-                <div className="mt-6 p-4 rounded-xl border flex flex-col gap-2 bg-white shadow-sm border-gray-200">
-                  <h4 className="font-bold text-gray-800 flex items-center gap-2">
-                    <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                    Plagiarism Report
-                  </h4>
-                  <div className="flex items-center gap-4 mt-1">
-                    <div className={`text-2xl font-extrabold ${assignment.plagiarismScore > 30 ? 'text-red-600' : assignment.plagiarismScore > 15 ? 'text-yellow-600' : 'text-green-600'}`}>
-                      {assignment.plagiarismScore}% Match
-                    </div>
-                    {assignment.plagiarismMatch && assignment.plagiarismScore > 0 && (
-                      <div className="text-sm text-gray-600 border-l-2 border-gray-200 pl-4">
-                        <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Highest Similarity With</p>
-                        <p className="font-extrabold text-gray-900 truncate max-w-[200px]">{assignment.plagiarismMatch.title}</p>
-                        <p className="font-medium">by {assignment.plagiarismMatch.student?.name || "Unknown Student"}</p>
-                      </div>
-                    )}
-                    {assignment.plagiarismScore === 0 && (
-                      <div className="text-sm text-gray-600 border-l-2 border-gray-200 pl-4">
-                        <p className="font-bold text-green-600">No matching assignments found in the database.</p>
-                      </div>
-                    )}
+                {/* Assignment info */}
+                <h3 style={{ fontSize: 18, fontWeight: 800, color: "#0f172a", margin: "0 0 14px" }}>{assignment.title}</h3>
+                <div className="info-grid">
+                  <div className="info-item">
+                    <label>Student</label>
+                    <p>{assignment.student?.name}</p>
+                  </div>
+                  <div className="info-item">
+                    <label>Email</label>
+                    <p style={{ fontSize: 12 }}>{assignment.student?.email}</p>
+                  </div>
+                  <div className="info-item">
+                    <label>Category</label>
+                    <p>{assignment.category}</p>
+                  </div>
+                  <div className="info-item">
+                    <label>Submitted</label>
+                    <p>{new Date(assignment.createdAt).toLocaleDateString()}</p>
                   </div>
                 </div>
-              )}
-            </div>
 
-            {assignment.history && assignment.history.length > 0 && (
-              <div className="mb-6">
-                <h4 className="font-semibold text-gray-700 mb-2">History</h4>
-                <div className="space-y-2 max-h-40 overflow-y-auto">
-                  {assignment.history.map((h, i) => (
-                    <div
-                      key={i}
-                      className="p-2 bg-gray-50 rounded-lg text-sm border"
-                    >
-                      <span
-                        className={`font-medium ${
-                          h.action === "approved"
-                            ? "text-green-600"
-                            : h.action === "rejected"
-                            ? "text-red-600"
-                            : h.action === "forwarded"
-                            ? "text-purple-600"
-                            : "text-blue-600"
-                        }`}
-                      >
-                        {h.action.toUpperCase()}
-                      </span>
-                      <span className="text-gray-500 ml-2">
-                        {new Date(h.date).toLocaleString()}
-                      </span>
-                      {h.remark && (
-                        <p className="text-gray-600 mt-1">Remark: {h.remark}</p>
+                {assignment.description && (
+                  <div style={{ marginTop: 12 }}>
+                    <label className="form-label" style={{ color: "#94a3b8" }}>Description</label>
+                    <p style={{ fontSize: 14, color: "#374151", margin: 0 }}>{assignment.description}</p>
+                  </div>
+                )}
+
+                {/* Plagiarism */}
+                {assignment.plagiarismScore !== undefined && (
+                  <div className="plag-card">
+                    <div className="plag-title">🔬 Plagiarism Report</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                      <div className={assignment.plagiarismScore > 30 ? "plag-score-high" : assignment.plagiarismScore > 15 ? "plag-score-mid" : "plag-score-low"}>
+                        {assignment.plagiarismScore}%
+                      </div>
+                      {assignment.plagiarismMatch && assignment.plagiarismScore > 0 && (
+                        <div style={{ fontSize: 13, color: "#64748b", borderLeft: "2px solid #e2e8f0", paddingLeft: 14 }}>
+                          <p style={{ fontSize: 11, color: "#94a3b8", fontWeight: 700, textTransform: "uppercase", margin: "0 0 4px" }}>Highest match with</p>
+                          <p style={{ fontWeight: 700, margin: "0 0 2px", color: "#0f172a" }}>{assignment.plagiarismMatch.title}</p>
+                          <p style={{ margin: 0, fontSize: 12 }}>by {assignment.plagiarismMatch.student?.name || "Unknown"}</p>
+                        </div>
+                      )}
+                      {assignment.plagiarismScore === 0 && (
+                        <p style={{ fontSize: 13, color: "#16a34a", fontWeight: 600, margin: 0 }}>✅ No matching assignments found</p>
                       )}
                     </div>
-                  ))}
+                  </div>
+                )}
+
+                {/* History */}
+                {assignment.history?.length > 0 && (
+                  <div style={{ marginTop: 16 }}>
+                    <div className="section-title">History</div>
+                    <div className="history-wrap">
+                      {assignment.history.map((h, i) => (
+                        <div key={i} className="history-item">
+                          <span className={`h-${h.action}`}>{h.action.toUpperCase()}</span>
+                          <span className="h-date">{new Date(h.date).toLocaleString()}</span>
+                          {h.remark && <p style={{ margin: "4px 0 0", color: "#64748b", fontSize: 12 }}>{h.remark}</p>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <hr className="divider" />
+
+                {/* ✨ AI FEEDBACK BUTTON */}
+                <button
+                  className="ai-generate-btn"
+                  onClick={generateAiFeedback}
+                  disabled={aiLoading}
+                >
+                  {aiLoading ? (
+                    <><div className="ai-spinner" style={{ width: 18, height: 18, borderWidth: 2 }} /> Analyzing PDF...</>
+                  ) : (
+                    <><span>✨</span> Generate AI Feedback</>
+                  )}
+                </button>
+
+                {/* AI PANEL */}
+                {showAiPanel && (
+                  <div className="ai-panel">
+                    <div className="ai-panel-header">
+                      <span>🤖 AI-Generated Feedback</span>
+                      <button className="ai-panel-close" onClick={() => setShowAiPanel(false)}>✕</button>
+                    </div>
+                    <div className="ai-panel-body">
+                      {aiLoading && (
+                        <div className="ai-loading-wrap">
+                          <div className="ai-spinner" />
+                          <div className="ai-loading-text">Reading PDF content...</div>
+                          <div className="ai-loading-sub">Gemini is analyzing the assignment</div>
+                        </div>
+                      )}
+
+                      {aiError && !aiLoading && (
+                        <div className="ai-error-msg">⚠️ {aiError}</div>
+                      )}
+
+                      {aiFeedback && !aiLoading && (
+                        <>
+                          <FeedbackRenderer text={aiFeedback} />
+                          <div className="ai-actions">
+                            <button className="ai-use-approve" onClick={useAsApprovalRemark}>
+                              ✅ Use as Approval Remark
+                            </button>
+                            <button className="ai-use-reject" onClick={useAsRejectionFeedback}>
+                              ❌ Use as Rejection Feedback
+                            </button>
+                            <button className="ai-regen" onClick={generateAiFeedback}>
+                              🔄 Regenerate
+                            </button>
+                          </div>
+                          <p className="ai-note">💡 You can edit the feedback before submitting</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* APPROVAL REMARK */}
+                <div className="form-group">
+                  <label className="form-label" htmlFor="approval-remark-area">
+                    Remarks (Optional)
+                  </label>
+                  <textarea
+                    id="approval-remark-area"
+                    rows={3}
+                    placeholder="Add your review remarks... or use AI to generate feedback above"
+                    value={remark}
+                    onChange={(e) => setRemark(e.target.value)}
+                    className="form-textarea"
+                    disabled={loading}
+                  />
                 </div>
-              </div>
-            )}
 
-            <hr className="my-4" />
+                {/* SIGNATURE */}
+                <div className="form-group">
+                  <label className="form-label">Digital Signature *</label>
+                  <input
+                    type="text"
+                    placeholder="Enter your name as signature"
+                    value={signature}
+                    onChange={(e) => setSignature(e.target.value)}
+                    className="form-input"
+                    disabled={loading}
+                  />
+                </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Remarks (Optional)
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="Add your review remarks..."
-                  value={remark}
-                  onChange={(e) => setRemark(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
-                  disabled={loading}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Digital Signature *
-                </label>
-                <input
-                  type="text"
-                  placeholder="Enter your name as signature"
-                  value={signature}
-                  onChange={(e) => setSignature(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
-                  disabled={loading}
-                />
-              </div>
-
-
-              <div className="flex flex-col gap-3 pt-4">
-                <div className="flex gap-3">
+                {/* ACTION BUTTONS */}
+                <div className="action-row">
                   <button
                     onClick={approve}
                     disabled={loading || !signature.trim()}
-                    className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold shadow disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="btn btn-approve"
                   >
-                    {loading ? "Processing..." : "Approve"}
+                    {loading ? "Processing..." : "✅ Approve"}
                   </button>
-
                   <button
                     onClick={() => setShowRejectModal(true)}
                     disabled={loading}
-                    className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold shadow disabled:opacity-50"
+                    className="btn btn-reject"
                   >
-                    Reject
+                    ❌ Reject
                   </button>
                 </div>
+
               </div>
             </div>
           </div>
         </div>
       </div>
 
+      {/* REJECT MODAL */}
       {showRejectModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md mx-4">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">
-              Reject Assignment
-            </h3>
-
-            <p className="text-sm text-gray-600 mb-4">
-              Please provide feedback for the student (minimum 10 characters). This will be sent to the student and shown in the resubmission form.
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h3 className="modal-title">Reject Assignment</h3>
+            <p className="modal-sub">
+              Provide feedback for the student. This will be sent to them and shown in the resubmission form.
             </p>
 
             <textarea
-              rows={4}
+              rows={5}
               placeholder="Enter rejection feedback (min 10 characters)..."
               value={rejectRemark}
               onChange={(e) => setRejectRemark(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl mb-2"
+              className="form-textarea"
               autoFocus
             />
-            <p className="text-xs text-gray-500 mb-4">
-              {rejectRemark.length}/10 characters minimum
-            </p>
+            <p className="char-hint">{rejectRemark.length}/10 characters minimum</p>
 
-            <div className="flex gap-3">
+            <div className="modal-actions">
               <button
-                onClick={() => {
-                  setShowRejectModal(false);
-                  setRejectRemark("");
-                }}
-                className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-xl"
+                onClick={() => { setShowRejectModal(false); setRejectRemark(""); }}
+                className="btn btn-cancel"
               >
                 Cancel
               </button>
               <button
                 onClick={reject}
                 disabled={loading || !rejectRemark.trim() || rejectRemark.trim().length < 10}
-                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl disabled:opacity-50"
+                className="btn btn-confirm-reject"
               >
                 {loading ? "Rejecting..." : "Confirm Reject"}
               </button>
@@ -359,6 +598,6 @@ export default function ReviewAssignment() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
