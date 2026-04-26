@@ -52,7 +52,7 @@ export default function StudentDashboard() {
       case "submitted":
         return "text-amber-400";
       case "forwarded":
-        return "text-violet-400";
+        return "text-blue-400";
       default:
         return "text-gray-400";
     }
@@ -79,7 +79,7 @@ export default function StudentDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
         <Card title="Drafts" value={stats.draft} color="text-gray-400 bg-gray-800" />
         <Card title="Submitted" value={stats.submitted} color="text-amber-400 bg-amber-900/30" />
-        <Card title="Forwarded" value={stats.forwarded || 0} color="text-violet-400 bg-violet-900/30" />
+        <Card title="Forwarded" value={stats.forwarded || 0} color="text-blue-400 bg-blue-900/30" />
         <Card title="Approved" value={stats.approved} color="text-emerald-400 bg-emerald-900/30" />
         <Card title="Rejected" value={stats.rejected} color="text-red-400 bg-red-900/30" />
       </div>
@@ -100,7 +100,7 @@ export default function StudentDashboard() {
               >
                 <Link
                   to={`/student/assignments/${r._id}`}
-                  className="font-bold text-gray-200 hover:text-indigo-400 hover:underline"
+                  className="font-bold text-gray-200 hover:text-blue-400 hover:underline"
                 >
                   {r.title}
                 </Link>
@@ -121,7 +121,7 @@ export default function StudentDashboard() {
 
       <div className="mt-10 flex flex-wrap gap-4">
         <Link to="/student/upload">
-          <button className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow-lg">
+          <button className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition shadow-lg">
             Upload New Assignment
           </button>
         </Link>

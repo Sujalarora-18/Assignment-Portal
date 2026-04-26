@@ -131,7 +131,7 @@ export default function ReviewAssignment() {
           border-radius: 12px; color: #cbd5e1; font-weight: 600; font-size: 14px;
           text-decoration: none; transition: all 0.2s; cursor: pointer;
         }
-        .back-btn:hover { background: #334155; border-color: #818cf8; color: #818cf8; }
+        .back-btn:hover { background: #334155; border-color: #60a5fa; color: #60a5fa; }
 
         .ra-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         @media (max-width: 900px) { .ra-grid { grid-template-columns: 1fr; } }
@@ -145,7 +145,7 @@ export default function ReviewAssignment() {
         /* PDF panel */
         .pdf-frame { width: 100%; height: 550px; border: none; }
         .pdf-footer { padding: 12px 16px; background: #0f172a; border-top: 1.5px solid #334155; }
-        .pdf-link { color: #818cf8; text-decoration: none; font-size: 13px; font-weight: 600; }
+        .pdf-link { color: #60a5fa; text-decoration: none; font-size: 13px; font-weight: 600; }
         .pdf-link:hover { text-decoration: underline; }
 
         /* Assignment info */
@@ -165,7 +165,7 @@ export default function ReviewAssignment() {
         .history-item { padding: 10px 14px; background: #0f172a; border-radius: 10px; border: 1.5px solid #334155; font-size: 13px; color: #cbd5e1; }
         .h-approved { color: #4ade80; font-weight: 700; }
         .h-rejected  { color: #f87171; font-weight: 700; }
-        .h-forwarded { color: #a78bfa; font-weight: 700; }
+        .h-forwarded { color: #60a5fa; font-weight: 700; }
         .h-submitted { color: #60a5fa; font-weight: 700; }
         .h-date { color: #64748b; margin-left: 8px; }
 
@@ -179,13 +179,13 @@ export default function ReviewAssignment() {
           font-size: 14px; font-family: 'Inter', sans-serif; resize: vertical;
           transition: border-color 0.2s; background: #0f172a; color: #e2e8f0;
         }
-        .form-textarea:focus { outline: none; border-color: #818cf8; box-shadow: 0 0 0 3px rgba(129,140,248,0.2); }
+        .form-textarea:focus { outline: none; border-color: #60a5fa; box-shadow: 0 0 0 3px rgba(96,165,250,0.2); }
         .form-input { 
           width: 100%; padding: 10px 16px; border: 1.5px solid #334155; border-radius: 12px; 
           font-size: 14px; font-family: 'Inter', sans-serif;
           transition: border-color 0.2s; background: #0f172a; color: #e2e8f0;
         }
-        .form-input:focus { outline: none; border-color: #818cf8; box-shadow: 0 0 0 3px rgba(129,140,248,0.2); }
+        .form-input:focus { outline: none; border-color: #60a5fa; box-shadow: 0 0 0 3px rgba(96,165,250,0.2); }
 
         /* Buttons */
         .btn { padding: 12px 20px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer; border: none; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -203,7 +203,7 @@ export default function ReviewAssignment() {
         .ra-spinner { 
           width: 36px; height: 36px; border-radius: 50%;
           border: 3px solid #334155;
-          border-top-color: #818cf8;
+          border-top-color: #60a5fa;
           animation: spin 0.8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }

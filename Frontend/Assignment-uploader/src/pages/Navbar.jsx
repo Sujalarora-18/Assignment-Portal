@@ -34,8 +34,8 @@ const Navbar = () => {
             {/* Purple gradient rounded square background */}
             <defs>
               <linearGradient id="navbg" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#7c3aed"/>
-                <stop offset="100%" stopColor="#6366f1"/>
+                <stop offset="0%" stopColor="#2563eb"/>
+                <stop offset="100%" stopColor="#3b82f6"/>
               </linearGradient>
             </defs>
             <rect x="5" y="5" width="110" height="110" rx="22" fill="url(#navbg)" />
@@ -51,7 +51,7 @@ const Navbar = () => {
               color: "#f1f5f9",
             }}
           >
-            Campus<span style={{ color: "#a78bfa" }}>Flow</span>
+            Campus<span style={{ color: "#60a5fa" }}>Flow</span>
           </span>
         </div>
       </Link>

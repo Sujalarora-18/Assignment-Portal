@@ -52,15 +52,15 @@ export default function Signup() {
         <p className="text-xl font-semibold text-gray-400 mb-6">Simplify Your Academic Journey</p>
         <div className="max-w-sm space-y-4 text-left">
           <div className="flex items-start gap-3">
-            <span className="text-indigo-400 font-bold text-lg">✓</span>
+            <span className="text-blue-400 font-bold text-lg">✓</span>
             <p className="text-gray-400 font-medium">Easy assignment submission and tracking</p>
           </div>
           <div className="flex items-start gap-3">
-            <span className="text-indigo-400 font-bold text-lg">✓</span>
+            <span className="text-blue-400 font-bold text-lg">✓</span>
             <p className="text-gray-400 font-medium">Real-time notifications and updates</p>
           </div>
           <div className="flex items-start gap-3">
-            <span className="text-indigo-400 font-bold text-lg">✓</span>
+            <span className="text-blue-400 font-bold text-lg">✓</span>
             <p className="text-gray-400 font-medium">Collaborate with professors and peers</p>
           </div>
         </div>
@@ -133,7 +133,7 @@ export default function Signup() {
 
           <p className="text-center text-gray-400 font-semibold mt-6">
             Already have an account?{" "}
-            <Link to="/" className="text-indigo-400 hover:underline font-bold">
+            <Link to="/" className="text-blue-400 hover:underline font-bold">
               Login
             </Link>
           </p>

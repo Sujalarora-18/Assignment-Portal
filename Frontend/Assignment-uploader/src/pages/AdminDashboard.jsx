@@ -60,7 +60,7 @@ export default function AdminDashboard() {
       <aside className="hidden md:flex md:flex-col w-72 bg-gray-800 border border-gray-700 p-4 sticky top-4 m-4 rounded-2xl h-[calc(100vh-2rem)] shadow-xl">
         <div className="mb-6 px-2">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-linear-to-br from-indigo-600 to-indigo-700 flex items-center justify-center text-white text-lg font-extrabold shadow-lg border-2 border-indigo-500/50">
+            <div className="w-12 h-12 rounded-xl bg-linear-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white text-lg font-extrabold shadow-lg border-2 border-blue-500/50">
               AD
             </div>
             <div>
@@ -233,7 +233,7 @@ export default function AdminDashboard() {
             <StatCard title="HODs" value={data?.totalHODs ?? 0} />
 
             <div className="bg-gray-800 p-6 rounded-2xl border border-gray-700 flex items-center justify-center shadow-lg">
-              <Link to="/admin/departments" className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow border border-indigo-500 transition">
+              <Link to="/admin/departments" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow border border-blue-500 transition">
                 Manage Departments
               </Link>
             </div>
@@ -279,7 +279,7 @@ function StatCard({ title, value }) {
     <div className="bg-gray-800 p-5 rounded-2xl border border-gray-700 flex flex-col justify-between shadow-lg">
       <div className="flex items-center justify-between">
         <p className="text-sm font-bold text-gray-400">{title}</p>
-        <div className="w-3 h-3 rounded-full bg-indigo-500" />
+        <div className="w-3 h-3 rounded-full bg-blue-500" />
       </div>
 
       <p className="mt-4 text-3xl font-extrabold text-gray-100">{value}</p>
@@ -289,7 +289,7 @@ function StatCard({ title, value }) {
 
 function ActionCard({ to, title, description, emoji }) {
   return (
-    <Link to={to} className="block p-5 border rounded-2xl hover:border-indigo-500 hover:shadow-lg transition border-gray-700 bg-gray-900">
+    <Link to={to} className="block p-5 border rounded-2xl hover:border-blue-500 hover:shadow-lg transition border-gray-700 bg-gray-900">
       <div className="flex items-center gap-3">
         <div className="text-3xl">{emoji}</div>
         <div>

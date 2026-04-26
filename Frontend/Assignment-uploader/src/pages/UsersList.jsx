@@ -162,7 +162,7 @@ export default function UsersList() {
         </div>
 
         <div className="flex justify-between items-center mb-4">
-          <Link to="/admin/dashboard" className="text-sm font-bold text-indigo-400 hover:text-indigo-300">← Back to Dashboard</Link>
+          <Link to="/admin/dashboard" className="text-sm font-bold text-blue-400 hover:text-blue-300">← Back to Dashboard</Link>
           <button
             onClick={handleResetFilters}
             className="text-xs font-bold text-gray-500 hover:text-gray-300"

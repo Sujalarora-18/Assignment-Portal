@@ -85,13 +85,13 @@ export default function CreateUser() {
     <div className="min-h-screen bg-gray-900 flex justify-center p-6">
       <div className="w-full max-w-xl">
         <div className="mb-6">
-          <Link to="/admin/users" className="text-sm font-bold text-indigo-400 hover:text-indigo-300">← Back to Users</Link>
+          <Link to="/admin/users" className="text-sm font-bold text-blue-400 hover:text-blue-300">← Back to Users</Link>
         </div>
         <div className="bg-gray-800 shadow-xl rounded-2xl border border-gray-700 p-8">
           <h1 className="text-2xl font-extrabold text-gray-100 mb-6">Create User</h1>
 
           {message && (
-            <div className="mb-4 text-sm font-bold text-indigo-300 bg-indigo-900/50 p-4 rounded-xl border-2 border-indigo-500">
+            <div className="mb-4 text-sm font-bold text-blue-300 bg-blue-900/50 p-4 rounded-xl border-2 border-blue-500">
               {message}
             </div>
           )}

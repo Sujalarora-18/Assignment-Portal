@@ -97,7 +97,7 @@ export default function OTPVerificationModal({ email, onVerified, onClose }) {
               onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
               placeholder="000000"
               maxLength="6"
-              className="w-full px-4 py-3 text-center text-3xl font-bold border-2 border-gray-600 rounded-lg focus:outline-none focus:border-indigo-500 tracking-widest bg-gray-900 text-gray-100"
+              className="w-full px-4 py-3 text-center text-3xl font-bold border-2 border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 tracking-widest bg-gray-900 text-gray-100"
             />
             <p className="text-xs text-gray-500 text-center mt-2">
               OTP expires in {formatTimer(timer)}
@@ -119,7 +119,7 @@ export default function OTPVerificationModal({ email, onVerified, onClose }) {
           <button
             type="submit"
             disabled={loading || otp.length !== 6}
-            className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:bg-gray-600 text-white font-semibold py-3 rounded-lg transition"
+            className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 text-white font-semibold py-3 rounded-lg transition"
           >
             {loading ? "Verifying..." : "Verify OTP"}
           </button>
@@ -131,7 +131,7 @@ export default function OTPVerificationModal({ email, onVerified, onClose }) {
             <button
               onClick={handleResendOTP}
               disabled={!canResend || loading}
-              className="text-indigo-400 hover:text-indigo-300 font-semibold disabled:text-gray-600 disabled:cursor-not-allowed"
+              className="text-blue-400 hover:text-blue-300 font-semibold disabled:text-gray-600 disabled:cursor-not-allowed"
             >
               Resend
             </button>

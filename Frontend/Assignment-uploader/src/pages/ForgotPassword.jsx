@@ -78,7 +78,7 @@ export default function ForgotPassword() {
       <div className="w-full max-w-md">
         <div className="bg-gray-800 shadow-xl rounded-2xl p-8 border border-gray-700">
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-14 h-14 rounded-xl bg-indigo-600 flex items-center justify-center text-white text-2xl font-extrabold shadow-md">
+            <div className="w-14 h-14 rounded-xl bg-blue-600 flex items-center justify-center text-white text-2xl font-extrabold shadow-md">
               ?
             </div>
             <div>
@@ -165,7 +165,7 @@ export default function ForgotPassword() {
           <div className="mt-6 text-center">
             <Link
               to="/"
-              className="text-indigo-400 hover:text-indigo-300 font-bold"
+              className="text-blue-400 hover:text-blue-300 font-bold"
             >
               Back to Login
             </Link>

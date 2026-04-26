@@ -101,7 +101,7 @@ export default function ResubmitAssignment() {
       case "error":
         return "bg-red-900/50 border-red-500 text-red-300";
       default:
-        return "bg-indigo-900/50 border-indigo-500 text-indigo-300";
+        return "bg-blue-900/50 border-blue-500 text-blue-300";
     }
   };
 
@@ -228,8 +228,8 @@ export default function ResubmitAssignment() {
               </div>
 
               {file && (
-                <div className="mt-2 p-3 bg-indigo-900/30 border border-indigo-700 rounded-lg">
-                  <p className="text-sm text-indigo-300">
+                <div className="mt-2 p-3 bg-blue-900/30 border border-blue-700 rounded-lg">
+                  <p className="text-sm text-blue-300">
                     <strong>Selected:</strong> {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
                   </p>
                 </div>

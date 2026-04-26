@@ -71,15 +71,15 @@ export default function Login() {
         <p className="text-xl font-semibold text-gray-400 mb-6">Manage Assignments Effortlessly</p>
         <div className="max-w-sm space-y-4 text-left">
           <div className="flex items-start gap-3">
-            <span className="text-indigo-400 font-bold text-lg">✓</span>
+            <span className="text-blue-400 font-bold text-lg">✓</span>
             <p className="text-gray-400 font-medium">Track and submit assignments in one place</p>
           </div>
           <div className="flex items-start gap-3">
-            <span className="text-indigo-400 font-bold text-lg">✓</span>
+            <span className="text-blue-400 font-bold text-lg">✓</span>
             <p className="text-gray-400 font-medium">Get instant feedback from faculty</p>
           </div>
           <div className="flex items-start gap-3">
-            <span className="text-indigo-400 font-bold text-lg">✓</span>
+            <span className="text-blue-400 font-bold text-lg">✓</span>
             <p className="text-gray-400 font-medium">Streamlined workflow for educators</p>
           </div>
         </div>
@@ -130,14 +130,14 @@ export default function Login() {
                   name="remember"
                   checked={form.remember}
                   onChange={handleChange}
-                  className="w-4 h-4 rounded border border-gray-600 text-indigo-500 focus:ring-indigo-500 bg-gray-900"
+                  className="w-4 h-4 rounded border border-gray-600 text-blue-500 focus:ring-blue-500 bg-gray-900"
                 />
                 Remember me
               </label>
 
               <Link
                 to="/forgot"
-                className="text-indigo-400 hover:underline font-bold"
+                className="text-blue-400 hover:underline font-bold"
               >
                 Forgot?
               </Link>
@@ -182,7 +182,7 @@ export default function Login() {
             Don't have an account?{" "}
             <Link
               to="/signup"
-              className="text-indigo-400 hover:underline font-bold"
+              className="text-blue-400 hover:underline font-bold"
             >
               Sign up
             </Link>

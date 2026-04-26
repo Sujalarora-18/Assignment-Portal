@@ -136,7 +136,7 @@ export default function MyAssignments() {
                   key={a._id}
                   className="border-b border-gray-700 hover:bg-gray-700/50 transition"
                 >
-                  <td className="py-4 px-6 font-bold text-indigo-400 hover:underline">
+                  <td className="py-4 px-6 font-bold text-blue-400 hover:underline">
                     <Link to={`/student/assignments/${a._id}`}>
                       {a.title}
                     </Link>
@@ -160,7 +160,7 @@ export default function MyAssignments() {
                     {a.status === "draft" && (
                       <Link
                         to={`/student/assignments/${a._id}`}
-                        className="text-indigo-400 hover:underline text-sm font-medium"
+                        className="text-blue-400 hover:underline text-sm font-medium"
                       >
                         Submit
                       </Link>

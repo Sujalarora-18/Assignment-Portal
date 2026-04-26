@@ -107,7 +107,7 @@ export default function EditUser() {
     <div className="min-h-screen bg-gray-900 p-6">
       <div className="max-w-xl mx-auto">
         <div className="mb-6">
-          <Link to="/admin/users" className="text-sm font-bold text-indigo-400 hover:text-indigo-300">← Back to Users</Link>
+          <Link to="/admin/users" className="text-sm font-bold text-blue-400 hover:text-blue-300">← Back to Users</Link>
         </div>
         <div className="bg-gray-800 shadow-xl rounded-2xl border border-gray-700 p-8">
           <h1 className="text-2xl font-extrabold text-gray-100 mb-6">Edit User</h1>

@@ -75,7 +75,7 @@ export default function UploadAssignment() {
             className={`mb-4 px-4 py-3 rounded-xl border-2 font-bold ${
               msg.includes("successfully")
                 ? "bg-emerald-900/50 border-emerald-500 text-emerald-300"
-                : "bg-indigo-900/50 border-indigo-500 text-indigo-300"
+                : "bg-blue-900/50 border-blue-500 text-blue-300"
             }`}
           >
             {msg}

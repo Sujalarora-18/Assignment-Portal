@@ -78,7 +78,7 @@ export default function ProfessorDashboard() {
           <h2 className="text-3xl font-extrabold text-gray-100">Professor Dashboard</h2>
           
           {pendingCount > 0 && (
-            <span className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-bold border border-indigo-500 shadow-md">
+            <span className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold border border-blue-500 shadow-md">
               {pendingCount} Pending Review{pendingCount !== 1 && "s"}
             </span>
           )}
@@ -127,7 +127,7 @@ export default function ProfessorDashboard() {
                       key={n._id}
                       onClick={() => !n.isRead && markAsRead(n._id)}
                       className={`p-4 border-b border-gray-700 cursor-pointer hover:bg-gray-700 ${
-                        !n.isRead ? "bg-indigo-900/30" : ""
+                        !n.isRead ? "bg-blue-900/30" : ""
                       }`}
                     >
                       <p className="text-sm font-medium text-gray-300">{n.message}</p>
@@ -155,7 +155,7 @@ export default function ProfessorDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 shadow-sm">
           <p className="text-gray-400 text-sm font-bold">Pending Reviews</p>
-          <p className="text-3xl font-extrabold text-indigo-400 mt-2">{pendingCount}</p>
+          <p className="text-3xl font-extrabold text-blue-400 mt-2">{pendingCount}</p>
         </div>
         <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 shadow-sm">
           <p className="text-gray-400 text-sm font-bold">Unread Notifications</p>
@@ -186,7 +186,7 @@ export default function ProfessorDashboard() {
           {assignments.map((a) => (
             <div
               key={a._id}
-              className="bg-gray-800 p-5 rounded-xl border border-gray-700 shadow-md flex justify-between items-center hover:border-indigo-500/50 transition"
+              className="bg-gray-800 p-5 rounded-xl border border-gray-700 shadow-md flex justify-between items-center hover:border-blue-500/50 transition"
             >
               <div className="flex-1">
                 <p className="font-extrabold text-lg text-gray-100">{a.title}</p>

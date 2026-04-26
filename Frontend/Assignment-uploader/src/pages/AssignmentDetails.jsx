@@ -78,7 +78,7 @@ export default function AssignmentDetails() {
     const styles = {
       draft: "bg-gray-600",
       submitted: "bg-amber-500",
-      forwarded: "bg-violet-600",
+      forwarded: "bg-blue-600",
       approved: "bg-emerald-600",
       rejected: "bg-red-600",
     };
@@ -100,7 +100,7 @@ export default function AssignmentDetails() {
       case "rejected":
         return "text-red-300 bg-red-900/30 border-red-700";
       case "resubmitted":
-        return "text-indigo-300 bg-indigo-900/30 border-indigo-700";
+        return "text-blue-300 bg-blue-900/30 border-blue-700";
       default:
         return "text-gray-300 bg-gray-800 border-gray-700";
     }
@@ -113,7 +113,7 @@ export default function AssignmentDetails() {
       case "error":
         return "bg-red-900/50 border-red-500 text-red-300";
       default:
-        return "bg-indigo-900/50 border-indigo-500 text-indigo-300";
+        return "bg-blue-900/50 border-blue-500 text-blue-300";
     }
   };
 
@@ -199,7 +199,7 @@ export default function AssignmentDetails() {
                   href={pdfUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-medium"
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-medium"
                 >
                   View / Download PDF
                 </a>
@@ -362,7 +362,7 @@ export default function AssignmentDetails() {
               <button
                 onClick={submitForReview}
                 disabled={loading}
-                className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl disabled:opacity-50"
+                className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl disabled:opacity-50"
               >
                 {loading ? "Submitting..." : "Confirm Submit"}
               </button>
