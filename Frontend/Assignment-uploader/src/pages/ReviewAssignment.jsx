@@ -2,30 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../Api/api";
 
-// Simple markdown-like renderer for Gemini output
-function FeedbackRenderer({ text }) {
-  if (!text) return null;
-  const lines = text.split("\n");
-  return (
-    <div className="feedback-render">
-      {lines.map((line, i) => {
-        if (line.startsWith("**") && line.endsWith("**")) {
-          return <h4 key={i} className="fb-heading">{line.replace(/\*\*/g, "")}</h4>;
-        }
-        if (/^\*\*(.*?)\*\*/.test(line)) {
-          const html = line.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-          return <p key={i} dangerouslySetInnerHTML={{ __html: html }} className="fb-para" />;
-        }
-        if (line.startsWith("- ")) {
-          return <li key={i} className="fb-li">{line.replace(/^- /, "")}</li>;
-        }
-        if (line.trim() === "") return <br key={i} />;
-        return <p key={i} className="fb-para">{line}</p>;
-      })}
-    </div>
-  );
-}
-
 export default function ReviewAssignment() {
   const { id } = useParams();
   const nav = useNavigate();
@@ -39,12 +15,6 @@ export default function ReviewAssignment() {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectRemark, setRejectRemark] = useState("");
 
-  // AI state
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiFeedback, setAiFeedback] = useState("");
-  const [aiError, setAiError] = useState("");
-  const [showAiPanel, setShowAiPanel] = useState(false);
-
   useEffect(() => {
     fetchAssignment();
   }, [id]);
@@ -57,35 +27,6 @@ export default function ReviewAssignment() {
       setMsg("Failed to load assignment");
       setMsgType("error");
     }
-  };
-
-  const generateAiFeedback = async () => {
-    setAiLoading(true);
-    setAiError("");
-    setAiFeedback("");
-    setShowAiPanel(true);
-    try {
-      const res = await api.request(`/api/professor/assignments/${id}/generate-feedback`, {
-        method: "POST",
-      });
-      setAiFeedback(res.feedback);
-    } catch (err) {
-      setAiError(err?.message || err?.data?.message || "Failed to generate AI feedback. Please try again.");
-    } finally {
-      setAiLoading(false);
-    }
-  };
-
-  const useAsApprovalRemark = () => {
-    setRemark(aiFeedback);
-    setShowAiPanel(false);
-    document.getElementById("approval-remark-area")?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const useAsRejectionFeedback = () => {
-    setRejectRemark(aiFeedback);
-    setShowAiPanel(false);
-    setShowRejectModal(true);
   };
 
   const approve = async () => {
@@ -149,17 +90,17 @@ export default function ReviewAssignment() {
   };
 
   const msgStyles = {
-    success: { bg: "#f0fdf4", border: "#86efac", color: "#15803d" },
-    error:   { bg: "#fef2f2", border: "#fca5a5", color: "#b91c1c" },
-    info:    { bg: "#eff6ff", border: "#93c5fd", color: "#1d4ed8" },
+    success: { bg: "#064e3b", border: "#10b981", color: "#6ee7b7" },
+    error:   { bg: "#7f1d1d", border: "#f87171", color: "#fca5a5" },
+    info:    { bg: "#1e3a5f", border: "#60a5fa", color: "#93c5fd" },
   };
 
   if (!assignment) {
     return (
-      <div style={{ minHeight: "100vh", background: "#f8fafc", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ minHeight: "100vh", background: "#0f172a", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
-          <div className="ai-spinner" style={{ width: 40, height: 40, borderWidth: 4 }} />
-          <p style={{ color: "#64748b", fontWeight: 600 }}>Loading assignment...</p>
+          <div className="ra-spinner" style={{ width: 40, height: 40, borderWidth: 4 }} />
+          <p style={{ color: "#94a3b8", fontWeight: 600 }}>Loading assignment...</p>
         </div>
       </div>
     );
@@ -179,72 +120,72 @@ export default function ReviewAssignment() {
         * { box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; }
 
-        .ra-page { min-height: 100vh; background: linear-gradient(135deg, #f0f4ff 0%, #f8fafc 60%, #f0fdf4 100%); padding: 24px; }
+        .ra-page { min-height: 100vh; background: #0f172a; padding: 24px; }
         .ra-container { max-width: 1280px; margin: 0 auto; }
 
         .ra-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .ra-title { font-size: 26px; font-weight: 800; color: #0f172a; margin: 0; }
+        .ra-title { font-size: 26px; font-weight: 800; color: #f1f5f9; margin: 0; }
 
         .back-btn { 
-          padding: 10px 20px; background: white; border: 1.5px solid #e2e8f0; 
-          border-radius: 12px; color: #374151; font-weight: 600; font-size: 14px;
+          padding: 10px 20px; background: #1e293b; border: 1.5px solid #334155; 
+          border-radius: 12px; color: #cbd5e1; font-weight: 600; font-size: 14px;
           text-decoration: none; transition: all 0.2s; cursor: pointer;
         }
-        .back-btn:hover { background: #f8fafc; border-color: #6366f1; color: #6366f1; }
+        .back-btn:hover { background: #334155; border-color: #818cf8; color: #818cf8; }
 
         .ra-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         @media (max-width: 900px) { .ra-grid { grid-template-columns: 1fr; } }
 
-        .ra-card { background: white; border-radius: 20px; border: 1.5px solid #e2e8f0; box-shadow: 0 4px 24px rgba(0,0,0,0.06); overflow: hidden; }
+        .ra-card { background: #1e293b; border-radius: 20px; border: 1.5px solid #334155; box-shadow: 0 4px 24px rgba(0,0,0,0.3); overflow: hidden; }
 
-        .card-header { padding: 16px 20px; border-bottom: 1.5px solid #f1f5f9; background: #f8fafc; display: flex; align-items: center; justify-content: space-between; }
-        .card-header h3 { margin: 0; font-size: 15px; font-weight: 700; color: #1e293b; }
+        .card-header { padding: 16px 20px; border-bottom: 1.5px solid #334155; background: #0f172a; display: flex; align-items: center; justify-content: space-between; }
+        .card-header h3 { margin: 0; font-size: 15px; font-weight: 700; color: #e2e8f0; }
         .card-body { padding: 24px; }
 
         /* PDF panel */
         .pdf-frame { width: 100%; height: 550px; border: none; }
-        .pdf-footer { padding: 12px 16px; background: #f8fafc; border-top: 1.5px solid #f1f5f9; }
-        .pdf-link { color: #6366f1; text-decoration: none; font-size: 13px; font-weight: 600; }
+        .pdf-footer { padding: 12px 16px; background: #0f172a; border-top: 1.5px solid #334155; }
+        .pdf-link { color: #818cf8; text-decoration: none; font-size: 13px; font-weight: 600; }
         .pdf-link:hover { text-decoration: underline; }
 
         /* Assignment info */
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .info-item label { display: block; font-size: 12px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-        .info-item p { margin: 0; font-size: 14px; font-weight: 600; color: #1e293b; }
+        .info-item label { display: block; font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .info-item p { margin: 0; font-size: 14px; font-weight: 600; color: #e2e8f0; }
 
         /* Plagiarism badge */
-        .plag-card { margin-top: 16px; padding: 16px; border-radius: 14px; border: 1.5px solid #e2e8f0; background: #f8fafc; }
-        .plag-title { font-size: 13px; font-weight: 700; color: #374151; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-        .plag-score-high { font-size: 28px; font-weight: 800; color: #dc2626; }
-        .plag-score-mid  { font-size: 28px; font-weight: 800; color: #d97706; }
-        .plag-score-low  { font-size: 28px; font-weight: 800; color: #16a34a; }
+        .plag-card { margin-top: 16px; padding: 16px; border-radius: 14px; border: 1.5px solid #334155; background: #0f172a; }
+        .plag-title { font-size: 13px; font-weight: 700; color: #cbd5e1; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        .plag-score-high { font-size: 28px; font-weight: 800; color: #f87171; }
+        .plag-score-mid  { font-size: 28px; font-weight: 800; color: #fbbf24; }
+        .plag-score-low  { font-size: 28px; font-weight: 800; color: #4ade80; }
 
         /* History */
         .history-wrap { max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-        .history-item { padding: 10px 14px; background: #f8fafc; border-radius: 10px; border: 1.5px solid #f1f5f9; font-size: 13px; }
-        .h-approved { color: #16a34a; font-weight: 700; }
-        .h-rejected  { color: #dc2626; font-weight: 700; }
-        .h-forwarded { color: #7c3aed; font-weight: 700; }
-        .h-submitted { color: #2563eb; font-weight: 700; }
-        .h-date { color: #94a3b8; margin-left: 8px; }
+        .history-item { padding: 10px 14px; background: #0f172a; border-radius: 10px; border: 1.5px solid #334155; font-size: 13px; color: #cbd5e1; }
+        .h-approved { color: #4ade80; font-weight: 700; }
+        .h-rejected  { color: #f87171; font-weight: 700; }
+        .h-forwarded { color: #a78bfa; font-weight: 700; }
+        .h-submitted { color: #60a5fa; font-weight: 700; }
+        .h-date { color: #64748b; margin-left: 8px; }
 
         /* Divider */
-        .divider { border: none; border-top: 1.5px solid #f1f5f9; margin: 20px 0; }
+        .divider { border: none; border-top: 1.5px solid #334155; margin: 20px 0; }
 
         /* Form */
-        .form-label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+        .form-label { display: block; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
         .form-textarea { 
-          width: 100%; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; 
+          width: 100%; padding: 12px 16px; border: 1.5px solid #334155; border-radius: 12px; 
           font-size: 14px; font-family: 'Inter', sans-serif; resize: vertical;
-          transition: border-color 0.2s;
+          transition: border-color 0.2s; background: #0f172a; color: #e2e8f0;
         }
-        .form-textarea:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+        .form-textarea:focus { outline: none; border-color: #818cf8; box-shadow: 0 0 0 3px rgba(129,140,248,0.2); }
         .form-input { 
-          width: 100%; padding: 10px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; 
+          width: 100%; padding: 10px 16px; border: 1.5px solid #334155; border-radius: 12px; 
           font-size: 14px; font-family: 'Inter', sans-serif;
-          transition: border-color 0.2s;
+          transition: border-color 0.2s; background: #0f172a; color: #e2e8f0;
         }
-        .form-input:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+        .form-input:focus { outline: none; border-color: #818cf8; box-shadow: 0 0 0 3px rgba(129,140,248,0.2); }
 
         /* Buttons */
         .btn { padding: 12px 20px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer; border: none; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -253,99 +194,32 @@ export default function ReviewAssignment() {
         .btn-approve:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(22,163,74,0.35); }
         .btn-reject  { background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; flex: 1; }
         .btn-reject:hover:not(:disabled)  { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(220,38,38,0.35); }
-        .btn-cancel  { background: #f1f5f9; color: #374151; flex: 1; }
-        .btn-cancel:hover  { background: #e2e8f0; }
+        .btn-cancel  { background: #334155; color: #cbd5e1; flex: 1; }
+        .btn-cancel:hover  { background: #475569; }
         .btn-confirm-reject { background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; flex: 1; }
         .btn-confirm-reject:hover:not(:disabled) { transform: translateY(-1px); }
 
-        /* =================== AI FEEDBACK SECTION =================== */
-        .ai-generate-btn {
-          width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 15px; cursor: pointer; 
-          border: 2px dashed #a5b4fc;
-          background: linear-gradient(135deg, #eef2ff 0%, #f0fdf4 100%);
-          color: #4f46e5;
-          transition: all 0.25s;
-          display: flex; align-items: center; justify-content: center; gap: 10px;
-          margin-bottom: 20px;
-        }
-        .ai-generate-btn:hover:not(:disabled) { 
-          background: linear-gradient(135deg, #e0e7ff 0%, #dcfce7 100%);
-          border-color: #6366f1; 
-          transform: translateY(-1px);
-          box-shadow: 0 8px 30px rgba(99,102,241,0.2);
-        }
-        .ai-generate-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-        .ai-panel {
-          background: linear-gradient(135deg, #fafafe 0%, #f0fdf4 100%);
-          border: 1.5px solid #c7d2fe;
-          border-radius: 16px;
-          margin-bottom: 20px;
-          overflow: hidden;
-        }
-        .ai-panel-header {
-          padding: 14px 18px;
-          background: linear-gradient(90deg, #4f46e5, #7c3aed);
-          display: flex; align-items: center; justify-content: space-between;
-        }
-        .ai-panel-header span { color: white; font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; }
-        .ai-panel-close { background: rgba(255,255,255,0.2); border: none; color: white; width: 28px; height: 28px; border-radius: 8px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
-        .ai-panel-close:hover { background: rgba(255,255,255,0.35); }
-
-        .ai-panel-body { padding: 18px; }
-
-        .ai-loading-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 30px; }
-        .ai-spinner { 
+        /* Spinner */
+        .ra-spinner { 
           width: 36px; height: 36px; border-radius: 50%;
-          border: 3px solid #c7d2fe;
-          border-top-color: #4f46e5;
+          border: 3px solid #334155;
+          border-top-color: #818cf8;
           animation: spin 0.8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .ai-loading-text { color: #6366f1; font-weight: 600; font-size: 14px; }
-        .ai-loading-sub  { color: #94a3b8; font-size: 12px; }
-
-        .ai-error-msg { color: #b91c1c; background: #fef2f2; border: 1.5px solid #fca5a5; padding: 12px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; }
-
-        .feedback-render { font-size: 14px; color: #1e293b; line-height: 1.75; }
-        .fb-heading { font-size: 14px; font-weight: 700; color: #4f46e5; margin: 14px 0 6px; }
-        .fb-para { margin: 4px 0; }
-        .fb-li { margin: 4px 0 4px 18px; color: #374151; }
-
-        .ai-actions { display: flex; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1.5px solid #e0e7ff; flex-wrap: wrap; }
-        .ai-use-approve { 
-          padding: 10px 16px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer;
-          background: linear-gradient(135deg, #16a34a, #15803d); color: white; border: none;
-          display: flex; align-items: center; gap: 6px; transition: all 0.2s;
-        }
-        .ai-use-approve:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(22,163,74,0.3); }
-        .ai-use-reject { 
-          padding: 10px 16px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer;
-          background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; border: none;
-          display: flex; align-items: center; gap: 6px; transition: all 0.2s;
-        }
-        .ai-use-reject:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(220,38,38,0.3); }
-        .ai-regen {
-          padding: 10px 16px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer;
-          background: #f1f5f9; color: #475569; border: none;
-          display: flex; align-items: center; gap: 6px; transition: all 0.2s;
-        }
-        .ai-regen:hover { background: #e2e8f0; }
-
-        .ai-note { font-size: 11px; color: #94a3b8; margin-top: 10px; display: flex; align-items: center; gap: 4px; }
 
         /* Modal */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
-        .modal-box { background: white; border-radius: 20px; padding: 28px; width: 100%; max-width: 480px; box-shadow: 0 25px 60px rgba(0,0,0,0.2); }
-        .modal-title { font-size: 20px; font-weight: 800; color: #0f172a; margin: 0 0 8px; }
-        .modal-sub { font-size: 13px; color: #64748b; margin: 0 0 16px; }
-        .char-hint { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
+        .modal-box { background: #1e293b; border-radius: 20px; padding: 28px; width: 100%; max-width: 480px; box-shadow: 0 25px 60px rgba(0,0,0,0.5); border: 1.5px solid #334155; }
+        .modal-title { font-size: 20px; font-weight: 800; color: #f1f5f9; margin: 0 0 8px; }
+        .modal-sub { font-size: 13px; color: #94a3b8; margin: 0 0 16px; }
+        .char-hint { font-size: 12px; color: #64748b; margin-bottom: 16px; }
         .modal-actions { display: flex; gap: 10px; }
 
         /* Alert messages */
         .alert-msg { margin-bottom: 16px; padding: 14px 18px; border-radius: 14px; font-weight: 600; font-size: 14px; border: 1.5px solid; }
 
-        .section-title { font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+        .section-title { font-size: 13px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
 
         .form-group { margin-bottom: 16px; }
         .action-row { display: flex; gap: 12px; padding-top: 8px; }
@@ -387,7 +261,7 @@ export default function ReviewAssignment() {
               <div className="card-body">
 
                 {/* Assignment info */}
-                <h3 style={{ fontSize: 18, fontWeight: 800, color: "#0f172a", margin: "0 0 14px" }}>{assignment.title}</h3>
+                <h3 style={{ fontSize: 18, fontWeight: 800, color: "#f1f5f9", margin: "0 0 14px" }}>{assignment.title}</h3>
                 <div className="info-grid">
                   <div className="info-item">
                     <label>Student</label>
@@ -409,8 +283,8 @@ export default function ReviewAssignment() {
 
                 {assignment.description && (
                   <div style={{ marginTop: 12 }}>
-                    <label className="form-label" style={{ color: "#94a3b8" }}>Description</label>
-                    <p style={{ fontSize: 14, color: "#374151", margin: 0 }}>{assignment.description}</p>
+                    <label className="form-label" style={{ color: "#64748b" }}>Description</label>
+                    <p style={{ fontSize: 14, color: "#cbd5e1", margin: 0 }}>{assignment.description}</p>
                   </div>
                 )}
 
@@ -423,14 +297,14 @@ export default function ReviewAssignment() {
                         {assignment.plagiarismScore}%
                       </div>
                       {assignment.plagiarismMatch && assignment.plagiarismScore > 0 && (
-                        <div style={{ fontSize: 13, color: "#64748b", borderLeft: "2px solid #e2e8f0", paddingLeft: 14 }}>
-                          <p style={{ fontSize: 11, color: "#94a3b8", fontWeight: 700, textTransform: "uppercase", margin: "0 0 4px" }}>Highest match with</p>
-                          <p style={{ fontWeight: 700, margin: "0 0 2px", color: "#0f172a" }}>{assignment.plagiarismMatch.title}</p>
+                        <div style={{ fontSize: 13, color: "#94a3b8", borderLeft: "2px solid #334155", paddingLeft: 14 }}>
+                          <p style={{ fontSize: 11, color: "#64748b", fontWeight: 700, textTransform: "uppercase", margin: "0 0 4px" }}>Highest match with</p>
+                          <p style={{ fontWeight: 700, margin: "0 0 2px", color: "#e2e8f0" }}>{assignment.plagiarismMatch.title}</p>
                           <p style={{ margin: 0, fontSize: 12 }}>by {assignment.plagiarismMatch.student?.name || "Unknown"}</p>
                         </div>
                       )}
                       {assignment.plagiarismScore === 0 && (
-                        <p style={{ fontSize: 13, color: "#16a34a", fontWeight: 600, margin: 0 }}>✅ No matching assignments found</p>
+                        <p style={{ fontSize: 13, color: "#4ade80", fontWeight: 600, margin: 0 }}>✅ No matching assignments found</p>
                       )}
                     </div>
                   </div>
@@ -445,7 +319,7 @@ export default function ReviewAssignment() {
                         <div key={i} className="history-item">
                           <span className={`h-${h.action}`}>{h.action.toUpperCase()}</span>
                           <span className="h-date">{new Date(h.date).toLocaleString()}</span>
-                          {h.remark && <p style={{ margin: "4px 0 0", color: "#64748b", fontSize: 12 }}>{h.remark}</p>}
+                          {h.remark && <p style={{ margin: "4px 0 0", color: "#94a3b8", fontSize: 12 }}>{h.remark}</p>}
                         </div>
                       ))}
                     </div>
@@ -453,60 +327,6 @@ export default function ReviewAssignment() {
                 )}
 
                 <hr className="divider" />
-
-                {/* ✨ AI FEEDBACK BUTTON */}
-                <button
-                  className="ai-generate-btn"
-                  onClick={generateAiFeedback}
-                  disabled={aiLoading}
-                >
-                  {aiLoading ? (
-                    <><div className="ai-spinner" style={{ width: 18, height: 18, borderWidth: 2 }} /> Analyzing PDF...</>
-                  ) : (
-                    <><span>✨</span> Generate AI Feedback</>
-                  )}
-                </button>
-
-                {/* AI PANEL */}
-                {showAiPanel && (
-                  <div className="ai-panel">
-                    <div className="ai-panel-header">
-                      <span>🤖 AI-Generated Feedback</span>
-                      <button className="ai-panel-close" onClick={() => setShowAiPanel(false)}>✕</button>
-                    </div>
-                    <div className="ai-panel-body">
-                      {aiLoading && (
-                        <div className="ai-loading-wrap">
-                          <div className="ai-spinner" />
-                          <div className="ai-loading-text">Reading PDF content...</div>
-                          <div className="ai-loading-sub">Gemini is analyzing the assignment</div>
-                        </div>
-                      )}
-
-                      {aiError && !aiLoading && (
-                        <div className="ai-error-msg">⚠️ {aiError}</div>
-                      )}
-
-                      {aiFeedback && !aiLoading && (
-                        <>
-                          <FeedbackRenderer text={aiFeedback} />
-                          <div className="ai-actions">
-                            <button className="ai-use-approve" onClick={useAsApprovalRemark}>
-                              ✅ Use as Approval Remark
-                            </button>
-                            <button className="ai-use-reject" onClick={useAsRejectionFeedback}>
-                              ❌ Use as Rejection Feedback
-                            </button>
-                            <button className="ai-regen" onClick={generateAiFeedback}>
-                              🔄 Regenerate
-                            </button>
-                          </div>
-                          <p className="ai-note">💡 You can edit the feedback before submitting</p>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                )}
 
                 {/* APPROVAL REMARK */}
                 <div className="form-group">
@@ -516,7 +336,7 @@ export default function ReviewAssignment() {
                   <textarea
                     id="approval-remark-area"
                     rows={3}
-                    placeholder="Add your review remarks... or use AI to generate feedback above"
+                    placeholder="Add your review remarks..."
                     value={remark}
                     onChange={(e) => setRemark(e.target.value)}
                     className="form-textarea"

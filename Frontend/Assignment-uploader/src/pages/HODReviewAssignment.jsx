@@ -94,18 +94,18 @@ export default function HODReviewAssignment() {
   const getMessageStyles = () => {
     switch (msgType) {
       case "success":
-        return "bg-green-50 border-green-200 text-green-700";
+        return "bg-emerald-900/50 border-emerald-500 text-emerald-300";
       case "error":
-        return "bg-red-50 border-red-200 text-red-700";
+        return "bg-red-900/50 border-red-500 text-red-300";
       default:
-        return "bg-blue-50 border-blue-200 text-blue-700";
+        return "bg-indigo-900/50 border-indigo-500 text-indigo-300";
     }
   };
 
   if (!assignment) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-lg font-bold text-gray-900">Loading assignment...</div>
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-lg font-bold text-gray-100">Loading assignment...</div>
       </div>
     );
   }
@@ -115,13 +115,13 @@ export default function HODReviewAssignment() {
     : `${import.meta.env.VITE_API_URL}${assignment.filePath}`;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-900 p-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-extrabold text-gray-900">Finalize Assignment</h2>
+          <h2 className="text-2xl font-extrabold text-gray-100">Finalize Assignment</h2>
           <Link
             to="/hod/dashboard"
-            className="px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 rounded-xl font-bold border border-gray-300"
+            className="px-4 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl font-bold border border-gray-600"
           >
             Back to Dashboard
           </Link>
@@ -134,9 +134,9 @@ export default function HODReviewAssignment() {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-            <div className="p-4 border-b border-gray-200 bg-gray-50">
-              <h3 className="font-extrabold text-gray-800">Document Preview</h3>
+          <div className="bg-gray-800 rounded-2xl shadow-xl border border-gray-700 overflow-hidden">
+            <div className="p-4 border-b border-gray-700 bg-gray-900">
+              <h3 className="font-extrabold text-gray-200">Document Preview</h3>
             </div>
             <div className="h-[600px]">
               <iframe
@@ -145,39 +145,39 @@ export default function HODReviewAssignment() {
                 title="Assignment PDF"
               />
             </div>
-            <div className="p-3 bg-gray-50 border-t">
+            <div className="p-3 bg-gray-900 border-t border-gray-700">
               <a
                 href={pdfUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="text-indigo-600 hover:underline text-sm font-medium"
+                className="text-indigo-400 hover:underline text-sm font-medium"
               >
                 Open in new tab / Download
               </a>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+          <div className="bg-gray-800 rounded-2xl shadow-xl border border-gray-700 p-6">
             <div className="mb-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-3">
+              <h3 className="text-xl font-bold text-gray-100 mb-3">
                 {assignment.title}
               </h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="text-gray-500">Student:</span>
-                  <p className="font-medium">{assignment.student?.name}</p>
+                  <p className="font-medium text-gray-200">{assignment.student?.name}</p>
                 </div>
                 <div>
                   <span className="text-gray-500">Email:</span>
-                  <p className="font-medium">{assignment.student?.email}</p>
+                  <p className="font-medium text-gray-200">{assignment.student?.email}</p>
                 </div>
                 <div>
                   <span className="text-gray-500">Category:</span>
-                  <p className="font-medium">{assignment.category}</p>
+                  <p className="font-medium text-gray-200">{assignment.category}</p>
                 </div>
                 <div>
                   <span className="text-gray-500">Submitted:</span>
-                  <p className="font-medium">
+                  <p className="font-medium text-gray-200">
                     {new Date(assignment.createdAt).toLocaleDateString()}
                   </p>
                 </div>
@@ -186,32 +186,32 @@ export default function HODReviewAssignment() {
               {assignment.description && (
                 <div className="mt-4">
                   <span className="text-gray-500 text-sm">Description:</span>
-                  <p className="text-gray-700 mt-1">{assignment.description}</p>
+                  <p className="text-gray-300 mt-1">{assignment.description}</p>
                 </div>
               )}
 
               {assignment.plagiarismScore !== undefined && (
-                <div className="mt-6 p-4 rounded-xl border flex flex-col gap-2 bg-white shadow-sm border-gray-200">
-                  <h4 className="font-bold text-gray-800 flex items-center gap-2">
-                    <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="mt-6 p-4 rounded-xl border flex flex-col gap-2 bg-gray-900 shadow-sm border-gray-700">
+                  <h4 className="font-bold text-gray-200 flex items-center gap-2">
+                    <svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
                     Plagiarism Report
                   </h4>
                   <div className="flex items-center gap-4 mt-1">
-                    <div className={`text-2xl font-extrabold ${assignment.plagiarismScore > 30 ? 'text-red-600' : assignment.plagiarismScore > 15 ? 'text-yellow-600' : 'text-green-600'}`}>
+                    <div className={`text-2xl font-extrabold ${assignment.plagiarismScore > 30 ? 'text-red-400' : assignment.plagiarismScore > 15 ? 'text-amber-400' : 'text-emerald-400'}`}>
                       {assignment.plagiarismScore}% Match
                     </div>
                     {assignment.plagiarismMatch && assignment.plagiarismScore > 0 && (
-                      <div className="text-sm text-gray-600 border-l-2 border-gray-200 pl-4">
+                      <div className="text-sm text-gray-400 border-l-2 border-gray-700 pl-4">
                         <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Highest Similarity With</p>
-                        <p className="font-extrabold text-gray-900 truncate max-w-[200px]">{assignment.plagiarismMatch.title}</p>
-                        <p className="font-medium">by {assignment.plagiarismMatch.student?.name || "Unknown Student"}</p>
+                        <p className="font-extrabold text-gray-200 truncate max-w-[200px]">{assignment.plagiarismMatch.title}</p>
+                        <p className="font-medium text-gray-400">by {assignment.plagiarismMatch.student?.name || "Unknown Student"}</p>
                       </div>
                     )}
                     {assignment.plagiarismScore === 0 && (
-                      <div className="text-sm text-gray-600 border-l-2 border-gray-200 pl-4">
-                        <p className="font-bold text-green-600">No matching assignments found in the database.</p>
+                      <div className="text-sm text-gray-400 border-l-2 border-gray-700 pl-4">
+                        <p className="font-bold text-emerald-400">No matching assignments found in the database.</p>
                       </div>
                     )}
                   </div>
@@ -221,34 +221,34 @@ export default function HODReviewAssignment() {
 
             {assignment.history && assignment.history.length > 0 && (
               <div className="mb-6">
-                <h4 className="font-semibold text-gray-700 mb-2">History</h4>
+                <h4 className="font-semibold text-gray-300 mb-2">History</h4>
                 <div className="space-y-2 max-h-40 overflow-y-auto">
                   {assignment.history.map((h, i) => (
                     <div
                       key={i}
-                      className="p-2 bg-gray-50 rounded-lg text-sm border"
+                      className="p-2 bg-gray-900 rounded-lg text-sm border border-gray-700"
                     >
                       <span
                         className={`font-medium ${
                           h.action === "approved"
-                            ? "text-green-600"
+                            ? "text-emerald-400"
                             : h.action === "rejected"
-                            ? "text-red-600"
+                            ? "text-red-400"
                             : h.action === "forwarded"
-                            ? "text-purple-600"
-                            : "text-blue-600"
+                            ? "text-violet-400"
+                            : "text-indigo-400"
                         }`}
                       >
                         {h.action.toUpperCase()}
                       </span>
-                      <span className="text-gray-700 font-bold ml-2">
+                      <span className="text-gray-300 font-bold ml-2">
                         by {h.reviewerId?.name || "System"}
                       </span>
                       <span className="text-gray-500 ml-2">
                         {new Date(h.date).toLocaleString()}
                       </span>
                       {h.remark && (
-                        <p className="text-gray-600 mt-1">Remark: {h.remark}</p>
+                        <p className="text-gray-400 mt-1">Remark: {h.remark}</p>
                       )}
                     </div>
                   ))}
@@ -256,11 +256,11 @@ export default function HODReviewAssignment() {
               </div>
             )}
 
-            <hr className="my-4" />
+            <hr className="my-4 border-gray-700" />
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Remarks (Optional)
                 </label>
                 <textarea
@@ -274,7 +274,7 @@ export default function HODReviewAssignment() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Digital Signature *
                 </label>
                 <input
@@ -291,7 +291,7 @@ export default function HODReviewAssignment() {
                 <button
                   onClick={approve}
                   disabled={loading || !signature.trim()}
-                  className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold shadow disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? "Processing..." : "Final Approve"}
                 </button>
@@ -310,13 +310,13 @@ export default function HODReviewAssignment() {
       </div>
 
       {showRejectModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6 w-full max-w-md">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-2xl shadow-xl border border-gray-700 p-6 w-full max-w-md">
+            <h3 className="text-xl font-bold text-gray-100 mb-4">
               Reject Assignment
             </h3>
 
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-400 mb-4">
               Please provide feedback for the student (minimum 10 characters).
             </p>
 
@@ -338,7 +338,7 @@ export default function HODReviewAssignment() {
                   setShowRejectModal(false);
                   setRejectRemark("");
                 }}
-                className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-xl font-bold"
+                className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-xl font-bold"
               >
                 Cancel
               </button>

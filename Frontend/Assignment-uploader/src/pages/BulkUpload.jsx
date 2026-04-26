@@ -86,11 +86,11 @@ export default function BulkUpload() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
+    <div className="min-h-screen bg-gray-900 p-6">
+      <div className="max-w-2xl mx-auto bg-gray-800 rounded-2xl shadow-xl border border-gray-700 p-8">
         <div className="flex items-start justify-between">
-          <h2 className="text-2xl font-extrabold text-gray-900">Bulk Upload</h2>
-          <div className="text-sm font-bold text-gray-500">
+          <h2 className="text-2xl font-extrabold text-gray-100">Bulk Upload</h2>
+          <div className="text-sm font-bold text-gray-400">
             Upload up to 5 PDF files
           </div>
         </div>
@@ -99,8 +99,8 @@ export default function BulkUpload() {
           <div
             className={`mt-4 mb-2 px-4 py-3 rounded-xl border-2 font-bold ${
               msg.includes("Uploaded")
-                ? "bg-emerald-50 border-emerald-300 text-emerald-800"
-                : "bg-amber-50 border-amber-300 text-amber-800"
+                ? "bg-emerald-900/50 border-emerald-500 text-emerald-300"
+                : "bg-amber-900/50 border-amber-500 text-amber-300"
             }`}
           >
             {msg}
@@ -109,7 +109,7 @@ export default function BulkUpload() {
 
         <form onSubmit={submit} className="grid gap-4 mt-6">
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1">Common description</label>
+            <label className="block text-sm font-bold text-gray-300 mb-1">Common description</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -121,7 +121,7 @@ export default function BulkUpload() {
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1">Category</label>
+            <label className="block text-sm font-bold text-gray-300 mb-1">Category</label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -135,14 +135,14 @@ export default function BulkUpload() {
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1">Select PDF files</label>
+            <label className="block text-sm font-bold text-gray-300 mb-1">Select PDF files</label>
             <input
               type="file"
               accept="application/pdf"
               multiple
               disabled={uploading}
               onChange={onFilesChange}
-              className="text-gray-700 font-medium"
+              className="text-gray-400 font-medium"
             />
             <p className="mt-1 text-xs font-medium text-gray-500">
               Maximum 5 files — each must be PDF and ≤ 10MB
@@ -150,7 +150,7 @@ export default function BulkUpload() {
           </div>
 
           <div>
-            <div className="text-sm font-bold text-gray-700 mb-2">
+            <div className="text-sm font-bold text-gray-300 mb-2">
               Files to upload ({files.length}/5)
             </div>
 
@@ -163,10 +163,10 @@ export default function BulkUpload() {
                 {files.map((f, idx) => (
                   <li
                     key={idx}
-                    className="flex items-center justify-between bg-gray-50 p-3 rounded-xl border border-gray-200"
+                    className="flex items-center justify-between bg-gray-900 p-3 rounded-xl border border-gray-700"
                   >
                     <div>
-                      <div className="font-medium text-gray-800">
+                      <div className="font-medium text-gray-200">
                         {f.name}
                       </div>
                       <div className="text-xs text-gray-500">
@@ -193,7 +193,7 @@ export default function BulkUpload() {
               type="button"
               onClick={() => nav(-1)}
               disabled={uploading}
-              className="px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold disabled:opacity-70"
+              className="px-4 py-2 rounded-xl bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold disabled:opacity-70"
             >
               Cancel
             </button>
@@ -205,7 +205,7 @@ export default function BulkUpload() {
                 setFiles([]);
                 setMsg("");
               }}
-              className="ml-auto px-3 py-2 rounded-xl border border-gray-300 text-sm font-bold text-gray-700 hover:bg-gray-100"
+              className="ml-auto px-3 py-2 rounded-xl border border-gray-600 text-sm font-bold text-gray-400 hover:bg-gray-700"
             >
               Clear selection
             </button>

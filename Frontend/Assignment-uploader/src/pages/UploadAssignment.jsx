@@ -64,9 +64,9 @@ export default function UploadAssignment() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex justify-center items-start py-10 px-4">
-      <div className="w-full max-w-2xl bg-white shadow-2xl rounded-2xl p-8 md:p-12 border border-gray-200">
-        <h2 className="text-3xl font-extrabold text-gray-900 mb-6">
+    <div className="min-h-screen bg-gray-900 flex justify-center items-start py-10 px-4">
+      <div className="w-full max-w-2xl bg-gray-800 shadow-2xl rounded-2xl p-8 md:p-12 border border-gray-700">
+        <h2 className="text-3xl font-extrabold text-gray-100 mb-6">
           Upload Assignment
         </h2>
 
@@ -74,8 +74,8 @@ export default function UploadAssignment() {
           <div
             className={`mb-4 px-4 py-3 rounded-xl border-2 font-bold ${
               msg.includes("successfully")
-                ? "bg-emerald-50 border-emerald-300 text-emerald-800"
-                : "bg-blue-50 border-blue-300 text-blue-800"
+                ? "bg-emerald-900/50 border-emerald-500 text-emerald-300"
+                : "bg-indigo-900/50 border-indigo-500 text-indigo-300"
             }`}
           >
             {msg}
@@ -84,7 +84,7 @@ export default function UploadAssignment() {
 
         <form onSubmit={submit} className="grid gap-5">
           <div>
-            <label className="block text-gray-700 font-bold mb-1">Title</label>
+            <label className="block text-gray-300 font-bold mb-1">Title</label>
             <input
               type="text"
               required
@@ -97,7 +97,7 @@ export default function UploadAssignment() {
           </div>
 
           <div>
-            <label className="block text-gray-700 font-bold mb-1">Description</label>
+            <label className="block text-gray-300 font-bold mb-1">Description</label>
             <textarea
               rows={3}
               value={description}
@@ -109,7 +109,7 @@ export default function UploadAssignment() {
           </div>
 
           <div>
-            <label className="block text-gray-700 font-bold mb-1">Category</label>
+            <label className="block text-gray-300 font-bold mb-1">Category</label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -123,15 +123,15 @@ export default function UploadAssignment() {
           </div>
 
           <div>
-            <label className="block text-gray-700 font-bold mb-1">Upload PDF File</label>
+            <label className="block text-gray-300 font-bold mb-1">Upload PDF File</label>
             <input
               type="file"
               accept="application/pdf"
               onChange={(e) => setFile(e.target.files[0])}
-              className="w-full text-gray-700 font-medium"
+              className="w-full text-gray-400 font-medium"
               disabled={loading}
             />
-            <p className="text-sm font-medium text-gray-600 mt-1">Max size: 10MB</p>
+            <p className="text-sm font-medium text-gray-500 mt-1">Max size: 10MB</p>
           </div>
 
           <div className="flex gap-4 mt-4">
@@ -147,7 +147,7 @@ export default function UploadAssignment() {
               type="button"
               onClick={() => nav(-1)}
               disabled={loading}
-              className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-xl transition disabled:opacity-70"
+              className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold rounded-xl transition disabled:opacity-70"
             >
               Cancel
             </button>

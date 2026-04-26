@@ -36,16 +36,16 @@ export default function HODDashboard() {
   };
 
   const getDaysPendingColor = (days) => {
-    if (days >= 7) return "text-red-600 bg-red-100";
-    if (days >= 3) return "text-yellow-600 bg-yellow-100";
-    return "text-green-600 bg-green-100";
+    if (days >= 7) return "text-red-400 bg-red-900/30";
+    if (days >= 3) return "text-amber-400 bg-amber-900/30";
+    return "text-emerald-400 bg-emerald-900/30";
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-900 p-6">
       <div className="flex justify-between items-center mb-8">
         <div className="flex items-center gap-4">
-          <h2 className="text-3xl font-extrabold text-gray-900">HOD Dashboard</h2>
+          <h2 className="text-3xl font-extrabold text-gray-100">HOD Dashboard</h2>
           {pendingCount > 0 && (
             <span className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-bold border border-emerald-500 shadow-md">
               {pendingCount} Pending Final Approval{pendingCount !== 1 ? "s" : ""}
@@ -62,12 +62,12 @@ export default function HODDashboard() {
       </div>
 
       <div className="mb-6">
-        <p className="text-gray-600 font-medium">
+        <p className="text-gray-400 font-medium">
           Finalize assignments forwarded to you by professors. Approve or reject to complete the workflow.
         </p>
       </div>
 
-      <h3 className="text-xl font-extrabold text-gray-900 mb-4">
+      <h3 className="text-xl font-extrabold text-gray-100 mb-4">
         Pending Assignments
       </h3>
 
@@ -76,7 +76,7 @@ export default function HODDashboard() {
           Loading...
         </div>
       ) : assignments.length === 0 ? (
-        <div className="bg-white rounded-xl p-8 text-center font-bold text-gray-500 border border-gray-200 shadow-md">
+        <div className="bg-gray-800 rounded-xl p-8 text-center font-bold text-gray-500 border border-gray-700 shadow-md">
           No pending assignments. Assignments forwarded to you will appear here.
         </div>
       ) : (
@@ -84,23 +84,23 @@ export default function HODDashboard() {
           {assignments.map((a) => (
             <div
               key={a._id}
-              className="bg-white p-5 rounded-xl border border-gray-200 shadow-md flex justify-between items-center hover:border-emerald-500/50 transition"
+              className="bg-gray-800 p-5 rounded-xl border border-gray-700 shadow-md flex justify-between items-center hover:border-emerald-500/50 transition"
             >
               <div className="flex-1">
-                <p className="font-extrabold text-lg text-gray-900">{a.title}</p>
-                <div className="flex flex-wrap gap-4 mt-2 text-sm font-medium text-gray-600">
+                <p className="font-extrabold text-lg text-gray-100">{a.title}</p>
+                <div className="flex flex-wrap gap-4 mt-2 text-sm font-medium text-gray-400">
                   <span>
-                    <strong>Student:</strong> {a.student?.name || "Unknown"}
+                    <strong className="text-gray-300">Student:</strong> {a.student?.name || "Unknown"}
                   </span>
                   <span>
-                    <strong>Approved By (Prof):</strong>{" "}
+                    <strong className="text-gray-300">Approved By (Prof):</strong>{" "}
                     {a.history?.slice().reverse().find(h => h.action === 'approved' || h.action === 'forwarded')?.reviewerId?.name || "Professor"}
                   </span>
                   <span>
-                    <strong>Category:</strong> {a.category}
+                    <strong className="text-gray-300">Category:</strong> {a.category}
                   </span>
                   <span>
-                    <strong>Submitted:</strong>{" "}
+                    <strong className="text-gray-300">Submitted:</strong>{" "}
                     {new Date(a.createdAt).toLocaleDateString()}
                   </span>
                 </div>

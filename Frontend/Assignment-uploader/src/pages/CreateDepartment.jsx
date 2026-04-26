@@ -46,45 +46,45 @@ export default function CreateDepartment({ onCreated }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-900 p-6">
       <div className="max-w-2xl mx-auto">
         <div className="mb-6">
-          <Link to="/admin/departments" className="text-sm font-bold text-blue-600 hover:text-blue-700">← Back to Departments</Link>
+          <Link to="/admin/departments" className="text-sm font-bold text-indigo-400 hover:text-indigo-300">← Back to Departments</Link>
         </div>
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
-          <h2 className="text-2xl font-extrabold text-gray-900 mb-6">Create Department</h2>
-          {success && <div className="mb-4 p-4 rounded-xl text-emerald-700 font-bold bg-emerald-50 border border-emerald-200">{success}</div>}
-          {errors._global && <div className="mb-4 p-4 rounded-xl text-red-700 font-bold bg-red-50 border border-red-200">{errors._global}</div>}
+        <div className="bg-gray-800 rounded-2xl shadow-xl border border-gray-700 p-8">
+          <h2 className="text-2xl font-extrabold text-gray-100 mb-6">Create Department</h2>
+          {success && <div className="mb-4 p-4 rounded-xl text-emerald-300 font-bold bg-emerald-900/50 border border-emerald-500">{success}</div>}
+          {errors._global && <div className="mb-4 p-4 rounded-xl text-red-300 font-bold bg-red-900/50 border border-red-500">{errors._global}</div>}
 
           <form onSubmit={handleSubmit} noValidate>
             <div className="mb-4">
-              <label className="block text-sm font-bold text-gray-700 mb-1">Department Name</label>
+              <label className="block text-sm font-bold text-gray-300 mb-1">Department Name</label>
               <input name="name" value={form.name} onChange={handleChange} className="input-strong" />
-              {errors.name && <small className="text-red-600 font-bold">{errors.name}</small>}
+              {errors.name && <small className="text-red-400 font-bold">{errors.name}</small>}
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-bold text-gray-700 mb-1">Program Type</label>
+              <label className="block text-sm font-bold text-gray-300 mb-1">Program Type</label>
               <select name="type" value={form.type} onChange={handleChange} className="input-strong">
                 <option value="">Select...</option>
                 <option value="UG">UG</option>
                 <option value="PG">PG</option>
                 <option value="Research">Research</option>
               </select>
-              {errors.type && <small className="text-red-600 font-bold">{errors.type}</small>}
+              {errors.type && <small className="text-red-400 font-bold">{errors.type}</small>}
             </div>
 
             <div className="mb-6">
-              <label className="block text-sm font-bold text-gray-700 mb-1">Address</label>
+              <label className="block text-sm font-bold text-gray-300 mb-1">Address</label>
               <textarea name="address" value={form.address} onChange={handleChange} rows={3} className="input-strong"></textarea>
-              {errors.address && <small className="text-red-600 font-bold">{errors.address}</small>}
+              {errors.address && <small className="text-red-400 font-bold">{errors.address}</small>}
             </div>
 
             <div className="flex gap-3">
               <button type="submit" disabled={loading} className="btn-primary">
                 {loading ? 'Creating...' : 'Create Department'}
               </button>
-              <Link to="/admin/departments" className="px-5 py-3 font-bold rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100">
+              <Link to="/admin/departments" className="px-5 py-3 font-bold rounded-xl border border-gray-600 text-gray-300 hover:bg-gray-700">
                 Cancel
               </Link>
             </div>

@@ -23,8 +23,8 @@ const Navbar = () => {
         alignItems: "center",
         justifyContent: "space-between",
         padding: "0 24px",
-        borderBottom: "1px solid #e5e7eb",
-        backgroundColor: "#ffffff",
+        borderBottom: "1px solid #334155",
+        backgroundColor: "#1e293b",
       }}
     >
       {/* LOGO */}
@@ -32,7 +32,7 @@ const Navbar = () => {
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <svg width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
             {/* Blue rounded square background */}
-            <rect x="10" y="10" width="100" height="100" rx="18" fill="#2563eb" />
+            <rect x="10" y="10" width="100" height="100" rx="18" fill="#6366f1" />
             
             {/* White arrow icon */}
             <g transform="translate(35, 35)">
@@ -47,10 +47,10 @@ const Navbar = () => {
             style={{
               fontSize: "20px",
               fontWeight: "600",
-              color: "#111827",
+              color: "#f1f5f9",
             }}
           >
-            Campus<span style={{ color: "#2563EB" }}>Flow</span>
+            Campus<span style={{ color: "#818cf8" }}>Flow</span>
           </span>
         </div>
       </Link>

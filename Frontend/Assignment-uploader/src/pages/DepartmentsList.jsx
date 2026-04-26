@@ -97,19 +97,19 @@ export default function DepartmentsList({ refreshSignal }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-900 p-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-extrabold text-gray-900">All Departments</h1>
+          <h1 className="text-3xl font-extrabold text-gray-100">All Departments</h1>
           <Link to="/admin/departments/new" className="btn-primary px-5 py-2.5 text-sm">
             + Create Department
           </Link>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+        <div className="bg-gray-800 rounded-2xl shadow-xl border border-gray-700 p-6">
           <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
             <div className="flex-1 min-w-60">
-              <label className="block text-xs font-bold text-gray-600 mb-1 uppercase tracking-wider">Search</label>
+              <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Search</label>
               <input
                 className="input-strong py-2"
                 placeholder="Search by department name"
@@ -119,7 +119,7 @@ export default function DepartmentsList({ refreshSignal }) {
             </div>
 
             <div className="w-[220px]">
-              <label className="block text-xs font-bold text-gray-600 mb-1 uppercase tracking-wider">Filter by Type</label>
+              <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Filter by Type</label>
               <select
                 className="input-strong py-2"
                 value={type}
@@ -134,16 +134,16 @@ export default function DepartmentsList({ refreshSignal }) {
           </div>
 
           {/* Summary */}
-          <div className="mb-4 text-sm font-bold text-gray-600">
+          <div className="mb-4 text-sm font-bold text-gray-400">
             Showing {departments.length} of {total} departments
           </div>
 
           {/* Table */}
-          <div className="rounded-xl border border-gray-200 overflow-hidden">
+          <div className="rounded-xl border border-gray-700 overflow-hidden">
             {loading ? (
               <div className="p-8 font-bold text-gray-500 text-center">Loading...</div>
             ) : error ? (
-              <div className="p-6 font-bold text-red-600 border border-red-200 bg-red-50 rounded-xl">{error}</div>
+              <div className="p-6 font-bold text-red-400 border border-red-700 bg-red-900/30 rounded-xl">{error}</div>
             ) : departments.length === 0 ? (
               <div className="p-8 font-bold text-gray-500 text-center">No departments found.</div>
             ) : (
@@ -160,9 +160,9 @@ export default function DepartmentsList({ refreshSignal }) {
                 <tbody>
                   {departments.map((d) => (
                     <tr key={d._id}>
-                      <td className="font-semibold text-gray-900">{d.name}</td>
-                      <td className="text-gray-700">{d.type}</td>
-                      <td className="text-gray-700">{d.usersCount ?? 0}</td>
+                      <td className="font-semibold text-gray-100">{d.name}</td>
+                      <td className="text-gray-300">{d.type}</td>
+                      <td className="text-gray-300">{d.usersCount ?? 0}</td>
                       <td>
                         <Link to={`/admin/departments/${d._id}/edit`}>
                           <button className="px-4 py-2 mr-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl">
@@ -171,7 +171,7 @@ export default function DepartmentsList({ refreshSignal }) {
                         </Link>
 
                         <button
-                          className="px-4 py-2 text-red-600 hover:bg-red-50 font-bold rounded-xl border-2 border-red-500/50"
+                          className="px-4 py-2 text-red-400 hover:bg-red-900/40 font-bold rounded-xl border-2 border-red-500/50"
                           onClick={() => confirmDelete(d)}
                         >
                           Delete
@@ -183,33 +183,33 @@ export default function DepartmentsList({ refreshSignal }) {
               </table>
             )}
 
-            <div className="p-4 flex items-center justify-between font-bold text-gray-600 border-t border-gray-200">
+            <div className="p-4 flex items-center justify-between font-bold text-gray-400 border-t border-gray-700">
               <div>Page {page} of {totalPages}</div>
 
               <div className="space-x-2 flex gap-1 items-center">
                 <button
-                  className="px-4 py-2 rounded-xl border border-gray-300 font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 disabled:hover:bg-transparent"
+                  className="px-4 py-2 rounded-xl border border-gray-600 font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-700 disabled:hover:bg-transparent text-gray-300"
                   onClick={() => setPage(1)}
                   disabled={page === 1}
                 >
                   First
                 </button>
                 <button
-                  className="px-4 py-2 rounded-xl border border-gray-300 font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 disabled:hover:bg-transparent"
+                  className="px-4 py-2 rounded-xl border border-gray-600 font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-700 disabled:hover:bg-transparent text-gray-300"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
                 >
                   Prev
                 </button>
                 <button
-                  className="px-4 py-2 rounded-xl border border-gray-300 font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 disabled:hover:bg-transparent"
+                  className="px-4 py-2 rounded-xl border border-gray-600 font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-700 disabled:hover:bg-transparent text-gray-300"
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
                 >
                   Next
                 </button>
                 <button
-                  className="px-4 py-2 rounded-xl border border-gray-300 font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 disabled:hover:bg-transparent"
+                  className="px-4 py-2 rounded-xl border border-gray-600 font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-700 disabled:hover:bg-transparent text-gray-300"
                   onClick={() => setPage(totalPages)}
                   disabled={page === totalPages}
                 >
@@ -221,7 +221,7 @@ export default function DepartmentsList({ refreshSignal }) {
         </div>
 
         <div className="mt-4">
-          <Link to="/admin/dashboard" className="text-sm font-bold text-blue-600 hover:text-blue-700">← Back to Dashboard</Link>
+          <Link to="/admin/dashboard" className="text-sm font-bold text-indigo-400 hover:text-indigo-300">← Back to Dashboard</Link>
         </div>
       </div>
 

@@ -44,34 +44,34 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-gray-800">
+    <div className="min-h-screen flex flex-col md:flex-row bg-gray-950">
       {/* Left: Logo */}
-      <div className="md:w-1/2 flex flex-col items-center justify-center text-center p-10 bg-gray-400 text-gray-900">
+      <div className="md:w-1/2 flex flex-col items-center justify-center text-center p-10 bg-gray-900 text-gray-100">
         <img src={Logo} alt="CampusFlow Logo" className="w-80 h-auto mb-8" />
-        <h1 className="text-4xl font-bold text-gray-900 mb-3">Join CampusFlow</h1>
-        <p className="text-xl font-semibold text-gray-700 mb-6">Simplify Your Academic Journey</p>
+        <h1 className="text-4xl font-bold text-gray-100 mb-3">Join CampusFlow</h1>
+        <p className="text-xl font-semibold text-gray-400 mb-6">Simplify Your Academic Journey</p>
         <div className="max-w-sm space-y-4 text-left">
           <div className="flex items-start gap-3">
-            <span className="text-blue-600 font-bold text-lg">✓</span>
-            <p className="text-gray-700 font-medium">Easy assignment submission and tracking</p>
+            <span className="text-indigo-400 font-bold text-lg">✓</span>
+            <p className="text-gray-400 font-medium">Easy assignment submission and tracking</p>
           </div>
           <div className="flex items-start gap-3">
-            <span className="text-blue-600 font-bold text-lg">✓</span>
-            <p className="text-gray-700 font-medium">Real-time notifications and updates</p>
+            <span className="text-indigo-400 font-bold text-lg">✓</span>
+            <p className="text-gray-400 font-medium">Real-time notifications and updates</p>
           </div>
           <div className="flex items-start gap-3">
-            <span className="text-blue-600 font-bold text-lg">✓</span>
-            <p className="text-gray-700 font-medium">Collaborate with professors and peers</p>
+            <span className="text-indigo-400 font-bold text-lg">✓</span>
+            <p className="text-gray-400 font-medium">Collaborate with professors and peers</p>
           </div>
         </div>
-        <p className="text-sm text-gray-600 mt-8">Join thousands of students already using CampusFlow</p>
+        <p className="text-sm text-gray-500 mt-8">Join thousands of students already using CampusFlow</p>
       </div>
 
       {/* Right: Signup Form */}
-      <div className="md:w-1/2 flex items-center justify-center p-8 bg-white">
-        <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl p-8 md:p-12 border border-gray-200">
-          <h2 className="text-3xl font-extrabold text-gray-900 mb-2 text-center">Sign Up</h2>
-          <p className="text-center text-gray-600 font-medium mb-6">Create your account to get started</p>
+      <div className="md:w-1/2 flex items-center justify-center p-8 bg-gray-950">
+        <div className="w-full max-w-md bg-gray-800 shadow-2xl rounded-2xl p-8 md:p-12 border border-gray-700">
+          <h2 className="text-3xl font-extrabold text-gray-100 mb-2 text-center">Sign Up</h2>
+          <p className="text-center text-gray-400 font-medium mb-6">Create your account to get started</p>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <input
@@ -80,7 +80,7 @@ export default function Signup() {
               onChange={handleChange}
               type="text"
               placeholder="Full Name"
-              className="w-full px-4 py-3 rounded-xl border border-gray-400 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:border-gray-900 placeholder-gray-400 font-medium"
+              className="input-strong"
               required
             />
 
@@ -90,7 +90,7 @@ export default function Signup() {
               onChange={handleChange}
               type="email"
               placeholder="Email address"
-              className="w-full px-4 py-3 rounded-xl border border-gray-400 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:border-gray-900 placeholder-gray-400 font-medium"
+              className="input-strong"
               required
             />
 
@@ -100,7 +100,7 @@ export default function Signup() {
               onChange={handleChange}
               type="password"
               placeholder="Password"
-              className="w-full px-4 py-3 rounded-xl border border-gray-400 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:border-gray-900 placeholder-gray-400 font-medium"
+              className="input-strong"
               required
             />
 
@@ -108,7 +108,7 @@ export default function Signup() {
               name="role"
               value={form.role}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-xl border border-gray-400 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:border-gray-900 font-medium"
+              className="input-strong"
             >
               <option value="student">Student</option>
               <option value="professor">Professor</option>
@@ -117,7 +117,7 @@ export default function Signup() {
             </select>
 
             {error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+              <div className="bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 rounded-xl font-semibold">
                 {error}
               </div>
             )}
@@ -125,15 +125,15 @@ export default function Signup() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-xl font-bold bg-gray-900 text-white hover:bg-gray-700 transition disabled:opacity-70"
+              className="btn-primary w-full py-3"
             >
               {loading ? "Creating Account..." : "Sign Up"}
             </button>
           </form>
 
-          <p className="text-center text-gray-700 font-semibold mt-6">
+          <p className="text-center text-gray-400 font-semibold mt-6">
             Already have an account?{" "}
-            <Link to="/" className="text-gray-900 hover:underline font-bold">
+            <Link to="/" className="text-indigo-400 hover:underline font-bold">
               Login
             </Link>
           </p>

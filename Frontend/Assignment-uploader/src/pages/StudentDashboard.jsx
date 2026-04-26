@@ -46,22 +46,22 @@ export default function StudentDashboard() {
   const statusColor = (status) => {
     switch (status) {
       case "approved":
-        return "text-green-600";
+        return "text-emerald-400";
       case "rejected":
-        return "text-red-600";
+        return "text-red-400";
       case "submitted":
-        return "text-yellow-600";
+        return "text-amber-400";
       case "forwarded":
-        return "text-purple-600";
+        return "text-violet-400";
       default:
-        return "text-gray-600";
+        return "text-gray-400";
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 md:p-10">
+    <div className="min-h-screen bg-gray-900 p-6 md:p-10">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <h1 className="text-3xl font-extrabold text-gray-900">
+        <h1 className="text-3xl font-extrabold text-gray-100">
           Student Dashboard
         </h1>
 
@@ -69,7 +69,7 @@ export default function StudentDashboard() {
 
           <button
             onClick={logout}
-            className="px-5 py-2.5 bg-gray-900 hover:bg-gray-700 text-white rounded-xl font-bold border border-gray-900 transition shadow-sm"
+            className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold border border-red-500 transition shadow-sm"
           >
             Logout
           </button>
@@ -77,15 +77,15 @@ export default function StudentDashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
-        <Card title="Drafts" value={stats.draft} color="text-gray-600 bg-gray-100" />
-        <Card title="Submitted" value={stats.submitted} color="text-yellow-600 bg-yellow-100" />
-        <Card title="Forwarded" value={stats.forwarded || 0} color="text-purple-600 bg-purple-100" />
-        <Card title="Approved" value={stats.approved} color="text-green-600 bg-green-100" />
-        <Card title="Rejected" value={stats.rejected} color="text-red-600 bg-red-100" />
+        <Card title="Drafts" value={stats.draft} color="text-gray-400 bg-gray-800" />
+        <Card title="Submitted" value={stats.submitted} color="text-amber-400 bg-amber-900/30" />
+        <Card title="Forwarded" value={stats.forwarded || 0} color="text-violet-400 bg-violet-900/30" />
+        <Card title="Approved" value={stats.approved} color="text-emerald-400 bg-emerald-900/30" />
+        <Card title="Rejected" value={stats.rejected} color="text-red-400 bg-red-900/30" />
       </div>
 
       <div className="mt-10">
-        <h3 className="text-xl font-extrabold text-gray-900 mb-4">
+        <h3 className="text-xl font-extrabold text-gray-100 mb-4">
           Recent Submissions
         </h3>
 
@@ -96,11 +96,11 @@ export default function StudentDashboard() {
             {recent.map((r) => (
               <li
                 key={r._id}
-                className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex justify-between items-center hover:shadow-md transition"
+                className="bg-gray-800 p-5 rounded-2xl border border-gray-700 shadow-sm flex justify-between items-center hover:shadow-md hover:border-gray-600 transition"
               >
                 <Link
                   to={`/student/assignments/${r._id}`}
-                  className="font-bold text-gray-800 hover:text-gray-600 hover:underline"
+                  className="font-bold text-gray-200 hover:text-indigo-400 hover:underline"
                 >
                   {r.title}
                 </Link>
@@ -121,19 +121,19 @@ export default function StudentDashboard() {
 
       <div className="mt-10 flex flex-wrap gap-4">
         <Link to="/student/upload">
-          <button className="px-6 py-3 bg-gray-900 hover:bg-gray-700 text-white font-bold rounded-xl transition shadow-lg">
+          <button className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow-lg">
             Upload New Assignment
           </button>
         </Link>
 
         <Link to="/student/bulk-upload">
-          <button className="px-6 py-3 bg-white hover:bg-gray-50 text-gray-900 font-bold rounded-xl border border-gray-300 transition shadow-sm">
+          <button className="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold rounded-xl border border-gray-600 transition shadow-sm">
             Bulk Upload
           </button>
         </Link>
 
         <Link to="/student/assignments">
-          <button className="px-6 py-3 bg-white hover:bg-gray-50 text-gray-900 font-bold rounded-xl border border-gray-300 transition shadow-sm">
+          <button className="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold rounded-xl border border-gray-600 transition shadow-sm">
             View All Assignments
           </button>
         </Link>
@@ -144,8 +144,8 @@ export default function StudentDashboard() {
 
 function Card({ title, value, color }) {
   return (
-    <div className="bg-white rounded-2xl p-6 border border-gray-200 text-center shadow-lg">
-      <p className="text-gray-500 text-sm font-bold uppercase tracking-wider">{title}</p>
+    <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700 text-center shadow-lg">
+      <p className="text-gray-400 text-sm font-bold uppercase tracking-wider">{title}</p>
       <p className={`mt-3 text-3xl font-extrabold px-4 py-2 rounded-xl inline-block ${color}`}>
         {value}
       </p>

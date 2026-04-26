@@ -74,31 +74,31 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 p-6">
       <div className="w-full max-w-md">
-        <div className="bg-white shadow-xl rounded-2xl p-8 border border-gray-200">
+        <div className="bg-gray-800 shadow-xl rounded-2xl p-8 border border-gray-700">
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-14 h-14 rounded-xl bg-blue-600 flex items-center justify-center text-white text-2xl font-extrabold shadow-md">
+            <div className="w-14 h-14 rounded-xl bg-indigo-600 flex items-center justify-center text-white text-2xl font-extrabold shadow-md">
               ?
             </div>
             <div>
-              <h1 className="text-2xl font-extrabold text-gray-900">
+              <h1 className="text-2xl font-extrabold text-gray-100">
                 {step === 1 ? "Forgot Password" : "Reset Password"}
               </h1>
-              <p className="text-sm font-medium text-gray-600">
+              <p className="text-sm font-medium text-gray-400">
                 {step === 1 ? "Enter your email to receive an OTP" : "Enter the OTP sent to your email"}
               </p>
             </div>
           </div>
 
           {error && (
-            <div className="mb-4 rounded-xl bg-red-50 border border-red-200 text-red-700 px-4 py-3 font-semibold">
+            <div className="mb-4 rounded-xl bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 font-semibold">
               {error}
             </div>
           )}
 
           {message && (
-            <div className="mb-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 font-semibold">
+            <div className="mb-4 rounded-xl bg-emerald-900/50 border border-emerald-500 text-emerald-300 px-4 py-3 font-semibold">
               {message}
             </div>
           )}
@@ -165,7 +165,7 @@ export default function ForgotPassword() {
           <div className="mt-6 text-center">
             <Link
               to="/"
-              className="text-blue-600 hover:text-blue-700 font-bold"
+              className="text-indigo-400 hover:text-indigo-300 font-bold"
             >
               Back to Login
             </Link>
