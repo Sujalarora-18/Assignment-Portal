@@ -29,28 +29,29 @@ const Navbar = () => {
     >
       {/* LOGO */}
       <Link to={getDashboardPath()} style={{ textDecoration: "none" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <svg width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-            {/* Blue rounded square background */}
-            <rect x="10" y="10" width="100" height="100" rx="18" fill="#6366f1" />
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <svg width="38" height="38" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            {/* Purple gradient rounded square background */}
+            <defs>
+              <linearGradient id="navbg" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#7c3aed"/>
+                <stop offset="100%" stopColor="#6366f1"/>
+              </linearGradient>
+            </defs>
+            <rect x="5" y="5" width="110" height="110" rx="22" fill="url(#navbg)" />
             
-            {/* White arrow icon */}
-            <g transform="translate(35, 35)">
-              {/* Arrow shaft */}
-              <line x1="10" y1="25" x2="40" y2="25" stroke="white" strokeWidth="4" strokeLinecap="round" />
-              {/* Arrow head */}
-              <polyline points="40,25 35,20 40,25 35,30" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-            </g>
+            {/* CF monogram */}
+            <text x="60" y="78" fontSize="56" fontWeight="900" fontFamily="Arial, sans-serif" fill="white" textAnchor="middle" letterSpacing="-2">CF</text>
           </svg>
 
           <span
             style={{
               fontSize: "20px",
-              fontWeight: "600",
+              fontWeight: "700",
               color: "#f1f5f9",
             }}
           >
-            Campus<span style={{ color: "#818cf8" }}>Flow</span>
+            Campus<span style={{ color: "#a78bfa" }}>Flow</span>
           </span>
         </div>
       </Link>
