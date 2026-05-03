@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const fs = require("fs");
 const pdfParse = require("pdf-parse");
+const axios = require("axios");
 
 const Assignment = require("../models/Assignment");
 const Notification = require("../models/Notification");
@@ -410,5 +411,127 @@ router.get(
   }
 );
 
-module.exports = router;
+// ===========================
+//  AI FEEDBACK GENERATION (Groq)
+// ===========================
 
+router.post(
+  "/assignments/:id/generate-feedback",
+  verifyToken,
+  isProfessor,
+  async (req, res) => {
+    try {
+      const assignment = await Assignment.findById(req.params.id).populate(
+        "student",
+        "name"
+      );
+      if (!assignment)
+        return res.status(404).json({ message: "Assignment not found" });
+
+      // Auth check — only the assigned reviewer can call this
+      if (
+        assignment.currentReviewer?.toString() !== req.user.id &&
+        assignment.reviewerId?.toString() !== req.user.id
+      ) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
+      // --- Step 1: Extract text from PDF ---
+      let pdfText = assignment.extractedText || "";
+
+      if (!pdfText) {
+        let filePath = assignment.filePath;
+        if (!path.isAbsolute(filePath)) {
+          filePath = path.join(__dirname, "..", filePath);
+        }
+
+        if (!fs.existsSync(filePath)) {
+          return res.status(400).json({ message: "Assignment PDF not found on server." });
+        }
+
+        const dataBuffer = fs.readFileSync(filePath);
+        const parsed = await pdfParse(dataBuffer);
+        pdfText = parsed.text || "";
+
+        // Cache extracted text for future calls
+        if (pdfText) {
+          assignment.extractedText = pdfText;
+          await assignment.save();
+        }
+      }
+
+      if (!pdfText || pdfText.trim().length < 50) {
+        return res.status(400).json({
+          message: "Could not extract enough text from the PDF. The file may be image-based or encrypted.",
+        });
+      }
+
+      // --- Step 2: Call Groq AI ---
+      if (!process.env.GROQ_API_KEY) {
+        return res.status(500).json({ message: "AI service not configured. GROQ_API_KEY missing." });
+      }
+
+      const userMessage = `You are an experienced academic professor reviewing a student's ${assignment.category}.
+
+Assignment Title: "${assignment.title}"
+Student Name: ${assignment.student?.name || "Unknown"}
+${assignment.description ? `Assignment Description: ${assignment.description}` : ""}
+
+Here is the content extracted from the student's submission PDF:
+---
+${pdfText.substring(0, 8000)}
+---
+
+Write a detailed, professional, and constructive academic feedback for this submission. Structure your response exactly like this:
+
+**Overall Assessment:** (1-2 sentences summarizing the quality of work)
+
+**Strengths:**
+- (Specific strength 1 based on the content)
+- (Specific strength 2 based on the content)
+- (Specific strength 3 if applicable)
+
+**Areas for Improvement:**
+- (Specific issue 1 with explanation)
+- (Specific issue 2 with explanation)
+- (Specific issue 3 if applicable)
+
+**Suggestions:**
+- (Concrete actionable recommendation 1)
+- (Concrete actionable recommendation 2)
+
+**Final Verdict:** (Choose one: Excellent work | Good work with minor revisions | Needs significant revision | Does not meet requirements)
+
+Be specific to the actual content, professional in tone, and constructive. Do not be vague or generic.`;
+
+      const response = await axios.post(
+        "https://api.groq.com/openai/v1/chat/completions",
+        {
+          model: "llama-3.1-8b-instant",
+          messages: [{ role: "user", content: userMessage }]
+        },
+        {
+          headers: {
+            "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+            "Content-Type": "application/json"
+          }
+        }
+      );
+
+      const feedback = response.data.choices[0]?.message?.content || "";
+
+      return res.json({ feedback });
+    } catch (err) {
+      console.error("AI Feedback Generation Error:", err);
+      if (err.status === 401) {
+        return res.status(401).json({ message: "Invalid Groq API key." });
+      }
+      if (err.status === 429) {
+        return res.status(429).json({ message: "AI rate limit reached. Please try again in a moment." });
+      }
+      return res.status(500).json({ message: "AI feedback generation failed. " + (err.message || "") });
+    }
+  }
+);
+
+module.exports = router;
