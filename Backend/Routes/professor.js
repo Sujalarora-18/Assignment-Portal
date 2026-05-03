@@ -22,6 +22,9 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
+  connectionTimeout: 5000,   // fail after 5s if can't connect
+  greetingTimeout: 5000,     // fail after 5s waiting for greeting
+  socketTimeout: 10000,      // fail after 10s of socket inactivity
 });
 
 router.get("/dashboard", verifyToken, isProfessor, async (req, res) => {

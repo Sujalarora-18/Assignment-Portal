@@ -12,6 +12,15 @@ if (!BASE) {
 }
 
 /**
+ * Clear auth and redirect to login (called on 401)
+ */
+function handleAuthExpiry() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  window.location.href = "/";
+}
+
+/**
  * Attach auth token if present
  */
 function authHeader() {
@@ -41,13 +50,18 @@ export async function request(url, options = {}) {
     method: options.method || "GET",
     headers,
     body,
-    credentials: "include", // ✅ REQUIRED for cross-origin (Vercel ↔ Render)
+    credentials: "include",
     cache: "no-store",
   });
 
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) {
+    // Global 401 handler — token expired or invalid → redirect to login
+    if (res.status === 401) {
+      handleAuthExpiry();
+      return;
+    }
     const error = new Error(data.message || "Request failed");
     error.status = res.status;
     error.data = data;
@@ -62,7 +76,7 @@ export async function request(url, options = {}) {
  */
 export const axiosInstance = axios.create({
   baseURL: BASE,
-  withCredentials: true, // ✅ same as fetch credentials: "include"
+  withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use(
@@ -72,6 +86,17 @@ axiosInstance.interceptors.request.use(
     return cfg;
   },
   (err) => Promise.reject(err)
+);
+
+// Global 401 handler for axios instance too
+axiosInstance.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401) {
+      handleAuthExpiry();
+    }
+    return Promise.reject(err);
+  }
 );
 
 export default {
