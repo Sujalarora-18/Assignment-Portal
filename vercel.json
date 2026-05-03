@@ -1,9 +1,0 @@
-{
-  "buildCommand": "npm install && npm run build",
-  "outputDirectory": "Frontend/Assignment-uploader/dist",
-  "installCommand": "cd Frontend/Assignment-uploader && npm install",
-  "framework": "vite",
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
-}
