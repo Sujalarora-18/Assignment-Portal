@@ -29,7 +29,26 @@ import HODReviewAssignment from "./pages/HODReviewAssignment";
 
 import PrivateRoute from "./components/PrivateRoute";
 
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+
+// Redirect already-logged-in users away from the login page
+function AuthRoute({ children }) {
+  try {
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    if (token && user) {
+      const role = String(user.role || "").toLowerCase();
+      if (role === "admin")     return <Navigate to="/admin/dashboard" replace />;
+      if (role === "student")   return <Navigate to="/student/dashboard" replace />;
+      if (role === "professor") return <Navigate to="/professor/dashboard" replace />;
+      if (role === "hod")       return <Navigate to="/hod/dashboard" replace />;
+    }
+  } catch {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  }
+  return children;
+}
 
 function AppContent() {
   const location = useLocation();
@@ -42,7 +61,7 @@ function AppContent() {
       {shouldShowNavbar && <Navbar />}
 
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<AuthRoute><Login /></AuthRoute>} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot" element={<ForgotPassword />} />
 
