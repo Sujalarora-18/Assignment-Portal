@@ -1,5 +1,7 @@
 {
+  "buildCommand": "cd Frontend/Assignment-uploader && npm install && npm run build",
+  "outputDirectory": "Frontend/Assignment-uploader/dist",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
