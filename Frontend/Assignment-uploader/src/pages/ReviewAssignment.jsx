@@ -325,7 +325,7 @@ export default function ReviewAssignment() {
                 {showAiPanel && (
                   <div className="ai-panel">
                     <div className="ai-panel-header">
-                      <span>🤖 AI-Generated Feedback (Groq)</span>
+                      <span>🤖 AI-Generated Feedback</span>
                       <button className="ai-panel-close" onClick={() => setShowAiPanel(false)}>✕</button>
                     </div>
                     <div className="ai-panel-body">
@@ -333,7 +333,7 @@ export default function ReviewAssignment() {
                         <div className="ai-loading-wrap">
                           <div className="ai-spinner" />
                           <div className="ai-loading-text">Reading PDF & generating feedback...</div>
-                          <div className="ai-loading-sub">Powered by Groq · Usually takes 2–5 seconds</div>
+                          <div className="ai-loading-sub">Usually takes 2–5 seconds</div>
                         </div>
                       )}
                       {aiError && !aiLoading && <div className="ai-error-msg">⚠️ {aiError}</div>}
